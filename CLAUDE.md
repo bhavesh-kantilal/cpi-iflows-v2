@@ -45,6 +45,8 @@ mappings/<Folder>/          one folder = one mapping
 - **Leading zeros**: use standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric (e.g. POSEX). Use a UDF (`removezeros`) only for values that may contain letters (e.g. IDTNR).
 - **Standard functions before UDFs.** Use a Groovy UDF only when no standard function does the job (e.g. `count` instead of a counting UDF). Prefer reusing a reference UDF unchanged over writing a new one.
 - **Sample files**: check the encoding. A file with `<?xml version="1.0"?>` and no encoding declaration must be UTF-8, or the CPI mapping simulator won't load it. Make a UTF-8 copy (`*_utf8.xml`) and never change the user's original.
+  - A root with `xmlns:xsi` + `xsi:schemaLocation` breaks the mapping simulator (`prefix "ns6" … is not bound`). Make a copy without those two attributes (`*_sim.xml`) for simulation (ORDRSP, 2026-11-13). Runtime behaviour in the iFlow is not tested yet.
+- **Qualifier filters on repeating source children** (e.g. `Quantity[@Type='21']`, `Property[@Type='12']`): follow the user's PO pattern (FORMAT_NOTES §3.6). No context settings on lower-level source fields and no UDF. Put value transforms that can fail (e.g. `substring`) after the filter. (User rule, 2026-11-13.)
 - **Build output** goes to `mappings/<Folder>/build/` as:
   - `<MappingName>.zip`, importable, with the same layout as the standalone reference zips (FORMAT_NOTES §1.1): root `mapping/`, `script/`, `xsd/`, `wsdl/`. No MANIFEST, `.project` or `metainfo.prop`.
   - The extracted `<MappingName>/` folder next to the zip.

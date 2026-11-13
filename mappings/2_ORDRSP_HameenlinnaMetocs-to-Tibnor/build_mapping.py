@@ -26,7 +26,8 @@ NAME = "Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP"
 NS_URI, NS = "http://www.ruukki.com/schemas/eai/internal/production/eruukki", "ns0"
 
 b = Builder(NAME,
-            source=Link("xsd", ["Ordrsp_1_0_0.xsd", "src/main/resources/xsd", "OrdrspInterchange"]),
+            # namespaced XSD: 4th elem = targetNamespace, as CPI writes it (feedback v1.0.1)
+            source=Link("xsd", ["Ordrsp_1_0_0.xsd", "src/main/resources/xsd", "OrdrspInterchange", NS_URI]),
             target=Link("xsd", ["ORDRSP.ORDERS02.xsd", "src/main/resources/xsd", "ORDERS01"]),
             namespaces=[(NS, NS_URI)])
 C, F = b.const, b.fn
@@ -112,8 +113,9 @@ line_no = F("formatNumber", S(f"{IT}/LineNo"), nformat="#", separator=".")      
 qty = each(by_type(f"{IT}/Quantity", "21", "QuantityValue"))
 unit = each(by_type(f"{IT}/Quantity", "21", "MeasureUnit"))
 is_718 = F("and", eq(S(f"{IT}/Date/@Type"), "55"), eq(S(f"{IT}/Date/@Format"), "718"))
-conf_date = each(F("ifWithoutElse", is_718, F("substring", S(f"{IT}/Date"), start="9", count="8"),
-                   keepss="false"))                    # PO D_2380: end of 'YYYYMMDD-YYYYMMDD'
+# User's CPI edit (feedback v1.0.1): direct date, no substring, for now. The substring ran on every Date
+# before the filter (e.g. the 6-char week date) and failed. Open: end of range, see spec.md.
+conf_date = each(F("ifWithoutElse", is_718, S(f"{IT}/Date"), keepss="false"))
 art_in = each(by_type(f"{IT}/AddArticleNo", "IN"))    # PO D_7140
 
 P = f"{T}/E1EDP01"

@@ -87,6 +87,14 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
 
 - **2026-11-13 Sample formatting.** Both input samples (original and `_sim.xml`) were re-indented on disk and committed with v1.0.1. The XML content is unchanged (canonical compare). The user decided to keep the indented files.
 
+### Feedback on v1.0.1 → v1.0.2 (2026-11-13, CPI download in `feedback/`)
+- **The source XSD did not load on import**: the editor showed "Add source message" with the tree in orange. The user re-added it. CPI's download shows the fix: the source link has a **4th `<elem>` = the targetNamespace URI**, as WSDL links have. Taken over.
+- **DATUM / EDATU:** `substring` failed in the simulation, and the user mapped the filtered Date directly for now. Taken over as-is, but it **contradicts spec rows 18 and 20**: the IDoc gets `20261207-20261220` instead of `20261220`.
+  - Cause (my analysis, not tested): v1.0.1 applied `substring(start 9, count 8)` to **every** Date of the Item *before* the `ifWithoutElse` filter. That includes the format-616 week date `202651` (6 characters), so start 9 is out of range. The values were not suppressed at that point.
+  - Proposed fix for the next version: filter first, then substring, i.e. `substring(SplitByValue(removeContexts(ifWithoutElse(is_718, Date))), 9, 8)`. Then only format-718 values (always 17 characters) reach `substring`. Waiting for the user's go-ahead.
+- The user reports "some fields missing" and will check later.
+- The XSDs in the download are CPI re-serializations, with the same paths. The builds keep the user's original files.
+
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).

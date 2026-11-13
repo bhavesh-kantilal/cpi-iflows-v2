@@ -154,6 +154,7 @@ Each mapping has one `lnkRole role="SOURCE_IFR_MESS"` and one `lnkRole role="TAR
 | WSDL (RFC) | `wsdl` | file name | `src/main/resources/wsdl` | message element (e.g. `BAPI_ACC_DOCUMENT_POST`) | `urn:sap-com:document:sap:rfc:functions` | ACC target, INV target |
 | WSDL (SOAP) | `wsdl` | `DOC_WEBI_PRODUCTMDMBULKREPLICATEREQUEST.WSDL` | `src/main/resources/wsdl` | `ProductMDMBulkReplicateRequestMessage` | `http://sap.com/xi/SAPGlobal20/Global` | MAT source |
 | XSD in wsdl folder | `xsd` | `A_DocumentInfoRecordEntityPOST.xsd` | `src/main/resources/wsdl` | `A_DocumentInfoRecord` | — | DIR target |
+| XSD with a targetNamespace | `xsd` | `Ordrsp_1_0_0.xsd` | `src/main/resources/xsd` | `OrdrspInterchange` | the targetNamespace URI, e.g. `http://www.ruukki.com/schemas/eai/internal/production/eruukki` | ORDRSP source. **CONFIRMED 2026-11-13** by the user's CPI download: without elem 4, CPI does not load the XSD on import ("Add source message") |
 | JSON (OpenAPI 3.0.3) | `json` | `Medius_Swagger.json` | `src/main/resources/json` | `<api path>__$delim$__<HTTP METHOD>__$delim$__Request`, e.g. `/integration/masterdata/v1/dimensionValueImportBatches__$delim$__POST__$delim$__Request` | empty, written `<elem></elem>` (not `<elem/>`) | CCM target |
 
 - **JSON targets (CCM)**:
@@ -203,6 +204,9 @@ Each mapping has one `lnkRole role="SOURCE_IFR_MESS"` and one `lnkRole role="TAR
   - CLF and DOC have no namespaced root and no `<namespaces>` element.
   - **UNVERIFIED** how the prefix number is chosen.
 - A path step gets a prefix only when that element is in a namespace. Usually that is the root alone: unqualified children and attributes have none, e.g. `/ns3:ProductMDMBulkReplicateRequestMessage/ProductMDMReplicateRequestMessage/Product/ProductInternalID` (MAT).
+- **Qualified XSD** (`targetNamespace` plus `elementFormDefault="qualified"`): **every** element step gets the prefix, attributes none. Example: `/ns0:OrdrspInterchange/ns0:OrderResponseMessage/ns0:Item/ns0:Date/@Type`.
+  - **CONFIRMED 2026-11-13** (ORDRSP): the CPI editor shows `ns0:` on every node. The root-only form showed the children as missing.
+  - The payload itself may use a default `xmlns="…"` with no prefix. The prefix exists only in the `.mmap`.
 - An element from **another** namespace gets its own prefix in the middle of the path, and each namespace gets its own `<namespaces>` entry.
   - JE: `/ns1:JournalEntryBulkCreateRequest/JournalEntryCreateRequest/JournalEntry/Item/ns2:ZZ1_SSABSourceSystem`
   - The declarations are `http://sap.com/xi/SAPSCORE/SFIN` → `ns1` and `http://SAPCustomFields.com/ZZ1_` → `ns2`.
@@ -325,6 +329,13 @@ Every standard function seen, with its parameters. An input count comes from the
   - MAT: `<brick context="/ns3:…/Product" gid="0" path="/ns3:…/Product/Plant/PlantID" type="Src">`
   - INV: `context="/root/invoice"` on `/root/invoice/poLines/lineNumber`.
   - Without the attribute the source keeps its default parent context.
+- **`mapWithDefault` after a context change does not fill the gaps.** **CONFIRMED 2026-11-13** in the user's ORDRSP v1.0.0 simulation. `context=Item` on `Property/PropertyText`, then `mapWithDefault`: the missing values were not added, the queues drifted apart, and no item was created.
+  - The user's fix in CPI is to apply `mapWithDefault` in the field's own context first, then `formatByExample`.
+- **Qualifier filter on repeating children (user's PO pattern, confirmed working in CPI on ORDRSP v1.0.1):** no context settings on the sources.
+  - Item node: `removeContexts(ifWithoutElse(condition, const ""))`
+  - Item value: `ifWithoutElse(stringEquals(mapWithDefault(@Type), 'X'), mapWithDefault(value))` → `removeContexts` → `SplitByValue(Each Value)`
+  - It assumes exactly one matching value per item.
+- **Functions on a queue run on all its values**, including those that a later `ifWithoutElse` filters out. Example: `substring(Date, 9, 8)` placed *before* the filter failed on a 6-character week date (ORDRSP v1.0.1, user's simulation). Value transforms that can fail (`substring` and the like) go **after** the filter. The failure is CONFIRMED; the explanation is my analysis.
 
 ### 3.7 Shared nodes and groups
 - **Shared brick (one output feeding many inputs)**: the first use carries `object_uid="rN"` and the full content. Later uses are just `<brick object_uid="rN"/>`.

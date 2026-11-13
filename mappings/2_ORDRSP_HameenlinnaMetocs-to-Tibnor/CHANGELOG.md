@@ -1,5 +1,12 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.2 — 2026-11-13
+Applies the user's CPI download of v1.0.1 (`feedback/`, compared with `tools/cpimm/diff.py`, 2 differences, both taken over):
+- **Source XSD link:** a 4th `<elem>` with the targetNamespace `http://www.ruukki.com/schemas/eai/internal/production/eruukki`. Without it, CPI did not load the source XSD on import ("Add source message").
+- `E1EDP03/DATUM` and `E1EDP20/EDATU`: direct mapping of the format-718 date, without `substring` (user's temporary fix). **Known wrong:** the value is the full range `YYYYMMDD-YYYYMMDD` (17 characters) instead of the end date (spec rows 18, 20). Open, see spec.md.
+- The build is now logically identical to the CPI version (diff: no differences). All checks passed. The self-test passes.
+- Still open from the user's test: "some fields missing", to be checked by the user.
+
 ## 1.0.1 — 2026-11-13
 Fixes from the user's import test and their existing PO mapping of the same source (spec.md):
 - One mapping under the plain name, with `ns0:` on every source element step (the NsAllSteps variant worked). The two variant zips are removed.
