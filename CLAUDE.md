@@ -41,7 +41,7 @@ mappings/<Folder>/          one folder = one mapping
 - Reusable generator and validation scripts go in `tools/`, never inside a mapping folder.
 
 ## Checks before finishing a build (all must pass, report results)
-1. Every source and target XPath used in the `.mmap` exists in the schemas, including attributes (`@x`), duplicate indexes (`item[1]`) and `context="…"` paths.
+1. Every source and target XPath used in the `.mmap` exists in the schemas, including attributes (`@x`), duplicate indexes (`item[1]`) and `context="…"` paths. For **JSON** sources or targets, check paths against the Swagger/OpenAPI schema of the linked operation (request body, `$ref` resolved) instead of an XSD. `/__$$RoOt_ArRaY$$__` stands for a root array (FORMAT_NOTES §2.2).
 2. All XML is well-formed: `.mmap`, XSD and WSDL.
 3. The zip structure matches the references: entries at the root, only the allowed folders, the `.mmap` name equals the mapping name, every `UsedFuncLib` script is present in `script/`, and every schema in `lnks` is present.
 4. The `.mmap` envelope matches FORMAT_NOTES §2.1: one line, no BOM, no prolog.
@@ -58,6 +58,7 @@ mappings/<Folder>/          one folder = one mapping
 ## Git
 - Track everything: `_reference/`, docs, `tools/`, mapping sources and `build/` zips. The repo is the backup of all knowledge. Nothing project-specific lives only in Claude's memory.
 - After each build, commit (`<MappingName> v<x.y.z>: <change>`) and tag `<MappingName>-v<x.y.z>`.
+- **Line endings**: never remove or weaken `.gitattributes` (`* -text`). Git on this PC has `core.autocrlf=true` set system-wide, so without that file it rewrites CRLF and LF. Every reference export and every build output must stay byte-identical to the original. After committing, spot-check with `git show HEAD:<file> | cmp - <file>`.
 - Commits are authored by the user's git identity. **Do not add `Co-Authored-By` or any Claude/AI attribution** to commits or files.
 - Commit or push only as part of a task the user asked for. Recommended: a private remote (GitHub or Azure DevOps) so the repo survives a disk crash.
 
