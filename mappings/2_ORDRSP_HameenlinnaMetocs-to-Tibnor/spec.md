@@ -64,6 +64,16 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
 - **2026-11-13 Unit 'M' → 'MTR' (#15)** uses `iF` instead of FixValues, because FixValues' "use key when not found" numbering is still UNVERIFIED (FORMAT_NOTES §5 Q1).
 - **2026-11-13 Files moved** into the standard layout: XSDs → `schemas/`, sample XMLs → `samples/` (contents unchanged).
 
+## Import test v1.0.0 (2026-11-13, package Test_BK, user screenshots)
+- **Both variants:** the user had to add the source message by hand in the editor after import. It is unclear which part of the generated source link CPI did not accept (perhaps a 4th `<elem>` with the namespace, as WSDL links have). This will be learned from the CPI download of the fixed variant.
+- **NsRootOnly fails.** The CPI source tree shows `ns0:OrdrspInterchange / ns0:OrderResponseMessage / …`. The unprefixed `OrderResponseMessage` is shown orange, as missing.
+- **NsAllSteps loads**: the CPI tree uses `ns0:` on every element step. It fails in the **simulator**, though:
+  `The prefix "ns6" for attribute "ns6:schemaLocation" associated with an element type "OrdrspInterchange" is not bound.`
+  - The simulator turns the root attributes (`@xmlns`, `@xmlns:xsi`, `@schemaLocation`) into test-input fields and loses the `xsi` prefix binding. This is a test-input problem, not a mapping problem.
+  - Test copy `samples/Input_AA_ORDRSP96A_MS_20261111_0919_sim.xml`: the same as the original, without `xmlns:xsi` and `xsi:schemaLocation`. The original is unchanged.
+  - **Open:** whether the iFlow runtime has the same problem with real hub payloads (which carry `xsi:schemaLocation`). Test it in the iFlow. If it fails, the iFlow must remove the attribute before the mapping.
+- **Result:** `ns0:` on every element step is the right form for a qualified namespaced XSD source.
+
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).
