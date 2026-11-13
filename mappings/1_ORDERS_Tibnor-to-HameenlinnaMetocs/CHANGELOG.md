@@ -6,7 +6,7 @@ Applies the user's feedback and CPI edits (`feedback/` export, compared with `to
 - `NumberOfLineItems`: standard `count(POSEX)` instead of the `countValues` UDF, which is removed from `TibnorOrdersHelpers.groovy`.
 - `Item/Quantity`, `Item/Price`: container ← empty constant.
 - `Contact`, `TermsOfDelivery`, `Location`, `Item/Property`: container ← `createIf(condition)` instead of a source value.
-- **Not taken over:** the CPI edit `Reference`/`Reference[1]`/`Reference[2]` ← empty constant. Reference is a simple-content element whose text is the value, so the edit would drop BELNR, 'S' and 'TPO' (spec rows 10–12, expected sample output). Waiting for the user to confirm.
+- **Not taken over:** the CPI edit `Reference`/`Reference[1]`/`Reference[2]` ← empty constant. Reference is a simple-content element whose text is the value, so the edit would drop BELNR, 'S' and 'TPO' (spec rows 10–12, expected sample output). Confirmed by the user 2026-11-13: keep the values.
 - All checks passed. The self-test still passes.
 
 ## 1.0.0 — 2026-11-13

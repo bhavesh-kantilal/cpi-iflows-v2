@@ -108,5 +108,5 @@ The output contains only these Party fields:
   - Price ← empty constant.
   - Contact, TermsOfDelivery, Location and Property ← `createIf`.
 - CPI re-serializes XSDs on export: attribute order and CDATA change, but all paths are identical. The builds keep the user's original XSD files.
-- **Open question:** should Reference stay ← BELNR / 'S' / 'TPO' (my v1.1.0) or really be an empty constant (the CPI edit)? An empty constant gives `<Reference Type="CR"/>` with no order number.
+- **Decided 2026-11-13 (user): Reference keeps its values** ← BELNR / 'S' / 'TPO'. The empty-constant CPI edit was not intended. Simple-content elements that carry a value are not "tags".
 - **Known risk (from v1.0.0 design):** Property text pairs E1EDP19 QUALF (context per item) with KTEXT (context per segment). This is correct with one E1EDP19 per item, as in all samples, but may mis-pair if an item also has e.g. a QUALF 002 segment. Fix it once there is a sample.
