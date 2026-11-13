@@ -88,3 +88,16 @@ The output contains only these Party fields:
     - `countValues(values[])` for row 52. The standard `count` function is not in the references.
 - **2026-11-13 Empty optional fields** (e.g. CN AddressLine2 when PFACH is empty) are not created. The sample output has none.
 - **2026-11-13 Item Date** takes EDATU directly and assumes one E1EDP20 per item. OP-10 says all samples have one.
+
+## Import test v1.0.0 (2026-11-13)
+- The user imported it into CPI (package Test_BK) and reports that the mapping works.
+- The editor's simulator would not load `Input_IDOC_0000000020247467.xml`. The cause: the file is Windows-1252 but has no encoding declaration, so it is read as UTF-8. Use `samples/Input_IDOC_0000000020247467_utf8.xml` instead.
+
+### User feedback on v1.0.0 (to apply in v1.1.0 together with the user's CPI export in `feedback/`)
+1. **Container nodes** ("tags") come from an **empty constant**, not a source field. This is the user's SAP judgement:
+   - Quantity and Price always exist on an SAP PO, so they always come from the constant.
+   - Conditional containers use `createIf`, e.g. Contact only when BNAME exists.
+   - Elements with simple content that carry a value (Reference, PartyId, Date, Currency, AddArticleNo, CommId) keep their source value.
+   - Item stays ← E1EDP01.
+2. **Leading zeros:** use the standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric, as in POSEX → LineNo. Keep `removezeros` for values that may not be numeric (IDTNR).
+3. **Counting:** use the standard **`count`** function (POSEX → count → NumberOfLineItems) instead of the `countValues` UDF.
