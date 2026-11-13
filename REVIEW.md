@@ -1,0 +1,48 @@
+# Actions to review
+
+The user asked (2026-11-13) to review all actions of this session later. This list collects what was done or proposed without a full review. Nothing in **Proposed** is applied until the user approves it.
+
+Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` = reviewed and changed · `Rejected`
+
+## A. Proposed rule changes (waiting for approval, NOT applied)
+| # | Proposal | Where | Why | Status |
+|---|---|---|---|---|
+| A1 | Add to "Checks before finishing a build": **6. All type / element references in the zip's XSD and WSDL files resolve** (`check.py: schema_ref_errors`; runs inside every build already). | CLAUDE.md | NShift v1.0.0: a WSDL whose types did not resolve passed every check, and CPI showed an empty Consignment | Open |
+| A2 | In the sample-files rule, refer to `tools/sim_copy.py` for the `*_sim.xml` copies | CLAUDE.md | Same step, done by a tool since DESADV/INVOIC | Open |
+| A3 | Rule for target WSDLs that import XSDs by URL: download (with approval), keep them in `schemas/downloaded/`, build a self-contained copy with `tools/wsdl_inline.py` | CLAUDE.md or FORMAT_NOTES §1.1 | CPI does not fetch external imports (NShift) | Open |
+| A4 | Note in FORMAT_NOTES §2.2: WSDL link elem 3 = message **element** name, once CPI confirms it on NShift (`book` vs message `ConsignmentEndpoint_book`) | FORMAT_NOTES | Still UNVERIFIED (NShift OP-12) | Open |
+
+## B. Toolkit changes made without separate approval (already committed)
+| # | Change | Commit | Status |
+|---|---|---|---|
+| B1 | `Builder.out(x, 0)` writes a plain `<arg>` instead of `from="0"` (FORMAT_NOTES §3.10). ORDERS/ORDRSP builds are logically unchanged. | c051eb8 | Open |
+| B2 | New `tools/sim_copy.py` (simulator copies without `xsi:` attributes) | c051eb8 | Open |
+| B3 | New `tools/wsdl_inline.py` (self-contained WSDL). v1 lost namespace declarations; fixed and self-checking since 75a7f4d | 7fcc03c, 75a7f4d | Open |
+| B4 | New build check `schema_ref_errors` in `tools/cpimm/check.py`, run by `check_build` for every zip | 75a7f4d | Open |
+
+## C. Mapping decisions and assumptions to confirm
+| # | Mapping | Item | Status |
+|---|---|---|---|
+| C1 | ORDRSP | DATUM / EDATU carry the full range `YYYYMMDD-YYYYMMDD` (user's temporary fix). Proposed fix: filter first, then `substring(9, 8)` | Open |
+| C2 | ORDRSP | "Some fields missing" in the user's v1.0.1 test (not specified yet) | Open |
+| C3 | ORDRSP, DESADV, INVOIC | Does the iFlow runtime accept `xsi:schemaLocation` / `xsi:noNamespaceSchemaLocation` in real hub payloads (simulator does not)? | Open |
+| C4 | ORDRSP, DESADV, INVOIC | PO pattern assumes exactly one value per item per qualifier; values shift if one is missing | Open |
+| C5 | INVOIC | A1 ZEILE for METOCSTO (`000001` → Implema sent `10`), A2 only DocumentType 380 | Open |
+| C6 | DESADV | Grouping UDF `groupByHeat`: key line + Heat, number format "as sent / sum without decimals" (A1, A2); all dates = DespatchDate (A3) | Open |
+| C7 | DESADV | Folder `Samples` should be renamed `samples` (rename was refused, folder in use) | Open |
+| C8 | NShift | All best-guess rules A1–A14 and open points OP-01–OP-12 in `spec.md` / the spec workbook, mainly: one consignment per freight order vs per house waybill (OP-01), template per carrier (OP-02), package codes (OP-04), re-booking / transactionId (OP-05) | Open |
+| C9 | NShift | Mapping name `Map_TibnorS4_NShift_TransportOrder_Book` was chosen by Claude, not given by the user | Open |
+| C10 | NShift | The spec workbook `S4TM-NShift_TransportOrder_Book_MappingSpec_v0.1.xlsx` was written by Claude (layout copied from the INVOIC workbook) | Open |
+| C11 | All | Control record handled as ORDRSP: SNDPOR / RCVPOR / RCVPRN from exchange properties, STD constants, REFMES empty | Open |
+
+## D. Other actions taken
+| # | Action | Status |
+|---|---|---|
+| D1 | Files moved into the standard layout (schemas/, samples/, docs/) in ORDRSP, DESADV, INVOIC, NShift. Originals unchanged in content | Open |
+| D2 | Two NShift XSDs downloaded from `https://service.web-ta.net/ws/services/ConsignmentWS?xsd=1/2` (approved by the user) | Open |
+| D3 | ORDRSP input samples re-indented on disk were committed; user chose to keep them | OK |
+
+## E. Import tests reported by the user
+- ORDRSP v1.0.2: runs, "some fields missing" (C2).
+- DESADV v1.0.0, INVOIC v1.0.0: "everything works" (user, 2026-11-13). No CPI download yet, so no `feedback/` diff.
+- NShift v1.0.1: "this works" (user, 2026-11-13). The target structure loads after the WSDL fix.

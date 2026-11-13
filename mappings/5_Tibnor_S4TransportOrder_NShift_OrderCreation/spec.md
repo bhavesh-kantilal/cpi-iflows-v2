@@ -78,3 +78,4 @@ See the Mapping sheet for all 22 rows. In short:
   - `wsdl_inline.py` splices the schemas in as text, keeping each schema root's own `xmlns:tns`. Before writing, it compiles the merged schema set; the compile rejects the old file and accepts the new one.
   - New build check `schema_ref_errors` in `tools/cpimm/check.py`: every `type=` / `ref=` / `base=` reference in a zip's XSD or WSDL must resolve to a definition in its namespace. It passes on every reference and mapping schema and reports the 151 errors in the v1.0.0 zip.
 - The mapping logic is unchanged.
+- **User, 2026-11-13: v1.0.1 "works".** Adding the new check to the CLAUDE.md build-check list waits for the user's review (`REVIEW.md` A1).
