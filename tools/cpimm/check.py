@@ -1,0 +1,184 @@
+"""Schema path index + build checks (CLAUDE.md "Checks before finishing a build")."""
+from __future__ import annotations
+
+import re
+import zipfile
+from pathlib import Path
+
+from lxml import etree
+
+from .model import Func, Mapping, Ref, Src, read_mmap
+
+XS = "{http://www.w3.org/2001/XMLSchema}"
+FOLDER = {"src/main/resources/xsd": "xsd", "src/main/resources/wsdl": "wsdl",
+          "src/main/resources/json": "json", "src/main/resources/script": "script"}
+FORBIDDEN = re.compile(rb"claude|anthropic", re.I)
+
+
+# ----------------------------------------------------------------------------- schema index
+def _schemas(path: Path):
+    doc = etree.parse(str(path))
+    root = doc.getroot()
+    if root.tag == XS + "schema":
+        return [root]
+    return root.findall(".//" + XS + "schema")          # WSDL: embedded schemas
+
+
+def schema_paths(path: Path, root_name: str, max_depth: int = 40) -> set[str]:
+    """All element/attribute paths (local names, no prefixes) below global element root_name."""
+    schemas = _schemas(path)
+    gel, gct, ggrp, gag, gst = {}, {}, {}, {}, {}
+    for s in schemas:
+        for e in s:
+            n = e.get("name")
+            {XS + "element": gel, XS + "complexType": gct, XS + "group": ggrp,
+             XS + "attributeGroup": gag, XS + "simpleType": gst}.get(e.tag, {}).__setitem__(n, e) if n else None
+    loc = lambda q: q.split(":")[-1] if q else q
+    out: set[str] = set()
+
+    def walk_type(ct, prefix, depth, stack):
+        if ct is None or depth > max_depth:
+            return
+        for c in ct.iter():
+            pass
+        _content(ct, prefix, depth, stack)
+
+    def _content(node, prefix, depth, stack):
+        for c in node:
+            tag = c.tag
+            if tag in (XS + "sequence", XS + "choice", XS + "all", XS + "complexContent", XS + "simpleContent"):
+                _content(c, prefix, depth, stack)
+            elif tag in (XS + "extension", XS + "restriction"):
+                base = gct.get(loc(c.get("base")))
+                if base is not None and base not in stack:
+                    _content(base, prefix, depth, stack + [base])
+                _content(c, prefix, depth, stack)
+            elif tag == XS + "group":
+                g = ggrp.get(loc(c.get("ref")))
+                if g is not None:
+                    _content(g, prefix, depth, stack)
+            elif tag == XS + "attribute":
+                n = c.get("name") or loc(c.get("ref"))
+                out.add(f"{prefix}/@{n}")
+            elif tag == XS + "attributeGroup":
+                g = gag.get(loc(c.get("ref")))
+                if g is not None:
+                    _content(g, prefix, depth, stack)
+            elif tag == XS + "element":
+                elem(c, prefix, depth + 1, stack)
+
+    def elem(e, prefix, depth, stack):
+        if e.get("ref"):
+            ref = gel.get(loc(e.get("ref")))
+            if ref is None:
+                return
+            e = ref
+        p = f"{prefix}/{e.get('name')}"
+        out.add(p)
+        if depth > max_depth:
+            return
+        ct = e.find(XS + "complexType")
+        if ct is None and e.get("type"):
+            ct = gct.get(loc(e.get("type")))
+        if ct is not None and ct not in stack:
+            _content(ct, p, depth, stack + [ct])
+
+    r = gel.get(root_name)
+    if r is None:
+        raise ValueError(f"root element {root_name} not found in {path.name}")
+    elem(r, "", 0, [])
+    return out
+
+
+_IDX = re.compile(r"\[\d+\]")
+
+
+def norm(path: str) -> str:
+    """Strip namespace prefixes and duplicate-subtree indexes: /ns0:A/b[2]/@c -> /A/b/@c"""
+    return "/".join(_IDX.sub("", s.split(":")[-1]) if not s.startswith("@") else s for s in path.split("/"))
+
+
+# ----------------------------------------------------------------------------- checks
+def walk(x):
+    yield x
+    if isinstance(x, Func):
+        for a in x.args:
+            yield from walk(a.expr)
+
+
+def check_paths(m: Mapping, folder: Path) -> list[str]:
+    errs = []
+    sides = {"source": m.source, "target": m.target}
+    idx = {}
+    for side, lk in sides.items():
+        if lk.type_id == "json":
+            idx[side] = None
+            continue
+        f = folder / FOLDER[lk.elems[1]] / lk.elems[0]
+        if not f.exists():
+            errs.append(f"{side} schema missing: {f}")
+            idx[side] = None
+            continue
+        idx[side] = {norm(p) for p in schema_paths(f, lk.elems[2])}
+    used_src, used_ctx = set(), set()
+    for t in m.targets:
+        if idx["target"] is not None and norm(t.path) not in idx["target"]:
+            errs.append(f"target path not in schema: {t.path}")
+        if t.expr is not None:
+            for n in walk(t.expr):
+                if isinstance(n, Src):
+                    used_src.add(n.path)
+                    if n.context:
+                        used_ctx.add(n.context)
+    if idx["source"] is not None:
+        for p in sorted(used_src | used_ctx):
+            if norm(p) not in idx["source"]:
+                errs.append(f"source path not in schema: {p}")
+    for side in sides:
+        if idx[side] is None and sides[side].type_id == "json":
+            errs.append(f"NOTE {side} is JSON: path check not implemented yet (manual check needed)")
+    return errs
+
+
+def check_build(zip_path: Path, name: str) -> list[str]:
+    """Zip structure like the standalone references + well-formed XML + no forbidden strings."""
+    errs = []
+    with zipfile.ZipFile(zip_path) as z:
+        names = z.namelist()
+        for i in z.infolist():
+            if i.is_dir():
+                errs.append(f"directory entry in zip: {i.filename}")
+            if i.compress_type != zipfile.ZIP_DEFLATED:
+                errs.append(f"not deflated: {i.filename}")
+            top = i.filename.split("/")[0]
+            if top not in ("mapping", "script", "xsd", "wsdl", "json") or i.filename.count("/") != 1:
+                errs.append(f"unexpected zip entry: {i.filename}")
+        mm = [n for n in names if n.startswith("mapping/")]
+        if mm != [f"mapping/{name}.mmap"]:
+            errs.append(f"mapping/ must hold exactly {name}.mmap, found {mm}")
+            return errs
+        raw = z.read(mm[0])
+        try:
+            m = read_mmap(raw.decode("utf-8"), name)          # also proves the envelope is standard
+        except Exception as e:                                # noqa: BLE001
+            errs.append(f".mmap not readable/standard: {e}")
+            return errs
+        for s in m.udfs:
+            if f"script/{s}" not in names:
+                errs.append(f"declared UDF script missing: script/{s}")
+        for lk in (m.source, m.target):
+            want = f"{FOLDER[lk.elems[1]]}/{lk.elems[0]}"
+            if want not in names:
+                errs.append(f"schema missing in zip: {want}")
+        for n in names:
+            data = z.read(n)
+            if FORBIDDEN.search(data):
+                errs.append(f"forbidden string (claude/anthropic) in {n}")
+            if n.endswith((".xsd", ".wsdl", ".WSDL", ".mmap")):
+                try:
+                    etree.fromstring(data)
+                except etree.XMLSyntaxError as e:
+                    errs.append(f"not well-formed: {n}: {e}")
+        if raw.startswith(b"\xef\xbb\xbf") or b"\n" in raw or raw.startswith(b"<?"):
+            errs.append(".mmap must be one line, no BOM, no prolog")
+    return errs
