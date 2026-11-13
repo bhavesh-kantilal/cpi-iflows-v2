@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://www.spedpoint.com/consignment/types" xmlns:v1="http://www.spedpoint.com/consignment/types/v1_0">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<typ:save>
+			<AuthenticationToken>
+				<userName>wsint</userName>
+				<groupName>ovako metals oy</groupName>
+				<password>***[removed]***</password>
+			</AuthenticationToken>
+			<Consignment orderNo="000081854_000033378_FCA" owner="" templateName="TRE71_FCA">
+				<Part role="consignee">
+					<Address>
+						<v1:id>000031246</v1:id>
+						<v1:name>ITA NORDIC OY</v1:name>
+						<v1:address>TYVITIE 2</v1:address>
+						<v1:postcode>56510</v1:postcode>
+						<v1:city>PUNTALA</v1:city>
+						<v1:countrycode>FI</v1:countrycode>
+					</Address>
+					<Communication>
+						<v1:contactPerson>Tommi Matikainen</v1:contactPerson>
+						<v1:phone>05-4731218</v1:phone>
+						<email notify="false">tommi.matikainen@itanordic.fi</email>
+					</Communication>
+					<Reference>
+						<v1:reference>P102713</v1:reference>
+					</Reference>
+				</Part>
+				<Part role="deliveryAddress">
+					<Address>
+						<v1:id>000033378</v1:id>
+						<v1:name>ITA NORDIC OY</v1:name>
+						<v1:address>TYVITIE 2</v1:address>
+						<v1:postcode>56510</v1:postcode>
+						<v1:city>PUNTALA</v1:city>
+						<v1:countrycode>FI</v1:countrycode>
+					</Address>
+					<Communication>
+						<v1:contactPerson>Tommi Matikainen</v1:contactPerson>
+						<v1:phone>05-4731218</v1:phone>
+						<email notify="false">tommi.matikainen@itanordic.fi</email>
+					</Communication>
+				</Part>
+				<Part role="consignor">
+					<Address>
+						<v1:id>000013608</v1:id>
+						<v1:name>Tibnor Metals Oy</v1:name>
+						<v1:address>Tuotekatu 3</v1:address>
+						<v1:postcode>33840</v1:postcode>
+						<v1:city>TAMPERE</v1:city>
+						<v1:countrycode>FI</v1:countrycode>
+					</Address>
+					<Communication>
+						<v1:contactPerson>Mira Rastas</v1:contactPerson>
+					</Communication>
+				</Part>
+				<GoodsItem>
+					<v1:noOfPackages>1</v1:noOfPackages>
+					<v1:weight>1660.00</v1:weight>
+					<v1:length>620.00</v1:length>
+					<v1:width>20.00</v1:width>
+					<v1:tag>000350570</v1:tag>
+					<v1:height>20.00</v1:height>
+					<v1:packageType>BE</v1:packageType>
+					<v1:notes>000350570</v1:notes>
+				</GoodsItem>
+				<GoodsItem>
+					<v1:noOfPackages>1</v1:noOfPackages>
+					<v1:weight>540.00</v1:weight>
+					<v1:length>620.00</v1:length>
+					<v1:width>20.00</v1:width>
+					<v1:tag>000350571</v1:tag>
+					<v1:height>20.00</v1:height>
+					<v1:packageType>BE</v1:packageType>
+					<v1:notes>000350571</v1:notes>
+				</GoodsItem>
+				<TransportProduct>
+					<Pickup/>
+					<Delivery>
+						<v1:instruction>Posti 802020</v1:instruction>
+					</Delivery>
+				</TransportProduct>
+				<Target>
+					<v1:date>2026-11-12</v1:date>
+				</Target>
+			</Consignment>
+			<TransactionId>UNI000091980</TransactionId>
+		</typ:save>
+	</soapenv:Body>
+</soapenv:Envelope>
