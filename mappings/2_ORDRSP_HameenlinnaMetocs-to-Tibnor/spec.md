@@ -85,6 +85,8 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
 - The user's own CPI test used a context UDF `checkItemToBeMapped` for E1EDP01. It is **not** used, because the user asked for the PO way without a UDF.
 - **Decision:** v1.0.1 follows these patterns; the assumption is under "Item values". Source message link: still 3 elems. The user had to re-add the source message by hand in v1.0.0; it is open until a CPI download shows what CPI writes.
 
+- **2026-11-13 Sample formatting.** Both input samples (original and `_sim.xml`) were re-indented on disk and committed with v1.0.1. The XML content is unchanged (canonical compare). The user decided to keep the indented files.
+
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).
