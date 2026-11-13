@@ -140,6 +140,47 @@ def check_paths(m: Mapping, folder: Path) -> list[str]:
     return errs
 
 
+XSD_NS = "http://www.w3.org/2001/XMLSchema"
+
+
+def schema_ref_errors(data: bytes) -> list[str]:
+    """Every type=/ref=/base= QName in the file's schemas must resolve, with its prefix bound in scope, to a
+    definition of that namespace in the same file (or to the XSD namespace).
+    Catches lost prefix declarations, e.g. 'tns' re-bound when schemas were inlined into a WSDL
+    (NShift v1.0.0: CPI showed an empty Consignment). Path checks match by local name only and miss this."""
+    root = etree.fromstring(data)
+    schemas = [root] if root.tag == f"{{{XSD_NS}}}schema" else list(root.iter(f"{{{XSD_NS}}}schema"))
+    defs: dict[str | None, set[tuple[str, str]]] = {}
+    for s in schemas:
+        tns = s.get("targetNamespace")
+        for kind in ("complexType", "simpleType", "element", "group", "attributeGroup", "attribute"):
+            for d in s.findall(f"{{{XSD_NS}}}{kind}"):
+                cat = "type" if kind in ("complexType", "simpleType") else kind
+                defs.setdefault(tns, set()).add((cat, d.get("name")))
+    errs, seen = [], set()
+    for s in schemas:
+        for e in s.iter(f"{{{XSD_NS}}}*"):
+            for attr in ("type", "ref", "base"):
+                v = e.get(attr)
+                if not v:
+                    continue
+                prefix, _, local = v.rpartition(":")
+                ns = e.nsmap.get(prefix or None)
+                if ns == XSD_NS:
+                    continue
+                if attr == "ref":
+                    cat = {"element": "element", "attribute": "attribute", "group": "group",
+                           "attributeGroup": "attributeGroup"}.get(etree.QName(e).localname, "element")
+                else:
+                    cat = "type"
+                if (cat, local) not in defs.get(ns, set()):
+                    key = (attr, v, ns)
+                    if key not in seen:
+                        seen.add(key)
+                        errs.append(f"unresolved {attr}='{v}' (prefix bound to {ns}) in schema {s.get('targetNamespace')}")
+    return errs
+
+
 def check_build(zip_path: Path, name: str) -> list[str]:
     """Zip structure like the standalone references + well-formed XML + no forbidden strings."""
     errs = []
@@ -179,6 +220,9 @@ def check_build(zip_path: Path, name: str) -> list[str]:
                     etree.fromstring(data)
                 except etree.XMLSyntaxError as e:
                     errs.append(f"not well-formed: {n}: {e}")
+                    continue
+            if n.endswith((".xsd", ".wsdl", ".WSDL")):
+                errs += [f"{n}: {e}" for e in schema_ref_errors(data)]
         if raw.startswith(b"\xef\xbb\xbf") or b"\n" in raw or raw.startswith(b"<?"):
             errs.append(".mmap must be one line, no BOM, no prolog")
     return errs
