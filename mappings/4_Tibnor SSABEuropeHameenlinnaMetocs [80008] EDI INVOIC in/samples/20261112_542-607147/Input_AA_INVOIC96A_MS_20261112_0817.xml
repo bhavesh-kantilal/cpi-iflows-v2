@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Harmonized_Mill_Invoice_0_0_4.xsd">
+<Header>
+<SchemaId>Harmonized_Mill_Invoice_0_0_4.xsd</SchemaId>
+<SchemaVersion>0.0.4</SchemaVersion>
+<MessageFunction>5</MessageFunction>
+<DocumentType>380</DocumentType>
+<SourceSystem>METOCSPU</SourceSystem>
+<InterchangeSender>00372389445754</InterchangeSender>
+<RecipientIdentification>7080003309006</RecipientIdentification>
+<eInvoiceKey>TEST#TEST#</eInvoiceKey>
+</Header>
+<DocumentId>
+<DocumentNo>542-607147</DocumentNo>
+<Date Format="102" Type="149">20261111</Date>
+</DocumentId>
+<DocumentLanguage>
+<LanguageCode>EN</LanguageCode>
+</DocumentLanguage>
+<FreeText Type="TXD">
+<Text1>VAT 0 % TAX-EXEMPT SALE OUTSIDE THE EU</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="DEL">
+<Text1>PART DELIVERY</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="DCL">
+<Text1>THE EXPORTER OF THE PRODUCTS COVERED BY THIS DOCUMENT (CUSTOMS AUTHORIZATION</Text1>
+<Text2>NO. FI/44/2014) DECLARES THAT, EXPECT WHERE OTHERWISE CLEARLY INDICATED, THESE</Text2>
+<Text3>PRODUCTS ARE OF EEA PREFERENTIAL ORIGIN.</Text3>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="PMT">
+<Text1>ALL BANK CHARGES OUTSIDE FINLAND ON BUYER'S ACCOUNT</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="ZGW">
+<Text1>Invoicing weight: NOMINAL WEIGHT</Text1>
+<Text2>Gross weight: 8454</Text2>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="ZTR">
+<Text1>FORETAKSREGISTERET</Text1>
+<LanguageCode>NO</LanguageCode>
+</FreeText>
+<Location Type="17">
+<LocationCode CodeSet="91">SE603360</LocationCode>
+<LocationText/>
+<CountryCode>SE</CountryCode>
+</Location>
+<Location Type="27">
+<LocationCode CodeSet="91">FI</LocationCode>
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Location Type="28">
+<LocationCode CodeSet="91">NO</LocationCode>
+<LocationText>NORWAY</LocationText>
+<CountryCode>NO</CountryCode>
+</Location>
+<Location Type="39">
+<LocationCode CodeSet="91">FI</LocationCode>
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Reference Type="ACE">
+<ReferenceIdentification>METOCSPU_542_607147_20261111_253501.pdf</ReferenceIdentification>
+</Reference>
+<Reference Type="LO">
+<ReferenceIdentification>51762</ReferenceIdentification>
+</Reference>
+<Reference Type="PE">
+<ReferenceIdentification>MPU</ReferenceIdentification>
+</Reference>
+<Reference Type="IA">
+<ReferenceIdentification>FI10</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>91</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ADC">
+<ReferenceIdentification/>
+</Reference>
+<Reference Type="ZID">
+<ReferenceIdentification>7034421</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>0046534977</ReferenceIdentification>
+</Reference>
+<Reference Type="ON">
+<ReferenceIdentification>0046534977</ReferenceIdentification>
+</Reference>
+<Reference Type="CT">
+<ReferenceIdentification>TIBEIE</ReferenceIdentification>
+</Reference>
+<Reference Type="AAA">
+<ReferenceIdentification>845620</ReferenceIdentification>
+</Reference>
+<Reference Type="AAK">
+<ReferenceIdentification>004</ReferenceIdentification>
+</Reference>
+<Reference Type="PK">
+<ReferenceIdentification>845620-004</ReferenceIdentification>
+<Date Format="102" Type="11">20261111</Date>
+</Reference>
+<Party Role="II">
+<PartyId Type="ZTI">0006000</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine2/>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>FB14OUV</ContactId>
+<ContactName>Wiik Outi, Oslo</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="SE">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>FB14OUV</ContactId>
+<ContactName>Wiik Outi, Oslo</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="MF">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>FB14OUV</ContactId>
+<ContactName>Wiik Outi, Oslo</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="PE">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>FB14OUV</ContactId>
+<ContactName>Wiik Outi, Oslo</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="BY">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine2/>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4/>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+<Contact Type="PD">
+<ContactName>Tone Sperre</ContactName>
+</Contact>
+</Party>
+<Party Role="IV">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyId Type="REG">911032767MVA</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine2/>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4/>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="PR">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine2/>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4/>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="CN">
+<PartyId Type="ZTI">8426340</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>KORNELIUSMYRVEGEN 5</AddressLine1>
+<AddressLine2/>
+<AddressLine3>2074 EIDSVOLL VERK NORWAY</AddressLine3>
+<AddressLine4/>
+<City>EIDSVOLL VERK</City>
+<PostalCode>2074</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+<TermsOfPayment Type="1">
+<TermsOfPaymentCode CodeSet="92">03</TermsOfPaymentCode>
+<TermsOfPaymentText>AT OUR DISPOSAL 11.12.2026 INTEREST ON OVERDUE 14 %</TermsOfPaymentText>
+<Date Format="102" Type="140">20261211</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+<PercentageBasis/>
+</Percentage>
+</TermsOfPayment>
+<ModeOfTransport Type="20">
+<ModeOfTransportCode>3</ModeOfTransportCode>
+<ModeOfTransportText>TRUCK</ModeOfTransportText>
+<CarrierName>AHOLA TRANSPORT OY AB</CarrierName>
+<TransportIdentification>206 HVC/DLH-680</TransportIdentification>
+</ModeOfTransport>
+<TermsOfDelivery Type="6">
+<TermsOfDeliveryCode CodeSet="Z2K">CIP</TermsOfDeliveryCode>
+<TermsOfDeliveryText>CIP (INCOTERMS 2020) EIDSVOLL VERK</TermsOfDeliveryText>
+</TermsOfDelivery>
+<Date Format="102" Type="149">20261111</Date>
+<Date Format="102" Type="11">20261111</Date>
+<Date Format="102" Type="451">20260921</Date>
+<Date Format="102" Type="140">20261211</Date>
+<Date Format="102" Type="2">20261113</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+</Percentage>
+<Item>
+<LineNo>000230</LineNo>
+<AddArticleNo Type="MF">138252</AddArticleNo>
+<AddArticleNo Type="HS">CN 7306 61 99</AddArticleNo>
+<AddArticleNo Type="UA">346971</AddArticleNo>
+<ProductProperty Type="8">
+<PropertyCode CodeSet="91">001</PropertyCode>
+<PropertyText>COLD-FORMED WELDED STRUCTURAL HOLLOW SECTIONS</PropertyText>
+</ProductProperty>
+<ProductProperty Type="ZDN">
+<PropertyCode CodeSet="91">058</PropertyCode>
+<PropertyText>EN 10219-1,2:2006 CFRHS</PropertyText>
+</ProductProperty>
+<ProductProperty Type="12">
+<PropertyCode CodeSet="91">8484</PropertyCode>
+<PropertyText>S355J2H EN 10219-1</PropertyText>
+</ProductProperty>
+<ProductProperty Type="59">
+<PropertyCode CodeSet="91">00</PropertyCode>
+<PropertyText>DRY</PropertyText>
+</ProductProperty>
+<ProductProperty Type="44">
+<PropertyText>200   X 200      8.00 X 10100</PropertyText>
+</ProductProperty>
+<ProductProperty Type="1">
+<PropertyCode CodeSet="91">36</PropertyCode>
+<PropertyText>INSPECTION CERTIFICATE EN 10204-3.1</PropertyText>
+</ProductProperty>
+<Measurement Role="AAE" Type="ABD">
+<MeasureValue>0,0</MeasureValue>
+<MeasureUnit>mm</MeasureUnit>
+</Measurement>
+<Measurement Role="AAE" Type="LN">
+<MeasureValue>10100,0</MeasureValue>
+<MeasureUnit>mm</MeasureUnit>
+</Measurement>
+<Quantity Type="21">
+<QuantityValue>8454.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="47">
+<QuantityValue>8.454</QuantityValue>
+<MeasureUnit>TNE</MeasureUnit>
+</Quantity>
+<Quantity Type="131">
+<QuantityValue>10000.0</QuantityValue>
+<MeasureUnit>KG</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>8454</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>2</QuantityValue>
+<MeasureUnit>BE</MeasureUnit>
+</Quantity>
+<FreeText Type="PRD">
+<Text1>SSAB DOMEX TUBE DOUBLE GRADE S355J2H EN 10219-1</Text1>
+<Text2>COLD-FORMED WELDED STRUCTURAL HOLLOW SECTIONS</Text2>
+<Text3>200   X 200      8.00 X10100,0</Text3>
+<Text4/>
+<Text5/>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>91</ReferenceIdentification>
+</Reference>
+<Reference Type="AOU">
+<ReferenceIdentification>0000301110</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPC">
+<ReferenceIdentification>0000010186</ReferenceIdentification>
+</Reference>
+<Price Type="AAA">
+<PriceValue>1060.00</PriceValue>
+<UnitPriceBasisCode>TNE</UnitPriceBasisCode>
+</Price>
+<Price Type="ZNP">
+<PriceValue>1060.00</PriceValue>
+<UnitPriceBasisCode>TNE</UnitPriceBasisCode>
+</Price>
+<MonetaryAmount Type="38">
+<MonetaryValue>8961.24</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>8961.24</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+</Item>
+<NumberOfLineItems>1</NumberOfLineItems>
+<Tax Type="VAT">
+<TaxRate>0.00</TaxRate>
+<MonetaryAmount Type="176">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<TaxCategory>G</TaxCategory>
+</Tax>
+<MonetaryAmount Type="39">
+<MonetaryValue>8961.24</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>8961.24</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="150">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="176">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="125">
+<MonetaryValue>8961.24</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="165">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="260">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+</Invoice>

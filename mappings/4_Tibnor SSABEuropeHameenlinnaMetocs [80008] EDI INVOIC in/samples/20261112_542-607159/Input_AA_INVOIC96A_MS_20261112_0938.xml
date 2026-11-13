@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Harmonized_Mill_Invoice_0_0_4.xsd">
+<Header>
+<SchemaId>Harmonized_Mill_Invoice_0_0_4.xsd</SchemaId>
+<SchemaVersion>0.0.4</SchemaVersion>
+<MessageFunction>5</MessageFunction>
+<DocumentType>380</DocumentType>
+<SourceSystem>METOCSPU</SourceSystem>
+<InterchangeSender>00372389445754</InterchangeSender>
+<RecipientIdentification>003723894430</RecipientIdentification>
+<eInvoiceKey>BW00372389443014#BAWCFI22#</eInvoiceKey>
+</Header>
+<DocumentId>
+<DocumentNo>542-607159</DocumentNo>
+<Date Format="102" Type="149">20261111</Date>
+</DocumentId>
+<DocumentLanguage>
+<LanguageCode>EN</LanguageCode>
+</DocumentLanguage>
+<FreeText Type="DEL">
+<Text1>PART DELIVERY</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="PMT">
+<Text1>ALL BANK CHARGES OUTSIDE FINLAND ON BUYER'S ACCOUNT</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="ZGW">
+<Text1>Invoicing weight: NOMINAL WEIGHT</Text1>
+<Text2>Gross weight: 4824</Text2>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<Location Type="27">
+<LocationCode CodeSet="91">FI</LocationCode>
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Location Type="28">
+<LocationCode CodeSet="91">FI</LocationCode>
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Location Type="39">
+<LocationCode CodeSet="91">FI</LocationCode>
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Reference Type="ACE">
+<ReferenceIdentification>METOCSPU_542_607159_20261111_253583.pdf</ReferenceIdentification>
+</Reference>
+<Reference Type="LO">
+<ReferenceIdentification>51891</ReferenceIdentification>
+</Reference>
+<Reference Type="PE">
+<ReferenceIdentification>MPU</ReferenceIdentification>
+</Reference>
+<Reference Type="IA">
+<ReferenceIdentification>FI10</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>09</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ADC">
+<ReferenceIdentification/>
+</Reference>
+<Reference Type="ZID">
+<ReferenceIdentification>7034695</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>0046540063</ReferenceIdentification>
+</Reference>
+<Reference Type="ON">
+<ReferenceIdentification>0046540063</ReferenceIdentification>
+</Reference>
+<Reference Type="PQ">
+<ReferenceIdentification>838792055426071591</ReferenceIdentification>
+</Reference>
+<Reference Type="CT">
+<ReferenceIdentification>TIBHYV</ReferenceIdentification>
+</Reference>
+<Reference Type="AAA">
+<ReferenceIdentification>851160</ReferenceIdentification>
+</Reference>
+<Reference Type="AAK">
+<ReferenceIdentification>001</ReferenceIdentification>
+</Reference>
+<Reference Type="CAX">
+<ReferenceIdentification>FI23894430</ReferenceIdentification>
+</Reference>
+<Reference Type="PK">
+<ReferenceIdentification>851160-001</ReferenceIdentification>
+<Date Format="102" Type="11">20261111</Date>
+</Reference>
+<Party Role="II">
+<PartyId Type="ZTI">0006000</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine2/>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>SORSAJU</ContactId>
+<ContactName>JUSSI SORSA, HELSINKI</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="SE">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>SORSAJU</ContactId>
+<ContactName>JUSSI SORSA, HELSINKI</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="MF">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>SORSAJU</ContactId>
+<ContactName>JUSSI SORSA, HELSINKI</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="PE">
+<PartyId Type="ZTI">0003026</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="ZPL">JK</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>TUBE MILL</PartyName2>
+<AddressLine1>LEHTOLANTIE 76</AddressLine1>
+<AddressLine2/>
+<AddressLine3>92600 PULKKILA FINLAND</AddressLine3>
+<AddressLine4/>
+<City>PULKKILA</City>
+<PostalCode>92600</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>SORSAJU</ContactId>
+<ContactName>JUSSI SORSA, HELSINKI</ContactName>
+</Contact>
+<Contact Type="TE">
+<ContactId>XRFSNINV</ContactId>
+<ContactName>GBS NORDIC INVOICING</ContactName>
+<CommId>+358 20 59 27090</CommId>
+<CommId>+358 20 5911</CommId>
+</Contact>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB Helsinki</InstitutionName>
+<InstitutionBranchLocation>Helsinki</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="BY">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine2/>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="PD">
+<ContactName>EERO KORKEAMÄKI</ContactName>
+</Contact>
+</Party>
+<Party Role="IV">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyId Type="REG">2389443-0</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine2/>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="PR">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine2/>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="CN">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine2/>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4/>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+<TermsOfPayment Type="1">
+<TermsOfPaymentCode CodeSet="92">03</TermsOfPaymentCode>
+<TermsOfPaymentText>AT OUR DISPOSAL 11.12.2026 INTEREST ON OVERDUE 14 %</TermsOfPaymentText>
+<Date Format="102" Type="140">20261211</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+<PercentageBasis/>
+</Percentage>
+</TermsOfPayment>
+<ModeOfTransport Type="20">
+<ModeOfTransportCode>3</ModeOfTransportCode>
+<ModeOfTransportText>TRUCK</ModeOfTransportText>
+<CarrierName>LOGISTIIKKAOPERAATTORIT</CarrierName>
+<TransportIdentification>SPN-993/</TransportIdentification>
+</ModeOfTransport>
+<TermsOfDelivery Type="6">
+<TermsOfDeliveryCode CodeSet="Z2K">CIP</TermsOfDeliveryCode>
+<TermsOfDeliveryText>CIP (INCOTERMS 2020) HYVINKÄÄ</TermsOfDeliveryText>
+</TermsOfDelivery>
+<Date Format="102" Type="149">20261111</Date>
+<Date Format="102" Type="11">20261111</Date>
+<Date Format="102" Type="451">20261105</Date>
+<Date Format="102" Type="140">20261211</Date>
+<Date Format="102" Type="2">20261114</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+</Percentage>
+<Item>
+<LineNo>000010</LineNo>
+<AddArticleNo Type="MF">167921</AddArticleNo>
+<AddArticleNo Type="HS">CN 7306 30 80</AddArticleNo>
+<AddArticleNo Type="UA">134245</AddArticleNo>
+<ProductProperty Type="8">
+<PropertyCode CodeSet="91">001</PropertyCode>
+<PropertyText>COLD-FORMED WELDED STRUCTURAL HOLLOW SECTIONS</PropertyText>
+</ProductProperty>
+<ProductProperty Type="ZDN">
+<PropertyCode CodeSet="91">059</PropertyCode>
+<PropertyText>EN 10219-1,2:2006 CFCHS</PropertyText>
+</ProductProperty>
+<ProductProperty Type="12">
+<PropertyCode CodeSet="91">8458</PropertyCode>
+<PropertyText>NON-ALLOY STRUCTURAL STEEL ACCORDING TO EN 10219-1</PropertyText>
+</ProductProperty>
+<ProductProperty Type="59">
+<PropertyCode CodeSet="91">00</PropertyCode>
+<PropertyText>DRY</PropertyText>
+</ProductProperty>
+<ProductProperty Type="44">
+<PropertyText>D  139.7         4.00 X 12000</PropertyText>
+</ProductProperty>
+<ProductProperty Type="1">
+<PropertyCode CodeSet="91">36</PropertyCode>
+<PropertyText>INSPECTION CERTIFICATE EN 10204-3.1</PropertyText>
+</ProductProperty>
+<Measurement Role="AAE" Type="ABD">
+<MeasureValue>0,0</MeasureValue>
+<MeasureUnit>mm</MeasureUnit>
+</Measurement>
+<Measurement Role="AAE" Type="LN">
+<MeasureValue>12000,0</MeasureValue>
+<MeasureUnit>mm</MeasureUnit>
+</Measurement>
+<Quantity Type="21">
+<QuantityValue>4824.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="47">
+<QuantityValue>4.824</QuantityValue>
+<MeasureUnit>TNE</MeasureUnit>
+</Quantity>
+<Quantity Type="131">
+<QuantityValue>600.0</QuantityValue>
+<MeasureUnit>KG</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>4824</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>3</QuantityValue>
+<MeasureUnit>BE</MeasureUnit>
+</Quantity>
+<FreeText Type="PRD">
+<Text1>S355J2H, SI/A, -40 C NON-ALLOY STRUCTURAL STEEL ACCORDING TO EN 10219-1</Text1>
+<Text2>COLD-FORMED WELDED STRUCTURAL HOLLOW SECTIONS</Text2>
+<Text3>D  139.7         4.00 X12000,0</Text3>
+<Text4/>
+<Text5/>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>09</ReferenceIdentification>
+</Reference>
+<Reference Type="AOU">
+<ReferenceIdentification>0000301110</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPC">
+<ReferenceIdentification>0000010186</ReferenceIdentification>
+</Reference>
+<Price Type="AAA">
+<PriceValue>1060.00</PriceValue>
+<UnitPriceBasisCode>TNE</UnitPriceBasisCode>
+</Price>
+<Price Type="ZNP">
+<PriceValue>1060.00</PriceValue>
+<UnitPriceBasisCode>TNE</UnitPriceBasisCode>
+</Price>
+<MonetaryAmount Type="38">
+<MonetaryValue>5113.44</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>5113.44</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+</Item>
+<NumberOfLineItems>1</NumberOfLineItems>
+<Tax Type="VAT">
+<TaxRate>25.50</TaxRate>
+<MonetaryAmount Type="176">
+<MonetaryValue>1303.93</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<TaxCategory>S</TaxCategory>
+</Tax>
+<MonetaryAmount Type="39">
+<MonetaryValue>6417.37</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>5113.44</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="150">
+<MonetaryValue>1303.93</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="176">
+<MonetaryValue>1303.93</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="125">
+<MonetaryValue>5113.44</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="165">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="260">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+<ExchangeRate>1.000000</ExchangeRate>
+</Currency>
+</MonetaryAmount>
+</Invoice>
