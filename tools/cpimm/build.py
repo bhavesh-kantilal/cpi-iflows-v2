@@ -62,8 +62,9 @@ class Builder:
         return Func(fname, "dflt", [Arg(inp)], [Param("vmdefault", text=default), Param("vmstrategy", text=strategy),
                                                  Param("table", table=list(rows))])
 
-    def out(self, expr: Func, n: int) -> Out:
-        return Out(expr, n)
+    def out(self, expr: Func, n: int):
+        """Output n of a multi-output UDF. Output 0 is a plain <arg> (FORMAT_NOTES §3.10, ACC NAME)."""
+        return expr if n == 0 else Out(expr, n)
 
     @staticmethod
     def _func(fname, fns, inputs, params) -> Func:
