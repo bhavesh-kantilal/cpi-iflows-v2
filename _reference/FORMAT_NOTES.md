@@ -167,7 +167,20 @@ Each mapping has one `lnkRole role="SOURCE_IFR_MESS"` and one `lnkRole role="TAR
   /root/StatementName/dbTableName/key/<Column>      ← key used for update matching
   ```
   - In the XSD, `action` is a required attribute on `dbTableName`. Columns are optional elements under `access`, and the key column sits under `key`.
-  - **UNVERIFIED**: other action values (INSERT, UPDATE, DELETE, SELECT) and multi-row statements. Only `UPDATE_INSERT` with one statement is seen.
+  - In the references only `UPDATE_INSERT` with one statement is seen. The rest of this section comes from **SAP documentation (external, not from the references)**, added at the user's request 2026-11-13. It describes the JDBC receiver "XML SQL Format":
+    - The root and statement element names are free (here `root` and `StatementName`). One or more statements are allowed, each holding one `dbTableName`. That element name is fixed, and its `action` attribute is mandatory.
+    - `action` values: `INSERT`, `UPDATE`, `UPDATE_INSERT`, `DELETE`, `SELECT`, `EXECUTE` (stored procedure) and `SQL_QUERY`. `SQL_QUERY` is written `SQL-QUERY` in one place in the docs.
+    - `table` is optional and must be the first child. It holds the real table name and overrides the `dbTableName` name.
+    - `access` lists the columns to write or read. It is absent for `DELETE`. `SELECT` must have exactly one `access`.
+    - Key blocks (`key1`, `key2`, … in SAP's examples) hold the WHERE conditions. They are used for `UPDATE`, `UPDATE_INSERT`, `DELETE` and `SELECT`.
+      - Columns inside one key block appear to be combined with AND, and separate key blocks with OR.
+      - Column attribute `compareOperation`: `EQ` (default), `NEQ`, `LT`, `LTEQ`, `GT`, `GTEQ`, `LIKE`.
+      - Your reference uses a single block named `key`, which works in your landscape.
+    - Column attributes: `hasQuot="YES|NO"` to force or suppress quoting, and `isNull="TRUE"` to ignore the column in the WHERE clause.
+    - `UPDATE_INSERT` runs UPDATE first and INSERTs if no row matched. It is not supported in batch mode.
+    - Each statement gets a `<StatementName_response>` in the reply, which is only accessible on synchronous calls.
+    - **NOT COVERED** (no reference or doc detail yet): EXECUTE stored-procedure parameters, SQL_QUERY placeholders, and batch payloads. Ask for a reference first.
+    - Sources: [SAP Help: Document Formats for Message Protocol XML SQL Format](https://help.sap.com/saphelp_nw73/helpdata/en/2e/96fd3f2d14e869e10000000a155106/content.htm), [SAP Help: Configuring the Receiver JDBC Adapter](https://help.sap.com/saphelp_nw73/helpdata/en/48/465581929734d9e10000000a42189d/content.htm). These pages are SAP PI/NetWeaver documentation; the format is reused by Cloud Integration but may differ in details. **UNVERIFIED for CPI.**
 - **Flat file targets (FLAT)**: a hand-written XSD `IFSSE.xsd` with no namespace, structured `root/row (maxOccurs unbounded)/<FIELD>`, where every field is `xs:string`. The `.mmap` maps `/root`, `/root/row` and `/root/row/<FIELD>` like any XSD target.
   - The XML-to-CSV conversion is **not** in the mapping; it happens later in the iFlow (README).
 
@@ -269,7 +282,8 @@ Every standard function seen, with its parameters. An input count comes from the
 | `removeContexts`, `collapseContexts`, `SplitByValue`, `useOneAsMany`, `formatByExample` | see §3.6 | | |
 | `FixValues`, `valuemap` | see §3.10 | | |
 
-- Pin meaning for 3-input functions such as `replaceString` is **UNVERIFIED**. Check a reference brick before use.
+- **`replaceString`** pins: 0 = input string, 1 = text to find, 2 = replacement. **CONFIRMED by user 2026-11-13** on DOC target OBJKY: if Type = BOM, then `toUpperCase(replaceString(TechnicalId, "-", ""))`, else TechnicalId.
+- For other multi-input functions, check a reference brick before use.
 
 ### 3.5 If / else
 - **`iF` / `iFS`** (if-then-else), seen in ACC `.../ACCOUNTGL/item/GL_ACCOUNT` (iFS) and INV (iF):
@@ -278,15 +292,23 @@ Every standard function seen, with its parameters. An input count comes from the
   - pin 2 = **else** value
 
   Example (ACC): `iFS(const "0000649100", stringEquals(dimension1,"UnplDelCosts"), formatNumber(dimension1))`.
-  **UNVERIFIED**: the then/else order is inferred from business meaning. Also unverified: the difference between `iF` and `iFS`, which is probably the "keep context changes" variant.
-- **`ifWithoutElse`**: pin 0 = **condition**, pin 1 = **then**, plus `<param name="keepss"><value>false</value></param>`. Source: MAT `/SAPMasterData/LongText`. **UNVERIFIED** what `keepss` means.
+  **CONFIRMED by user 2026-11-13**: the pin order is then, condition, else. If dimension1 = `UnplDelCosts`, the target gets the constant `0000649100`; otherwise it gets dimension1 formatted with `0000000000`.
+  Still **UNVERIFIED**: the difference between `iF` and `iFS`. Probably `iFS` is the "keep context changes" variant.
+- **`ifWithoutElse`**: pin 0 = **condition**, pin 1 = **then**, plus `<param name="keepss"><value>false</value></param>`. Source: MAT `/SAPMasterData/LongText`. **CONFIRMED by user 2026-11-13** (condition, then): if TypeCode = `GRUN`, concatenate all `SAPScriptLineText` values of that text into one field with the UDF `concatText`. **UNVERIFIED** what `keepss` means.
 - **`ifSWithoutElse`** has the same pins and `keepss` param as `ifWithoutElse`. Source: SUP, e.g. `ifSWithoutElse(not(isNil(CashDiscountTermsCode)), CashDiscountTermsCode)`. **UNVERIFIED**: probably the "keep context changes" variant, by analogy with `iF`/`iFS`.
 - **`createIf`**: 1 input (a boolean), used on structure nodes to create the node only when true. Source: ACC `.../ACCOUNTTAX/item` and `item[2]`.
 
 ### 3.6 Context handling
 - **`removeContexts`** (1 input): ACC, e.g. `removeContexts(/root/invoice/taxLines/taxCode)`.
 - **`collapseContexts`** (1 input): ACC, INV.
-- **`SplitByValue`** (1 input) with `<param name="type">`. Values seen: `0` (ACC TAX_CODE, INV), `2` (ACC, chained after removeContexts). **UNVERIFIED** mapping of 0/1/2 to "each value / value change / empty value".
+- **`SplitByValue`** (1 input) with `<param name="type">`. **CONFIRMED by user 2026-11-13** from the CPI UI:
+  - `0` = **Each Value**
+  - `1` = **Empty Value**
+  - `2` = **Value Change**
+
+  Examples:
+  - ACC TAX_CODE: `removeContexts` → SplitByValue(**2**, Value Change) → `collapseContexts` → SplitByValue(**0**, Each Value).
+  - CLF `E1AUSPM/ATWRT`: SplitByValue(0, Each Value).
 - **`useOneAsMany`** (3 inputs): pin 0 = value, pin 1 = repeat source, pin 2 = context source. Pins 1 and 2 often point to the same shared Src (`object_uid`). Sources: INV, CLF `/DocumentInfoRecordUpdateRequest/Characteristics/Characteristic/...`.
 - **`formatByExample`** (2 inputs): ACC, INV.
 - **Context of a source field** is the `context="{ancestor path}"` attribute on a Src brick. It sets the context to that ancestor (right-click → Context). Examples:
@@ -357,7 +379,7 @@ Sources: MAT (`concatText`), ACC (5 scripts), INV (8 scripts), DIR (`DetemineTex
   - ACC `splitStringOTV(String[] is, Output Name, Output City, Output PostalCode, …)`.
   - The output is picked on the consuming `arg` with `from="n"`: `<arg from="1"><brick fname="splitStringOTV" … object_uid="r308">` for CITY, and `<arg from="2"><brick object_uid="r308"/>` for POSTL_CODE.
   - Output 0 uses a plain `<arg>` (NAME).
-  - **UNVERIFIED**: `from` is 0-based in Output-parameter order.
+  - **CONFIRMED by user 2026-11-13**: outputs are numbered from 0 in Output-parameter order. ACC: Name = 0 → NAME (plain `<arg>`), City = 1 → CITY, PostalCode = 2 → POSTL_CODE.
 - **Script conventions**:
   - Imports are `import com.sap.it.api.mapping.*` (most scripts) or `Output` and `MappingContext` imported one by one (MAT).
   - Most scripts keep SAP's commented template header (`customFunc1`/`custFunc2`), e.g. INV `splitString.groovy`.
@@ -380,7 +402,8 @@ Sources: MAT (`concatText`), ACC (5 scripts), INV (8 scripts), DIR (`DetemineTex
   ```
   - agency1/schema1 = source agency/identifier; agency2/schema2 = target. Values seen: `GSAP_TaxCode`/`TaxCode` → `GSAP_AccountKey`/`AccountKey` and `GSAP_AccountKeyConditionKey`/`AccountKeyConditionKey`.
   - `srcns=newInterfaceFunction` and `context=http://sap.com/xi/XI` are the same in all 6 uses in ACC.
-  - `vmstrategy` `1` goes with `vmdefault` `NF` (use default value) in ACC. **UNVERIFIED** what the other values mean.
+  - `vmstrategy` `1` = **Use Default Value** with `vmdefault` as the default. **CONFIRMED by user 2026-11-13** on ACC `ACCOUNTTAX/item`, where default `NF` means "create the item only if a value is found".
+  - Values seen across the references: ACC 6× `1`/`NF`; JE 7× `1`/`N/A`, 3× `1`/empty, 1× `1`/`1`, 1× `1`/`NF`; SUP 1× `2`/empty. Meaning of `0` and `2` for valuemap: see the open question in §5.
 - **`FixValues`**, an inline key→value table. Sources: MAT `/SAPMasterData/Status/Description`, ACC TAX_CODE, DOC.
   ```xml
   <bindings><param name="vmdefault"><value/></param><param name="vmstrategy"><value>2</value></param>
@@ -406,6 +429,21 @@ Sources: `I2052/src/main/resources/scenarioflows/integrationflow/*.iflw`, `I0115
 - Every mapping in the references is a **local iFlow resource**. No step points to a separate Message Mapping artifact in the package. **NOT COVERED**: referencing a package-level Message Mapping artifact from an iFlow.
 
 ## 5. Open questions
-1. Is `AdditionalProperties` required for new mappings? (Present in 10 of 14 distinct mappings, not tied to age, §2.1.)
-2. What exactly do `SplitByValue type`, `vmstrategy`, `keepss`, `iF` vs `iFS`, and the then/else pin order mean (§3.5, §3.6, §3.11)? Planned check: compare against more references or your confirmation.
-3. Is `viewData` needed at all? Until confirmed, generated bricks get simple increasing coordinates.
+
+Confirmed by the user on 2026-11-13 (now marked CONFIRMED above):
+- the pin orders of `iF`/`iFS`, `ifWithoutElse` and `replaceString`
+- the `SplitByValue` types
+- `valuemap` `vmstrategy` 1
+- multi-output `from` numbering
+
+**Still open. Settle these with UI screenshots after the first example mapping is built.** The user knows the CPI UI, not the internal XML. Ask one item at a time, naming the mapping and field so the user can screenshot that function's settings.
+1. **FixValues `vmstrategy` numbers.** The data shows `2`/empty (e.g. Material `Status/Description`, which the user says is "Use Key" in the UI) and `1`/`VST` (ACC). The user's first guess was 0 = Use Key, 1 = Default, 2 = Throw Exception, which conflicts with the data. Screenshot Material `Status/Description` and the ACC FixValues with `VST`.
+2. **valuemap `vmstrategy` 2.** Seen in SUP `currencyCode` (FSAP/CountryCode → Medius/CurrencyCode). Screenshot that lookup's "if value not found" setting.
+3. **`iF` vs `iFS`, and `ifWithoutElse` vs `ifSWithoutElse`.** Which UI checkbox differs (probably "Keep Context Changes")? What is `keepss` (probably "Keep Suppressed Values")?
+4. **The standard function table (§3.4).** The user will check it with screenshots: text, boolean, arithmetic/format and node/date/context functions.
+5. **File internals**, settled by importing the first build into CPI and opening it in the editor:
+   - whether `AdditionalProperties` is required
+   - whether `viewData` coordinates matter
+   - whether a duplicate subtree needs anything beyond the `item[1]`/`item[2]` paths
+
+Until these are settled, generated mappings copy the XML of a reference brick that has the same UI meaning. If the meaning is unclear, stop and ask.
