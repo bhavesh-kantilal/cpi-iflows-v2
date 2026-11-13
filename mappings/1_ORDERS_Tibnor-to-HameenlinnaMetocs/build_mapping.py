@@ -47,6 +47,11 @@ def nonempty(v):
     return F("ifWithoutElse", F("not", F("stringEquals", v, C(""))), v, keepss="false")
 
 
+def exists(v):
+    """Condition for createIf: v has a non-empty value (user feedback 1.1.0: conditional containers use createIf)."""
+    return F("createIf", F("not", F("stringEquals", v, C(""))))
+
+
 def table(inp, rows, default=""):
     # FixValues with "use default value" (vmstrategy 1 + default, as ACC's FixValues with default VST).
     # UNVERIFIED for FixValues (FORMAT_NOTES §5 Q1): check in the CPI editor after import.
@@ -119,8 +124,9 @@ b.map(f"{P}/AddressLine2", nonempty(table(ag_partn, [("0010", "909"), ("0310", "
 b.map(f"{P}/AddressLine3", F("iF", we_ort01, is_oy, table(ag_partn, [("0010", "Köping"), ("0310", "OSLO")])))
 b.map(f"{P}/PostalCode", F("iF", we_pstlz, is_oy, table(ag_partn, [("0010", "73129"), ("0310", "1081")])))
 b.map(f"{P}/CountryCode", partner("AG", "LAND1"))
-bname = nonempty(partner("AG", "BNAME"))
-b.map(f"{P}/Contact", bname)
+bname_raw = partner("AG", "BNAME")
+bname = nonempty(bname_raw)
+b.map(f"{P}/Contact", exists(bname_raw))              # container: createIf (user feedback 1.1.0)
 b.map(f"{P}/Contact/@Type", C("PD"))
 b.map(f"{P}/Contact/ContactName", bname)
 telf1 = nonempty(F("replaceString", F("replaceString", partner("AG", "TELF1"), C("-"), C("")), C(" "), C("")))
@@ -149,13 +155,14 @@ b.map(f"{P}/CountryCode", nonempty(partner("WE", "LAND1")))
 # ---- Commercial terms (#40-42) ----------------------------------------------------------
 b.map(f"{T}/Currency", C("EUR"))                                                   # OP-20
 b.map(f"{T}/Currency/@Type", C("5"))
-lkond = nonempty(header_qualified("E1EDK17", "001", "LKOND"))
-lktext = nonempty(header_qualified("E1EDK17", "001", "LKTEXT"))
-b.map(f"{T}/TermsOfDelivery", lkond)
+lkond_raw = header_qualified("E1EDK17", "001", "LKOND")
+lktext_raw = header_qualified("E1EDK17", "001", "LKTEXT")
+lkond, lktext = nonempty(lkond_raw), nonempty(lktext_raw)
+b.map(f"{T}/TermsOfDelivery", exists(lkond_raw))      # container: createIf (user feedback 1.1.0)
 b.map(f"{T}/TermsOfDelivery/@Type", C("6"))
 b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond)
 b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode/@CodeSet", C("Z2K"))
-b.map(f"{T}/TermsOfDelivery/Location", lktext)
+b.map(f"{T}/TermsOfDelivery/Location", exists(lktext_raw))
 b.map(f"{T}/TermsOfDelivery/Location/@Type", C("1"))
 b.map(f"{T}/TermsOfDelivery/Location/LocationText", lktext)
 
@@ -170,27 +177,27 @@ has_best = b.udf("TibnorOrdersHelpers", "hasBestText", S(f"{E}/E1EDPT1/TDID", co
 prop_text = F("ifWithoutElse", has_best,
               b.udf("TibnorOrdersHelpers", "cropText", ktext001, C("35")), keepss="false")
 b.map(f"{T}/Item", S(E))
-b.map(f"{T}/Item/LineNo", b.udf("removezeros", "removezeros", S(f"{E}/POSEX")))
+# user feedback 1.1.0: numeric source -> formatNumber '#' removes leading zeros; removezeros only for non-numeric (IDTNR)
+b.map(f"{T}/Item/LineNo", F("formatNumber", S(f"{E}/POSEX"), nformat="#", separator="."))
 b.map(f"{T}/Item/AddArticleNo", b.udf("removezeros", "removezeros", idtnr001))
 b.map(f"{T}/Item/AddArticleNo/@Type", C("UA"))
-b.map(f"{T}/Item/Property", prop_text)
+b.map(f"{T}/Item/Property", F("createIf", has_best))  # container: only items with a BEST text
 b.map(f"{T}/Item/Property/@Type", C("44"))
 b.map(f"{T}/Item/Property/PropertyText", prop_text)
-b.map(f"{T}/Item/Quantity", S(f"{E}/MENGE"))
+b.map(f"{T}/Item/Quantity", C(""))                    # container: every PO item has a quantity (user)
 b.map(f"{T}/Item/Quantity/@Type", C("21"))
 b.map(f"{T}/Item/Quantity/QuantityValue", F("formatNumber", S(f"{E}/MENGE"), nformat="0.###", separator="."))
 b.map(f"{T}/Item/Quantity/MeasureUnit", S(f"{E}/MENEE"))
 b.map(f"{T}/Item/Date", S(f"{E}/E1EDP20/EDATU"))     # assumes one E1EDP20 per item (OP-10)
 b.map(f"{T}/Item/Date/@Type", C("2"))
 b.map(f"{T}/Item/Date/@Format", C("102"))
-b.map(f"{T}/Item/Price", S(f"{E}/VPREI"))
+b.map(f"{T}/Item/Price", C(""))                       # container: every PO item has a price (user)
 b.map(f"{T}/Item/Price/@Type", C("AAA"))
 b.map(f"{T}/Item/Price/PriceValue", S(f"{E}/VPREI"))
 b.map(f"{T}/Item/Price/UnitPriceBasisCode", S(f"{E}/PMENE"))
 
 # ---- Trailer (#52) --------------------------------------------------------------------------
-b.map(f"{T}/NumberOfLineItems",
-      b.udf("TibnorOrdersHelpers", "countValues", S(f"{E}/POSEX", context=I), context_param=True))
+b.map(f"{T}/NumberOfLineItems", F("count", S(f"{E}/POSEX", context=I)))   # standard count (user feedback 1.1.0)
 
 m = b.finish()
 

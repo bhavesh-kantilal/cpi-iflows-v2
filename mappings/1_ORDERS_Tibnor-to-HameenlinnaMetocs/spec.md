@@ -101,3 +101,12 @@ The output contains only these Party fields:
    - Item stays ← E1EDP01.
 2. **Leading zeros:** use the standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric, as in POSEX → LineNo. Keep `removezeros` for values that may not be numeric (IDTNR).
 3. **Counting:** use the standard **`count`** function (POSEX → count → NumberOfLineItems) instead of the `countValues` UDF.
+
+### v1.1.0 (2026-11-13), built from the feedback export `feedback/Map_…ORDERS02.zip`
+- The CPI export differs from v1.0.0 in 6 targets: LineNo, NumberOfLineItems, Quantity, Reference, Reference[1] and Reference[2]. All of them were taken over **except the Reference ones** (see the open question below).
+- Applied the feedback rule beyond the user's own edits:
+  - Price ← empty constant.
+  - Contact, TermsOfDelivery, Location and Property ← `createIf`.
+- CPI re-serializes XSDs on export: attribute order and CDATA change, but all paths are identical. The builds keep the user's original XSD files.
+- **Open question:** should Reference stay ← BELNR / 'S' / 'TPO' (my v1.1.0) or really be an empty constant (the CPI edit)? An empty constant gives `<Reference Type="CR"/>` with no order number.
+- **Known risk (from v1.0.0 design):** Property text pairs E1EDP19 QUALF (context per item) with KTEXT (context per segment). This is correct with one E1EDP19 per item, as in all samples, but may mis-pair if an item also has e.g. a QUALF 002 segment. Fix it once there is a sample.

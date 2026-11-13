@@ -23,8 +23,3 @@ def void hasBestText(String[] tdid, Output output, MappingContext context){
     }
     output.addValue(found ? "true" : "false")
 }
-
-// All values of a context: number of values (spec row 52: count of E1EDP01).
-def void countValues(String[] values, Output output, MappingContext context){
-    output.addValue(String.valueOf(values.length))
-}
