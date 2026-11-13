@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Published by JAX-WS RI (https://github.com/eclipse-ee4j/metro-jax-ws). RI's version is Eclipse Metro/2.4.7 (RELEASE-2.4.7-1ccd54b; 2021-10-15T10:09:37+0000) JAXWS-RI/2.3.5 JAXWS-API/2.3.3 JAXB-RI/2.3.5 JAXB-API/2.3.3 git-revision#1ccd54b. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://www.spedpoint.com/consignment/types" xmlns:ns2="http://www.spedpoint.com/common/webservice/types/v1_0" xmlns:ns3="http://www.spedpoint.com/consignment/types/v1_0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.spedpoint.com/consignment" name="ConsignmentWS" targetNamespace="http://www.spedpoint.com/consignment">
+<!-- Published by JAX-WS RI (https://github.com/eclipse-ee4j/metro-jax-ws). RI's version is Eclipse Metro/2.4.7 (RELEASE-2.4.7-1ccd54b; 2021-10-15T10:09:37+0000) JAXWS-RI/2.3.5 JAXWS-API/2.3.3 JAXB-RI/2.3.5 JAXB-API/2.3.3 git-revision#1ccd54b. -->
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://www.spedpoint.com/consignment/types" xmlns:ns2="http://www.spedpoint.com/common/webservice/types/v1_0" xmlns:ns3="http://www.spedpoint.com/consignment/types/v1_0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.spedpoint.com/consignment" name="ConsignmentWS" targetNamespace="http://www.spedpoint.com/consignment">
 	<types>
 		<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.spedpoint.com/consignment/types/v1_0" xmlns:ns3="http://www.spedpoint.com/common/webservice/types/v1_0" xmlns:tns="http://www.spedpoint.com/consignment/types" targetNamespace="http://www.spedpoint.com/consignment/types">
 			<import namespace="http://www.spedpoint.com/consignment/types/v1_0"/>
@@ -519,7 +520,8 @@
 			<element name="getConsignmentTemplates" type="tns:getConsignmentTemplates"/>
 			<element name="getConsignmentTemplatesResponse" type="tns:getConsignmentTemplatesResponse"/>
 		</schema>
-	<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.spedpoint.com/consignment/types/v1_0">
+	
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.spedpoint.com/consignment/types/v1_0" targetNamespace="http://www.spedpoint.com/consignment/types/v1_0">
 
 	<xsd:complexType name="ConsignmentList">
 		<xsd:sequence>
@@ -1184,7 +1186,8 @@
 	<xsd:element name="standardisedProductId" type="xsd:string"/>
 	<xsd:element name="eudrDdsReferenceNo" type="xsd:string"/>
 	<xsd:element name="eudrTaricDocumentCode" type="xsd:string"/>
-</xsd:schema><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.spedpoint.com/common/webservice/types/v1_0">
+</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.spedpoint.com/common/webservice/types/v1_0" targetNamespace="http://www.spedpoint.com/common/webservice/types/v1_0">
 
     <xsd:complexType name="Error">
         <xsd:sequence>
@@ -1209,7 +1212,8 @@
     </xsd:complexType>
     <xsd:element name="ServiceException" type="tns:ServiceException"/>
 
-</xsd:schema></types>
+</xsd:schema>
+	</types>
 	<message name="ConsignmentServiceException">
 		<part element="ns1:ConsignmentServiceException" name="ConsignmentServiceException"/>
 	</message>

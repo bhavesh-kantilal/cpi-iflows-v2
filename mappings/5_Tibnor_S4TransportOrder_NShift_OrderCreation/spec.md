@@ -69,3 +69,12 @@ See the Mapping sheet for all 22 rows. In short:
 - **2026-11-13** Best-guess rules with assumptions; no mapping sheet (user).
 - **2026-11-13** Download the two NShift XSDs from the WSDL import URLs and inline them into a self-contained WSDL copy (user approved). The originals `Source.wsdl` / `Target.wsdl` are kept unchanged in `schemas/`.
 - **2026-11-13** Files moved: samples → `samples/`, WSDLs → `schemas/`, PDF → `docs/`.
+
+## Import test v1.0.0 → v1.0.1 (2026-11-13)
+- **User:** the WSDL was missing objects in CPI (in the mapping and when loaded by hand).
+- **Cause, my bug in `tools/wsdl_inline.py`:** the downloaded XSDs refer to their own types as `tns:…`, with `tns` declared on their schema root. Moving the schema elements into the WSDL with lxml dropped that declaration, because `tns` is used only inside attribute values. So `tns` resolved to the WSDL's own `tns` (`http://www.spedpoint.com/consignment`), and all 151 type / element references inside the NShift schemas pointed to a namespace with no definitions. CPI showed `book` with nothing below it.
+  - The path check did not catch it, because it matches types by local name only.
+- **Fix:**
+  - `wsdl_inline.py` splices the schemas in as text, keeping each schema root's own `xmlns:tns`. Before writing, it compiles the merged schema set; the compile rejects the old file and accepts the new one.
+  - New build check `schema_ref_errors` in `tools/cpimm/check.py`: every `type=` / `ref=` / `base=` reference in a zip's XSD or WSDL must resolve to a definition in its namespace. It passes on every reference and mapping schema and reports the 151 errors in the v1.0.0 zip.
+- The mapping logic is unchanged.
