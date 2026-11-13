@@ -1,6 +1,6 @@
 # Hämeenlinna Metocs hub OrdrspInterchange → Tibnor ORDRSP / ORDERS01
 
-- **Mapping name:** `Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP` (v1.0.0 is built as two test variants, see Q2)
+- **Mapping name:** `Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP` (v1.0.0 was two test variants, see Q2; from v1.0.1 one mapping, `ns0:` on every source step)
 - **Spec source:** `25207_ORDRSP_HameenlinnaMetocs-to-Tibnor_MappingSpec_v0.1.xlsx` (draft v0.1, 12 Nov 2026), integration ID 25207 / IN-14528
 - **Source:** `schemas/Ordrsp_1_0_0.xsd`, root `OrdrspInterchange`, targetNamespace `http://www.ruukki.com/schemas/eai/internal/production/eruukki`, `elementFormDefault="qualified"`
 - **Target:** `schemas/ORDRSP.ORDERS02.xsd`, IDoc root `ORDERS01`, no namespace. The file name says ORDERS02 but the content is basic type ORDERS01, which the spec asks for. The name is kept as delivered.
@@ -30,20 +30,21 @@ Only functions from FORMAT_NOTES. No Groovy UDF is needed.
 | 6 | STD / STDVRS / STDMES | constants `E` / `96A` / `ORDRSP` (Q4) |
 | 7 | REFMES | not mapped (Q4) |
 | 8 | E1EDK01-BELNR | `removeContexts(ifWithoutElse(Reference/@Type = 'CO', RefNo))` = "PO number" |
-| 9 | E1EDK03 (IDDAT 012) / DATUM | `createIf` when DocumentId/Date[@Type='137'] exists; date copied (format 102 is already YYYYMMDD) |
-| 10 | E1EDK02 (QUALF 001) / BELNR | `createIf` when the PO number exists; BELNR = PO number |
+| 9 | E1EDK03 (IDDAT 012) / DATUM | E1EDK03 ← `createIf(DocumentId/Date/@Type = '137')`; DATUM ← `ifWithoutElse(same condition, Date)` (format 102 is already YYYYMMDD) |
+| 10 | E1EDK02 (QUALF 001) / BELNR | `createIf(Reference/@Type = 'CO')`; BELNR = PO number |
 | 11 | E1EDK02[1] (QUALF 002) / BELNR | duplicate subtree; DocumentId/DocumentNo (mandatory in the source) |
-| 12 | E1EDP01 | `createIf(not(stringEquals(mapWithDefault(type-12 PropertyText, 'ITEM CANCELLED'), 'ITEM CANCELLED')))` per Item. An Item with no type-12 property gets the default and is skipped like a cancelled one |
+| 12 | E1EDP01 | as the PO item node G_SG26: `removeContexts(ifWithoutElse(and(Property/@Type = '12', not(PropertyText = 'ITEM CANCELLED')), const ""))` |
 | 13, 17 | POSEX, E1EDP02-ZEILE | `formatNumber(LineNo, '#', '.')` (leading zeros, numeric source) |
-| 14, 19 | MENGE, E1EDP20-WMENG | Quantity[@Type='21']/QuantityValue |
-| 15 | MENEE | `iF('MTR', unit = 'M', unit)` on Quantity[@Type='21']/MeasureUnit |
-| 16 | E1EDP02 (QUALF 001) / BELNR | PO number repeated per Item: `useOneAsMany(PO no, LineNo [context OrderResponseMessage], LineNo)` |
-| 18, 20 | E1EDP03 (IDDAT 001) / DATUM, E1EDP20-EDATU | Date[@Type='55'][@Format='718'] → `substring(start 9, count 8)` = end of the range. E1EDP03 ← `createIf` when that date exists; without it EDATU is left out |
-| 21 | E1EDP19 (QUALF 001) / IDTNR | `createIf` when AddArticleNo[@Type='IN'] exists; IDTNR = copy |
+| 14, 19 | MENGE, E1EDP20-WMENG | PO pattern D_7140: `ifWithoutElse(mapWithDefault(Quantity/@Type) = '21', mapWithDefault(QuantityValue))` → `removeContexts` → `SplitByValue(Each Value)` |
+| 15 | MENEE | `iF('MTR', unit = 'M', unit)` on the same chain for Quantity/MeasureUnit |
+| 16 | E1EDP02 (QUALF 001) / BELNR | PO number once per Item: `useOneAsMany(PO no, removeContexts(LineNo), LineNo)` |
+| 18, 20 | E1EDP03 (IDDAT 001) / DATUM, E1EDP20-EDATU | E1EDP03 ← `createIf(and(Date/@Type = '55', Date/@Format = '718'))`. Value as PO D_2380: `ifWithoutElse(same condition, substring(Date, start 9, count 8))` → `removeContexts` → `SplitByValue(Each Value)` = end of the range |
+| 21 | E1EDP19 (QUALF 001) / IDTNR | E1EDP19 ← `createIf(AddArticleNo/@Type = 'IN')`; IDTNR as PO D_7140 (mapWithDefault on @Type and value, filter, removeContexts, SplitByValue) |
 
-### Queue alignment (why some sources carry a context)
-An attribute such as `Quantity/@Type` sits on the Quantity level, so its default context is the Item. A child field such as `Quantity/QuantityValue` has the Quantity as its default context. To compare them value by value, the child field gets `context = Item`. This applies to Quantity (QuantityValue, MeasureUnit), Property (PropertyText) and Reference (RefNo, context OrderResponseMessage). `Date` and `AddArticleNo` carry their value on the same level as their attributes, so they need no context.
-- **Known risk:** this pairing assumes every Quantity has a MeasureUnit and every Property a PropertyText (both optional in the XSD). The hub writes empty elements (`<PropertyText/>`) in all samples, so it holds today.
+### Item values: the PO pattern (from v1.0.1)
+No source field carries a context setting. Every filtered item value is built the way the user's existing PO mapping of the same hub source does it: filter with `ifWithoutElse`, then `removeContexts`, then `SplitByValue(Each Value)`, which gives one context per found value.
+- **Assumption** (user, 2026-11-13: "a safe assumption"): every kept Item has exactly one type-21 Quantity, one format-718 Date and one IN article, and no Item is skipped by the #12 filter. If an Item lacks one of them, the values after it move up one Item. This affects EDATU, MENGE/WMENG/MENEE and IDTNR. For DATUM and IDTNR the parent segment is created per Item by `createIf`, so their k-th value goes to the k-th segment created.
+- v1.0.0 instead put `context = Item` on child fields and applied `mapWithDefault` after that. **This did not work**: `mapWithDefault` no longer adds the missing values after a context change, so the queues drifted apart and no E1EDP01 was created (user's simulation, 2026-11-13).
 
 ### Sample check (by hand, against the expected output)
 All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDATU = end of the 718 range (e.g. 20261207-20261220 → 20261220), IDTNR = IN article. Header: BELNR 0046537330, E1EDK03 20261111, E1EDK02 001/0046537330 and 002/764930. EDI_DC40: LI/LF/0000080008, SNDLAD 00372389445756, RCVLAD 003723894430, E/96A/ORDRSP. Every sample item has a type-12 property, so no item is skipped.
@@ -73,6 +74,16 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
   - Test copy `samples/Input_AA_ORDRSP96A_MS_20261111_0919_sim.xml`: the same as the original, without `xmlns:xsi` and `xsi:schemaLocation`. The original is unchanged.
   - **Open:** whether the iFlow runtime has the same problem with real hub payloads (which carry `xsi:schemaLocation`). Test it in the iFlow. If it fails, the iFlow must remove the attribute before the mapping.
 - **Result:** `ns0:` on every element step is the right form for a qualified namespaced XSD source.
+
+### User feedback on v1.0.0 → v1.0.1 (2026-11-13)
+- NsAllSteps ran with the `_sim.xml` input, but most fields came out empty. In particular, no E1EDP01 was created (cause: see "Item values: the PO pattern" above).
+- The user showed their existing **PO mapping of the same hub source** (towards EDI) and asked to follow it: **no UDF and no context handling on the lower levels.**
+  - Item node G_SG26 ← `removeContexts(ifWithoutElse(and(@Type = 12, not(PropertyText = ITEM CANCELLED)), const ""))`
+  - D_7140 (IN article) ← `ifWithoutElse(mapWithDefault(@Type) = IN, mapWithDefault(AddArticleNo))` → `removeContexts` → `SplitByValue(Each Value)`
+  - D_2380 (date) ← `ifWithoutElse(and(@Type = 55, @Format = 718), substring(Date, 9, 17))` → `removeContexts` → `SplitByValue(Each Value)`. In PO that 3-input substring takes start and end; v1.0.1 uses the standard CPI `substring` with start 9 and count 8, which gives the same result.
+  - D_7008_1 (PropertyText cropped to 35 characters) is the same pattern. It is not needed for ORDRSP.
+- The user's own CPI test used a context UDF `checkItemToBeMapped` for E1EDP01. It is **not** used, because the user asked for the PO way without a UDF.
+- **Decision:** v1.0.1 follows these patterns; the assumption is under "Item values". Source message link: still 3 elems. The user had to re-add the source message by hand in v1.0.0; it is open until a CPI download shows what CPI writes.
 
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
