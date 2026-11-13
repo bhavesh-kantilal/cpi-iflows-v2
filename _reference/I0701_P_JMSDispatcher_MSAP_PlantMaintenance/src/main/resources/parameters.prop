@@ -1,0 +1,25 @@
+#Tue Nov 10 07:40:51 UTC 2026
+AllowedHeaders=SSAB.*
+IDoc_Authorization=RoleBased
+JMSMaxRetryInterval=60
+JMSMaxetryInterval=60
+JMS_AccessType=Non-Exclusive
+JMS_CompressStoredMessages=0
+JMS_ConcurentProcesses=1
+JMS_EncryptStoredMessages=0
+JMS_ExpirationDays=30
+JMS_ExponentialBackOff=1
+JMS_ExponentialBackoff=1
+JMS_InternalDLQ=1
+JMS_QueueName=I0701_MSAP_PlantMaintenance
+JMS_RetentionThreshold=2
+JMS_RetentionThresholdDays=2
+JMS_RetryInterval=1
+JMS_TransferProperties=1
+MaxRetries=2
+Receiver_Agency=CPI
+Receiver_Identifier=IFlow
+SAP_Sender=DR1_100
+Sender_Agency=StripSAP
+Sender_Identifier=IDoc
+UserRole=SSAB_MessagingSend_StripSAP

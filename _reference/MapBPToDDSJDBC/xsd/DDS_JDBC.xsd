@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="StatementName">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="dbTableName">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="table" type="xs:string"/>
+										<!-- ACCESS SECTION -->
+										<xs:element name="access">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Id" type="xs:string" minOccurs="0"/>
+													<xs:element name="ReceiverTypeId" type="xs:string" minOccurs="0"/>
+													<xs:element name="CustomerNo" type="xs:string"/>
+													<xs:element name="Name" type="xs:string" minOccurs="0"/>
+													<xs:element name="Company" type="xs:string" minOccurs="0"/>
+													<xs:element name="Phone" type="xs:string" minOccurs="0"/>
+													<xs:element name="Fax" type="xs:string" minOccurs="0"/>
+													<xs:element name="Mail" type="xs:string" minOccurs="0"/>
+													<xs:element name="Street" type="xs:string" minOccurs="0"/>
+													<xs:element name="POBox" type="xs:string" minOccurs="0"/>
+													<xs:element name="ZipCode" type="xs:string" minOccurs="0"/>
+													<xs:element name="City" type="xs:string" minOccurs="0"/>
+													<xs:element name="Country" type="xs:string" minOccurs="0"/>
+													<xs:element name="SourceChangedTime" type="xs:string" minOccurs="0"/>
+													<xs:element name="Description" type="xs:string" minOccurs="0"/>
+													<xs:element name="ChangedBy" type="xs:string" minOccurs="0"/>
+													<xs:element name="ChangedTime" type="xs:string" minOccurs="0"/>
+													<xs:element name="CountryCode" type="xs:string" minOccurs="0"/>
+													<xs:element name="GlobalId" type="xs:string" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<!-- KEY SECTION -->
+										<xs:element name="key">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Id" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="action" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

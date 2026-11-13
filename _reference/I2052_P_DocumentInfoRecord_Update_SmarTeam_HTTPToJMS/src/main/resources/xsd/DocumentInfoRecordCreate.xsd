@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<xs:element name="DocumentInfoRecordCreateRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DocType" type="xs:string" minOccurs="0"/>
+				<xs:element name="DocVersion" type="xs:string" minOccurs="0"/>
+				<xs:element name="DocPart" type="xs:string" minOccurs="0"/>
+				<xs:element name="Descriptions" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Description" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="lang" type="xs:string" use="optional"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

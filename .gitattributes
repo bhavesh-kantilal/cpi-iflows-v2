@@ -1,0 +1,2 @@
+# Store every file byte-for-byte. CPI exports and generated zips must never have line endings changed.
+* -text

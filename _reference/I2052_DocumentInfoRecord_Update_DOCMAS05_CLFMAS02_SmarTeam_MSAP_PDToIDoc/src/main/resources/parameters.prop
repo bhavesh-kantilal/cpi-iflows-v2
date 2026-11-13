@@ -1,0 +1,20 @@
+#Tue Nov 10 11:17:39 UTC 2026
+ClassType=017
+HTTPSessionReuse=onIntegrationFlow
+InternalDocumentStatus=RL
+LocationID=
+LogPayload=True
+MSAPHost=ad1.sap.ssab.com\:44300
+MSAP_Credentials=AD1_User_Dev
+MSAP_IDocEndpoint=/I2004_MSAP_IDOCReceiver
+RCVPOR=SAPAD1
+RCVPRN=AD1CLNT100
+RCVPRT=LS
+SAP_Receiver=AD1_110
+SAP_Sender=SmarTeam
+SNDPOR=CI_DEV_IDO
+SNDPRN=SSABISDEV
+SNDPRT=LS
+Timeout=1
+UserRole=SSAB_MessagingSend_SmarTeam
+sap-client=110
