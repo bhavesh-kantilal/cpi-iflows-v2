@@ -134,7 +134,13 @@ Sources: all 18 `.mmap` files (13 originals + CCM, FLAT, JDBC, JE, SUP).
   - `groupsOccurrence`
   - `topLevelChoiceOccurrenceApplied`
 
-  Each entry is `<Property Applicable="BOTH"><PropertyName>…</PropertyName><PropertyValue>RESOLVED</PropertyValue></Property>`. **UNVERIFIED** that new mappings need it. The default is to include it, as most files do (10 of 14 distinct mappings).
+  Each entry is `<Property Applicable="BOTH"><PropertyName>…</PropertyName><PropertyValue>RESOLVED</PropertyValue></Property>`.
+  - **Variations found by the toolkit self-test:**
+    - MAT, CLF, DOC and DIR have all 4 entries.
+    - CCM, JDBC, JE, SUP and `MapTaxBaseAmount` have only the first 3 (no `topLevelChoiceOccurrenceApplied`).
+    - The legacy `MapSpecialTaxCases` has only `externalNameSpace`.
+  - New builds include all 4. **CONFIRMED 2026-11-13**: the ORDERS v1.0.0 build with 4 entries imported and ran in CPI. Whether the block is *required* stays untested.
+- **Blank `xmlns=""`:** `idInfo`, `documentation`, `generic`, `AdditionalProperties` and `content` carry `xmlns=""` in every file except FLAT, which has none of them. New builds include it, like the majority; the ORDERS build imported fine.
 - `Multiplicity` is always `1:1`, with exactly one source parameter and one target parameter. **NOT COVERED**: 1:n, n:1, and mapping parameters.
 - `testData/instances` is always empty and `ViewState` is always empty. **NOT COVERED**: stored test instances.
 
@@ -224,7 +230,7 @@ Sources: all `.mmap` files.
   ```
 - Function inputs are `<arg>` for pin 0, then `<arg pin="1">`, `<arg pin="2">` and so on. They come **before** `<bindings>`.
 - Function parameters are set in `<bindings><param name="…"><value>…</value></param></bindings>`. An empty value is written `<value/>`.
-- `viewData x/y` are editor coordinates and have no effect on runtime. **UNVERIFIED** whether CPI needs them, but every brick in the references has them, so generated bricks get them too.
+- `viewData x/y` are editor coordinates and have no effect on runtime. Every brick in the references has them, so generated bricks get them too. **CONFIRMED 2026-11-13**: generated coordinates (`tools/cpimm/build.py`, a simple left-to-right layout) import and display fine in the CPI editor (ORDERS v1.0.0).
 - `gid="0"` appears on every Src and Dst brick. No other value is seen.
 - Dst brick order is not schema order. In ACC, for example, `ACCOUNTGL/item` comes before `ACCOUNTGL`. **UNVERIFIED**: it is probably edit order, and probably does not matter.
 - Attribute order inside `<brick>` is alphabetical: `context`, `fname`, `fns`, `gid`, `object_uid`, `path`, `type`. Checked across all `.mmap` files. The only combinations seen are `gid,path,type`; `context,gid,path,type`; `gid,object_uid,path,type`; `context,gid,object_uid,path,type`; `fname,fns,type`; `fname,fns,object_uid,type`; and `object_uid` alone.
@@ -273,6 +279,9 @@ Every standard function seen, with its parameters. An input count comes from the
 | `sub`, `div` | 2 | — | ACC / `MapTaxBaseAmount.mmap` (I0115) |
 | `neg` | 1 | — | ACC, INV |
 | `formatNumber` | 1 | `nformat` `0000000000`, `separator` `.` | ACC, INV |
+| `formatNumber` with `#` | 1 | `nformat` `#`, `separator` `.`: **removes leading zeros** from a numeric value (`00010` → `10`). **CONFIRMED** in the user's CPI edit of the ORDERS mapping (POSEX → LineNo, 2026-11-13). The user's rule: use it whenever the source is always numeric. | ORDERS feedback |
+| `formatNumber` with `0.###` | 1 | removes trailing zero decimals (`432.000` → `432`). **CONFIRMED**: the ORDERS v1.0.0 output matched the sample. | ORDERS |
+| `count` | 1 | none (no `<bindings>`): the number of values in the input's context. **CONFIRMED** in the user's CPI edit: `count(POSEX [context /ORDERS02/IDOC])` → NumberOfLineItems. | ORDERS feedback |
 | `counter` | 0 | `ini`, `inc` | ACC, INV |
 | `CopyValue` | 1 | `nnumber` `0` | ACC, INV, DOC |
 | `mapWithDefault` | 1 | `default_value` | ACC, INV |
@@ -297,6 +306,7 @@ Every standard function seen, with its parameters. An input count comes from the
 - **`ifWithoutElse`**: pin 0 = **condition**, pin 1 = **then**, plus `<param name="keepss"><value>false</value></param>`. Source: MAT `/SAPMasterData/LongText`. **CONFIRMED by user 2026-11-13** (condition, then): if TypeCode = `GRUN`, concatenate all `SAPScriptLineText` values of that text into one field with the UDF `concatText`. **UNVERIFIED** what `keepss` means.
 - **`ifSWithoutElse`** has the same pins and `keepss` param as `ifWithoutElse`. Source: SUP, e.g. `ifSWithoutElse(not(isNil(CashDiscountTermsCode)), CashDiscountTermsCode)`. **UNVERIFIED**: probably the "keep context changes" variant, by analogy with `iF`/`iFS`.
 - **`createIf`**: 1 input (a boolean), used on structure nodes to create the node only when true. Source: ACC `.../ACCOUNTTAX/item` and `item[2]`.
+  - **User convention (2026-11-13):** container ("tag") nodes come from an **empty constant**, or `createIf(condition)` when the node is optional. An element that carries its own value (simple content with attributes, e.g. `Reference`, `PartyId`) is **not** a tag and keeps its source value.
 
 ### 3.6 Context handling
 - **`removeContexts`** (1 input): ACC, e.g. `removeContexts(/root/invoice/taxLines/taxCode)`.
@@ -322,7 +332,12 @@ Every standard function seen, with its parameters. An input count comes from the
   - The same works for Func bricks, e.g. `collapseContexts … object_uid="r39"` in ACC.
   - References can cross Dst bricks, e.g. ACC `r308` used for `CUSTOMERCPD/CITY`, `NAME` and `POSTL_CODE`.
 - **Group**: `<group object_uid="gN"/>` replaces `<group/>` on every Dst brick of a set edited together in one editor. Those are typically targets that share bricks, e.g. ACC `g21` on the CUSTOMERCPD fields that share `r308`.
-- Numbering: `rN` and `gN` both run upward through the file in document order (ACC: r6, r17, r30 … and g0, g1, g2 …). They are separate counters, and the numbers are not contiguous. **UNVERIFIED** whether only uniqueness matters.
+- Numbering: `rN` and `gN` both run upward through the file in document order (ACC: r6, r17, r30 … and g0, g1, g2 …). They are separate counters, and the numbers are not contiguous. **CONFIRMED 2026-11-13: only uniqueness matters.** The ORDERS build numbers them r0, r1, … and g0, g1, …, and it imported and ran.
+- **Rules found across all 13 standard references (65 of 65 cases, toolkit check):**
+  - A brick gets an `object_uid` **only when it is reused**. No uid is ever left unreferenced.
+  - Targets that share a brick always carry the **same** `<group object_uid="gN"/>`.
+  - Groups exist **only** for that: there are no groups with a single target.
+- **Dst-level `from`**: a target can take output *n* of a multi-output UDF directly with `<arg from="n">` on the Dst brick's own `arg` (ACC, ACC_OTM, INV, JE, SUP).
 
 ### 3.8 Duplicate subtree
 Source: ACC (README: "Duplicate Subtree").
@@ -336,7 +351,7 @@ Source: ACC (README: "Duplicate Subtree").
   - JE: `.../JournalEntry/ProductTaxItem[1]/...` and `ProductTaxItem[2]/...`, a SOAP sub-node
   - SUP: `/__$$RoOt_ArRaY$$__/externalSystemMetadata[1]/name`, inside a **JSON** target. The same index syntax works for JSON arrays.
 - Each copy gets its own Dst brick for the node, usually `createIf` or a constant, and for each child.
-- No other declaration of the duplicate exists anywhere in the file: `ViewState` and `pcont` are empty. **UNVERIFIED** that nothing else is needed. Confirm by importing the first generated duplicate-subtree mapping.
+- No other declaration of the duplicate exists anywhere in the file: `ViewState` and `pcont` are empty. **CONFIRMED 2026-11-13: nothing else is needed.** The ORDERS build uses `Reference[1]`/`[2]`, `Party[1]`/`[2]` and `PartyId[1]` with no other declaration, and CPI shows them as duplicated nodes (user screenshot) and produced the expected output.
 
 ### 3.9 Disabled target fields
 Source: ACC, 28 cases, e.g. `.../CUSTOMERCPD/TAX_CATEGORY`.
@@ -414,6 +429,16 @@ Sources: MAT (`concatText`), ACC (5 scripts), INV (8 scripts), DIR (`DetemineTex
 
 ---
 
+## 3.12 What a CPI export changes (from the ORDERS feedback export, 2026-11-13)
+- Downloading a Message Mapping from CPI gives the same layout as §1.1: `mapping/`, `script/`, `xsd/`.
+- The `.mmap` came back in the standard envelope (the toolkit reads it back byte-identically). Groovy scripts came back unchanged.
+- **XSDs are re-serialized:**
+  - attributes reordered
+  - CDATA sections unwrapped
+  - the prolog joined to the first line
+
+  The structure (all paths) is identical. Builds keep the user's original XSD files; compare a feedback export by paths, not bytes.
+
 ## 4. How iFlows reference mappings
 Sources: `I2052/src/main/resources/scenarioflows/integrationflow/*.iflw`, `I0115/.../*.iflw`.
 
@@ -441,9 +466,8 @@ Confirmed by the user on 2026-11-13 (now marked CONFIRMED above):
 2. **valuemap `vmstrategy` 2.** Seen in SUP `currencyCode` (FSAP/CountryCode → Medius/CurrencyCode). Screenshot that lookup's "if value not found" setting.
 3. **`iF` vs `iFS`, and `ifWithoutElse` vs `ifSWithoutElse`.** Which UI checkbox differs (probably "Keep Context Changes")? What is `keepss` (probably "Keep Suppressed Values")?
 4. **The standard function table (§3.4).** The user will check it with screenshots: text, boolean, arithmetic/format and node/date/context functions.
-5. **File internals**, settled by importing the first build into CPI and opening it in the editor:
-   - whether `AdditionalProperties` is required
-   - whether `viewData` coordinates matter
-   - whether a duplicate subtree needs anything beyond the `item[1]`/`item[2]` paths
+5. ~~File internals~~: **settled 2026-11-13** by the ORDERS v1.0.0 import (see §2.1, §3.1, §3.7, §3.8).
+   - Generated `viewData`, uid/group numbering and duplicate subtrees work.
+   - `AdditionalProperties` with 4 entries works. Whether it is *required* is untested and not needed.
 
 Until these are settled, generated mappings copy the XML of a reference brick that has the same UI meaning. If the meaning is unclear, stop and ask.

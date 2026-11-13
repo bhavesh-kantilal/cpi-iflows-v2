@@ -15,7 +15,9 @@ mappings/<Folder>/          one folder = one mapping
   <mapping sheet>           whatever sheet the user provides (xlsx/csv/…)
   schemas/                  source/target XSD, WSDL, IDoc XSD
   samples/                  sample payloads
-  feedback/                 (optional) user's corrected CPI re-export of a build
+  scripts/                  Groovy UDFs used by this mapping
+  build_mapping.py          the mapping as code (tools/cpimm Builder); single source of truth
+  feedback/                 user's CPI download of a build (zip + extracted folder)
   build/                    <MappingName>.zip + extracted <MappingName>/
   CHANGELOG.md
 ```
@@ -32,8 +34,17 @@ mappings/<Folder>/          one folder = one mapping
 - Build strictly following `_reference/FORMAT_NOTES.md`. **Never invent XML structure that is not seen in the references.**
 - If something is needed that the references don't show (anything marked NOT COVERED, or a function with no catalog entry), **stop and ask**.
 - If you rely on an item marked UNVERIFIED, say so to the user.
-- Brick XML comes only from the brick catalog in `tools/`. Each entry is copied from a reference and cites its source. The generator fills in paths and values only.
-- Before the first real build, the generator must pass a **round-trip self-test**: decompile a reference `.mmap` into a spec, regenerate it, and diff against the original.
+- The mapping is written in `mappings/<Folder>/build_mapping.py` with the toolkit's `Builder` (`tools/README.md`). XML is produced only by `tools/cpimm/model.py`, which renders only the structures described in FORMAT_NOTES. Running the script builds, packages and checks.
+- **Before every build, run `py -I tools/mm.py selftest`.** It must pass: every standard reference `.mmap` round-trips byte-identically and all its paths are found in its schemas. Run it again after any toolkit change.
+
+### Mapping conventions (user rules, 2026-11-13)
+- **Containers ("tags")** — nodes that only hold child elements — come from an **empty constant**. When the node is optional, use `createIf(condition)` instead.
+  - Use SAP judgement for which is which, e.g. a PO item always has Quantity and Price.
+  - An element that **carries its own value** (simple content, with or without attributes, e.g. `Reference`, `PartyId`, `Date`) is **not** a tag. It keeps its source value.
+  - Repeating nodes keep their source occurrence (e.g. `Item` ← `E1EDP01`).
+- **Leading zeros**: use standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric (e.g. POSEX). Use a UDF (`removezeros`) only for values that may contain letters (e.g. IDTNR).
+- **Standard functions before UDFs.** Use a Groovy UDF only when no standard function does the job (e.g. `count` instead of a counting UDF). Prefer reusing a reference UDF unchanged over writing a new one.
+- **Sample files**: check the encoding. A file with `<?xml version="1.0"?>` and no encoding declaration must be UTF-8, or the CPI mapping simulator won't load it. Make a UTF-8 copy (`*_utf8.xml`) and never change the user's original.
 - **Build output** goes to `mappings/<Folder>/build/` as:
   - `<MappingName>.zip`, importable, with the same layout as the standalone reference zips (FORMAT_NOTES §1.1): root `mapping/`, `script/`, `xsd/`, `wsdl/`. No MANIFEST, `.project` or `metainfo.prop`.
   - The extracted `<MappingName>/` folder next to the zip.
@@ -67,14 +78,17 @@ mappings/<Folder>/          one folder = one mapping
   - extract the zip into `_reference/<Name>/`
   - update `_reference/CATALOG.md` (functions, params and patterns, with sources)
   - diff against FORMAT_NOTES and propose additions with citations
-- **Feedback**: when the user puts a corrected CPI export in `mappings/<Folder>/feedback/`:
-  - diff it against the build
-  - record the cause in spec.md Decisions and CHANGELOG
-  - fix the generator or catalog
+- **Feedback** (after the user tests in CPI):
+  1. The user downloads the mapping from CPI: package → Artifacts → Actions (…) → **Download**. They save the zip in `mappings/<Folder>/feedback/` and say "feedback is in".
+  2. Extract it into `feedback/<Name>/`. Compare it with the build using `tools/cpimm/diff.py`, which works per target and ignores layout and uid numbering. CPI re-serializes XSDs, so compare those by paths, not bytes (FORMAT_NOTES §3.12).
+  3. Take over the user's changes in `build_mapping.py`, so the build script stays the single source of truth. **Don't blindly copy** a change that contradicts the spec or the samples: flag it and ask (e.g. ORDERS v1.1.0, Reference).
+  4. Rebuild as the next version. Record each difference in spec.md (Decisions) and CHANGELOG. Propose any general lesson as a rule here.
+- Before committing, check `git status` for files changed by the user (e.g. edited samples) and mention them; don't commit them silently.
 - **At the end of each task**, propose any new convention or correction you learned as an update to `CLAUDE.md` or `_reference/FORMAT_NOTES.md`. **Wait for the user's approval before changing them.**
 
 ## Environment
 - Windows 11 with Git Bash and PowerShell.
-- Node.js is installed.
-- Python 3 is the main language for `tools/` (stdlib `zipfile`, `openpyxl`, `lxml`). It is not installed yet: `python3` on this machine is only the Microsoft Store stub. Until it is installed, Node.js is the fallback.
-- A SAP JVM 8 is present, but nothing uses it.
+- Python 3.12 (with `openpyxl` and `lxml`) runs `tools/`. Always use `py -I` (isolated mode).
+  - In a shell that started before the install, use the full path `C:\Users\BhaveshKantilal\AppData\Local\Programs\Python\Python312\python.exe`.
+  - Windows console output needs `sys.stdout.reconfigure(encoding="utf-8")`, which the tools already do.
+- Node.js is installed (fallback). A SAP JVM 8 is present, but nothing uses it.
