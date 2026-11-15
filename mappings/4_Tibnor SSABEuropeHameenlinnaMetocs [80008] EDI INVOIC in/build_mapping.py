@@ -38,7 +38,10 @@ def by_attr(node, attr, value, field=None, attr_context=None):
     attr_context: when the value is the node itself (attribute vs its own element's value), the attribute's
     context must be the parent (FORMAT_NOTES 3.6, ORDRSP v1.0.4)."""
     val = S(f"{node}/{field}") if field else S(node)
-    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@{attr}", context=attr_context), default_value=""), value),
+    attr = S(f"{node}/@{attr}", context=attr_context)
+    # R4 (CLAUDE.md): no mapWithDefault after a context change when the new context can hold several occurrences
+    key = attr if attr_context else F("mapWithDefault", attr, default_value="")
+    return F("ifWithoutElse", eq(key, value),
              F("mapWithDefault", val, default_value=""), keepss="false")
 
 

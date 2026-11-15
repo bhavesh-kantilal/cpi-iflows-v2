@@ -1,5 +1,10 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.2 — 2026-11-15 13:38 CET
+- Rule R4 (CLAUDE.md): no `mapWithDefault` after a context change when the new context can hold several occurrences. `AddArticleNo/@Type` [context Item] (IDTNR) now goes into the filter directly. An item can carry several AddArticleNo (UA, MF, HS), and `mapWithDefault` doesn't fill gaps after a context change.
+- The same function also builds `DocumentId/Date/@Type` [context DocumentId] (E1EDK03/DATUM, E1EDP03/DATUM) without `mapWithDefault`. There is one Date per DocumentId, so the result is the same.
+- All checks passed. Re-test in CPI recommended (IDTNR, dates).
+
 ## 1.0.1 — 2026-11-15 11:43 CET
 - Applies the rules accepted in the review of 2026-11-15:
   - PO number and invoice date on every item (E1EDP02/BELNR, E1EDP03/DATUM) use `CopyValue(value, 0)` instead of `useOneAsMany`.

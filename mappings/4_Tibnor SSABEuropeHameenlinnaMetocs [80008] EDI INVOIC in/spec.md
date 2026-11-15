@@ -60,3 +60,5 @@ All header, tax, item and total values match, **except** ZEILE in 552-601893 (ME
 - **2026-11-13 Control record** as ORDRSP (user).
 - **2026-11-13 ZEILE** "ask later" (user) → A1.
 - **2026-11-13 Files moved:** XSDs → `schemas/`. The empty `Test/` folder is left as it is.
+
+- **2026-11-15 Rule R4 applied (user: "Docs + R4 fix only"):** no `mapWithDefault` around an attribute that has a `context=` setting (AddArticleNo/@Type → IDTNR). See CHANGELOG.
