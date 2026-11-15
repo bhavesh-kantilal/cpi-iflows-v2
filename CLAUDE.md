@@ -35,7 +35,7 @@ mappings/<Folder>/          one folder = one mapping
 ## Building a mapping
 - Build strictly following `_reference/FORMAT_NOTES.md`. **Never invent XML structure that is not seen in the references.**
 - If something is needed that the references don't show (anything marked NOT COVERED, or a function with no catalog entry), **stop and ask**.
-- **WSDLs that import XSDs by URL:** CPI does not fetch them. Ask before downloading. Keep the files unchanged in `schemas/downloaded/`, and build a self-contained copy with `tools/wsdl_inline.py` (FORMAT_NOTES §1.1). The original WSDL stays unchanged.
+- **WSDLs that import XSDs by URL:** CPI does not fetch them. Ask before downloading, and keep the XSDs unchanged in `schemas/downloaded/`. **Default (user, 2026-11-15):** a copy of the WSDL with only the `schemaLocation` values changed to `../xsd/<file>.xsd`. The build packs the XSDs into the zip's `xsd/` (FORMAT_NOTES §1.1, NShift TestD). Inlining with `tools/wsdl_inline.py` is the alternative. The original WSDL stays unchanged.
 - If you rely on an item marked UNVERIFIED, say so to the user.
 - The mapping is written in `mappings/<Folder>/build_mapping.py` with the toolkit's `Builder` (`tools/README.md`). XML is produced only by `tools/cpimm/model.py`, which renders only the structures described in FORMAT_NOTES. Running the script builds, packages and checks.
 - **Before every build, run `py -I tools/mm.py selftest`.** It must pass: every standard reference `.mmap` round-trips byte-identically and all its paths are found in its schemas. Run it again after any toolkit change.

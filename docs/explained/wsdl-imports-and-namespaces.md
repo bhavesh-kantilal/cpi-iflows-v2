@@ -85,7 +85,32 @@ When I moved the schema into the WSDL, the library I used dropped `xmlns:tns`, b
 
 **Fix:** the tool now copies each schema as text, keeping its own first line intact. It also test-compiles the result before writing. And every build now runs check 6: every `type=` / `ref=` in a zip's XSD/WSDL must resolve (the v1.0.0 zip fails it with 151 errors).
 
-### 2.4 Which name the mapping uses for the target message
+### 2.4 Follow-up: keep the XSDs as separate files (tests A–D, 2026-11-15) → the new default
+Your question: doesn't CPI resolve the imports if the XSDs are simply imported as well? We tested four variants. In all of them the WSDL is your original, and **only the two `schemaLocation` values** (lines 6–7) differ:
+
+| Test | `schemaLocation` (line 6; line 7 the same with `xsd2`) | Where the XSDs are | Result |
+|---|---|---|---|
+| A (original) | `https://service.web-ta.net/ws/services/ConsignmentWS?xsd=1` | imported by hand | ✗ structure unresolved |
+| B | `ConsignmentWS_xsd1.xsd` | imported by hand | ✗ the same |
+| C | `ConsignmentWS_xsd1.xsd` | in the zip's `wsdl/`, next to the WSDL | ✓ |
+| D | `../xsd/ConsignmentWS_xsd1.xsd` | in the zip's `xsd/` | ✓ |
+
+**What it means:** CPI reads `schemaLocation` as a **file path, starting from the folder the WSDL is in** (`wsdl/`):
+- A: an internet address is never fetched.
+- B: a plain file name means "next to me in `wsdl/`", but XSDs imported by hand land in `xsd/`, so nothing is found.
+- C: the file *is* next to the WSDL, so it's found.
+- D: `../xsd/` means "one folder up, then into `xsd/`", which is where CPI keeps XSDs, so it's found.
+
+**New default (your choice): D.** The XSDs stay exactly as downloaded, in `xsd/`. The only change is two attribute values in a copy of the WSDL:
+```xml
+<!-- original Target.wsdl -->
+<import namespace="http://www.spedpoint.com/consignment/types/v1_0" schemaLocation="https://service.web-ta.net/ws/services/ConsignmentWS?xsd=1"/>
+<!-- NShift_ConsignmentWS.wsdl from v1.0.3 -->
+<import namespace="http://www.spedpoint.com/consignment/types/v1_0" schemaLocation="../xsd/ConsignmentWS_xsd1.xsd"/>
+```
+The toolkit packs the imported XSDs into `xsd/` by itself, and the checks follow the import. Inlining (2.2, 2.3) remains as the alternative.
+
+### 2.5 Which name the mapping uses for the target message
 A WSDL has a *message* (`ConsignmentEndpoint_book`) that contains an *element* (`book`). In all our references both names are the same, so we couldn't tell which one CPI wants. I used the element name `book`, and your import of v1.0.1 loaded the full structure, so it's **confirmed**: the element name (FORMAT_NOTES §2.2).
 
 ---
@@ -96,5 +121,5 @@ A WSDL has a *message* (`ConsignmentEndpoint_book`) that contains an *element* (
 | Namespaced source, root-only prefix | Fields orange / "not found" | Every element is qualified | `ns0:` on every element step | FORMAT_NOTES §2.2 |
 | Source link without namespace | "Add source message" | CPI looks up the root by name **and** namespace | 4th `<elem>` = namespace | Toolkit writes it |
 | `xsi:` attributes on the root | Simulator `prefix "ns6" not bound` | Simulator limitation | `*_sim.xml` copies | `tools/sim_copy.py` |
-| WSDL imports XSDs by URL | Empty `book` / Consignment | CPI doesn't fetch URLs | Inline the downloaded XSDs | CLAUDE.md rule, `tools/wsdl_inline.py` |
+| WSDL imports XSDs by URL | Empty `book` / Consignment | CPI doesn't fetch URLs; it resolves `schemaLocation` only as a path from the WSDL's folder | **Default:** `schemaLocation="../xsd/…"` + XSDs in `xsd/` (test D). Alternative: inline | CLAUDE.md rule; `package.py` packs the imports |
 | Lost `xmlns:tns` when inlining | Still empty | Library dropped an "unused" declaration | Copy as text + test-compile | Build check 6 |

@@ -86,8 +86,17 @@ Sources: I0115, I0701, I2052, I2052P.
   ```
 - The `.iflw` file name does **not** match the iFlow name in three of four exports. See IFLOW_CONVENTIONS.md, "Observed deviations".
 - **NOT COVERED**: a MANIFEST for a standalone Message Mapping artifact. None exists, and the build target does not need one.
-- **WSDLs that import XSDs by URL** (`<import schemaLocation="https://…">`): CPI does not fetch them, and the structure stays empty. The schemas must be inside the WSDL: one inline `<schema>` per namespace, joined by namespace-only `<import namespace="…"/>`. That is the layout of the SAP WSDLs in the references (CCM, JE, SUP, MAT). `tools/wsdl_inline.py` builds such a copy from the downloaded XSDs.
-  - Each inlined schema must keep its own `xmlns:tns` (and other prefix) declarations; otherwise `type="tns:…"` silently points to the WSDL's `tns`. **CONFIRMED 2026-11-15** by NShift v1.0.0 (empty Consignment in CPI) → v1.0.1 (works). See `docs/explained/wsdl-imports-and-namespaces.md`.
+- **WSDLs that import XSDs** (`<xsd:import namespace="…" schemaLocation="…"/>`): CPI resolves `schemaLocation` **only as a relative file path from the importing file's own folder**. It does not fetch `https://` URLs, and it does not match imported XSDs by namespace. **CONFIRMED 2026-11-15** by the user's NShift tests (`mappings/5_…/spec.md`):
+
+  | Test | `schemaLocation` in the WSDL (`wsdl/`) | XSDs | Result |
+  |---|---|---|---|
+  | A | `https://service.web-ta.net/…?xsd=1` (original) | imported by hand into the mapping | structure unresolved |
+  | B | `ConsignmentWS_xsd1.xsd` | imported by hand (land in `xsd/`) | structure unresolved |
+  | C | `ConsignmentWS_xsd1.xsd` | in the zip's `wsdl/`, next to the WSDL | **works** |
+  | D | `../xsd/ConsignmentWS_xsd1.xsd` | in the zip's `xsd/` | **works** |
+
+  - **Default (user decision 2026-11-15): D.** Keep the XSDs unchanged in `xsd/`, and change only the `schemaLocation` values in a copy of the WSDL to `../xsd/<file>.xsd`. The toolkit packs every relatively imported file automatically (`package.py`), and the checks follow the imports.
+  - **Alternative:** inline the schemas into the WSDL (`tools/wsdl_inline.py`, NShift v1.0.1/v1.0.2, works). One inline `<schema>` per namespace, joined by namespace-only `<import namespace="…"/>`, as in the SAP WSDLs of the references (CCM, JE, SUP, MAT). Each inlined schema must keep its own `xmlns:tns` declarations; otherwise `type="tns:…"` silently points to the WSDL's `tns` (NShift v1.0.0: empty Consignment in CPI). See `docs/explained/wsdl-imports-and-namespaces.md`.
 
 ---
 

@@ -1,6 +1,7 @@
 """Schema path index + build checks (CLAUDE.md "Checks before finishing a build")."""
 from __future__ import annotations
 
+import posixpath
 import re
 import zipfile
 from pathlib import Path
@@ -16,12 +17,32 @@ FORBIDDEN = re.compile(rb"claude|anthropic", re.I)
 
 
 # ----------------------------------------------------------------------------- schema index
-def _schemas(path: Path):
-    doc = etree.parse(str(path))
-    root = doc.getroot()
-    if root.tag == XS + "schema":
-        return [root]
-    return root.findall(".//" + XS + "schema")          # WSDL: embedded schemas
+def relative_imports(root) -> list[str]:
+    """schemaLocation values of <import>/<include> that are relative file paths (not http/https URLs).
+    CPI resolves them from the importing file's own folder (NShift TestC/TestD, 2026-11-15); it does not fetch URLs."""
+    locs = []
+    for tag in ("import", "include"):
+        for e in root.iter(XS + tag):
+            loc = e.get("schemaLocation")
+            if loc and not re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*://", loc):
+                locs.append(loc)
+    return locs
+
+
+def _schemas(path: Path, _seen: set | None = None):
+    """Schemas of an XSD or WSDL file, plus the files it imports by relative schemaLocation (recursively)."""
+    seen = set() if _seen is None else _seen
+    path = path.resolve()
+    if path in seen:
+        return []
+    seen.add(path)
+    root = etree.parse(str(path)).getroot()
+    found = [root] if root.tag == XS + "schema" else root.findall(".//" + XS + "schema")   # WSDL: embedded
+    for loc in relative_imports(root):
+        p = path.parent / loc
+        if p.exists():
+            found += _schemas(p, seen)
+    return found
 
 
 def schema_paths(path: Path, root_name: str, max_depth: int = 40) -> set[str]:
@@ -143,15 +164,18 @@ def check_paths(m: Mapping, folder: Path) -> list[str]:
 XSD_NS = "http://www.w3.org/2001/XMLSchema"
 
 
-def schema_ref_errors(data: bytes) -> list[str]:
+def schema_ref_errors(data: bytes, imported: list[bytes] | None = None) -> list[str]:
     """Every type=/ref=/base= QName in the file's schemas must resolve, with its prefix bound in scope, to a
     definition of that namespace in the same file (or to the XSD namespace).
     Catches lost prefix declarations, e.g. 'tns' re-bound when schemas were inlined into a WSDL
     (NShift v1.0.0: CPI showed an empty Consignment). Path checks match by local name only and miss this."""
-    root = etree.fromstring(data)
-    schemas = [root] if root.tag == f"{{{XSD_NS}}}schema" else list(root.iter(f"{{{XSD_NS}}}schema"))
+    def schemas_of(b):
+        r = etree.fromstring(b)
+        return [r] if r.tag == f"{{{XSD_NS}}}schema" else list(r.iter(f"{{{XSD_NS}}}schema"))
+    schemas = schemas_of(data)
+    pool = schemas + [s for b in (imported or []) for s in schemas_of(b)]   # definitions from imported files
     defs: dict[str | None, set[tuple[str, str]]] = {}
-    for s in schemas:
+    for s in pool:
         tns = s.get("targetNamespace")
         for kind in ("complexType", "simpleType", "element", "group", "attributeGroup", "attribute"):
             for d in s.findall(f"{{{XSD_NS}}}{kind}"):
@@ -245,7 +269,14 @@ def check_build(zip_path: Path, name: str) -> list[str]:
                     errs.append(f"not well-formed: {n}: {e}")
                     continue
             if n.endswith((".xsd", ".wsdl", ".WSDL")):
-                errs += [f"{n}: {e}" for e in schema_ref_errors(data)]
+                imported = []
+                for loc in relative_imports(etree.fromstring(data)):
+                    target = posixpath.normpath(posixpath.join(posixpath.dirname(n), loc))
+                    if target in names:
+                        imported.append(z.read(target))
+                    else:
+                        errs.append(f"{n}: imports {loc} -> {target}, not in the zip")
+                errs += [f"{n}: {e}" for e in schema_ref_errors(data, imported)]
         if raw.startswith(b"\xef\xbb\xbf") or b"\n" in raw or raw.startswith(b"<?"):
             errs.append(".mmap must be one line, no BOM, no prolog")
     return errs
