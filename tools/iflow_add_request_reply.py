@@ -329,10 +329,66 @@ def process_iflow(zip_path: Path, id_prefix: str) -> None:
     print(f"  SmarTeam channel: {new_mf_id} → {SMARTEAM_URL}")
 
 
+# ── version / description stamping ────────────────────────────────────────────
+def _next_version(current: str) -> str:
+    """Increment the patch component: '1.0.1' → '1.0.2', '1.0.2' → '1.0.3'."""
+    parts = current.strip().split(".")
+    parts[-1] = str(int(parts[-1]) + 1)
+    return ".".join(parts)
+
+
+def set_iflow_version(zip_path: Path, description: str) -> str:
+    """
+    Read Bundle-Version from MANIFEST.MF, increment the patch, write it back
+    together with the description in metainfo.prop.  Returns the new version string.
+    """
+    with zipfile.ZipFile(zip_path, "r") as zin:
+        infos    = {info.filename: info for info in zin.infolist()}
+        contents = {name: zin.read(name) for name in zin.namelist()}
+
+    # -- MANIFEST.MF: bump Bundle-Version --
+    manifest_raw = contents["META-INF/MANIFEST.MF"].decode("utf-8")
+    old_ver = ""
+    new_lines = []
+    for line in manifest_raw.splitlines(keepends=True):
+        if line.startswith("Bundle-Version:"):
+            old_ver = line.split(":", 1)[1].strip()
+            new_ver = _next_version(old_ver)
+            new_lines.append(f"Bundle-Version: {new_ver}\n")
+        else:
+            new_lines.append(line)
+    contents["META-INF/MANIFEST.MF"] = "".join(new_lines).encode("utf-8")
+
+    # -- metainfo.prop: set description --
+    prop_raw = contents["metainfo.prop"].decode("utf-8")
+    prop_lines = []
+    for line in prop_raw.splitlines(keepends=True):
+        if line.startswith("description="):
+            prop_lines.append(f"description={description}\n")
+        else:
+            prop_lines.append(line)
+    contents["metainfo.prop"] = "".join(prop_lines).encode("utf-8")
+
+    # -- re-zip --
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zout:
+        for name, data in contents.items():
+            zout.writestr(infos[name], data)
+    zip_path.write_bytes(buf.getvalue())
+    print(f"  {zip_path.name}: {old_ver} → {new_ver}  |  description set")
+    return new_ver
+
+
 # ── run ────────────────────────────────────────────────────────────────────────
+# To add Request-Reply steps to a fresh iFlow, call process_iflow() first:
+#   process_iflow(zip_path, id_prefix)
+# Then stamp the version:
+#   set_iflow_version(zip_path, description)
+
 BASE = Path(r"C:\work\cpi-mappings\iflowdevelopment")
+DESCRIPTION = "Added step for send to smarteam and payload logging"
 
-process_iflow(BASE / "I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP.zip",    "I2049")
-process_iflow(BASE / "I2050_MaintananceBOM_MSAP_SmarTeam_PDToHTTP.zip", "I2050")
+set_iflow_version(BASE / "I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP.zip", DESCRIPTION)
+set_iflow_version(BASE / "I2050_MaintananceBOM_MSAP_SmarTeam_PDToHTTP.zip", DESCRIPTION)
 
-print("\nDone. Import each ZIP into CPI to verify the new steps.")
+print("\nDone. Import each ZIP into CPI to verify version and description.")
