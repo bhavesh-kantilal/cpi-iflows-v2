@@ -17,6 +17,9 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | A8 | **Layout rule:** share logic between targets only when the canvas stays clean (no overlap, shared brick in one column); otherwise split. Build check `layout_overlaps` | CLAUDE.md conventions + checks list | ORDRSP feedback 2026-11-15 | Open |
 | A9 | **`udf_library/`** in the folder layout: reusable UDFs, copied unchanged into a mapping's `scripts/`. Rule: standard `substring` first, `substringSafe` only when the length is not certain | CLAUDE.md | ORDRSP feedback 2026-11-15 | Open |
 | A10 | Apply A6/A7 to DESADV and INVOIC too (they use `useOneAsMany` / `createIf` the same way), and rebuild ORDERS, DESADV, INVOIC, NShift with the new layout at their next version | mappings | Consistency | Open |
+| A11 | **Attribute context rule:** an attribute's default context is its own element. When it is compared with that element's own value (`Date/@Type` vs `Date`, `AddArticleNo/@Type` vs `AddArticleNo`), set the attribute's context to the parent (e.g. Item). Not needed when it is compared with a child element (`Quantity/@Type` + `QuantityValue`). This changes the CLAUDE.md rule "no context settings on lower-level source fields" | CLAUDE.md conventions + FORMAT_NOTES §3.6 | ORDRSP v1.0.4 (user's CPI fix) | Open |
+| A12 | **createIf rule:** a segment with `createIf` gets `removeContexts` after it and straight child maps; never `createIf` on the segment together with `ifWithoutElse` on its fields. Otherwise build the segment and its fields from one filtered chain | CLAUDE.md conventions + FORMAT_NOTES §3.5 | ORDRSP v1.0.4 (feedback_v2) | Open |
+| A13 | Check DESADV, INVOIC and NShift for the same patterns (attribute vs its own element, header `createIf` without `removeContexts`) | mappings | Consistency | Open |
 
 ## B. Toolkit changes made without separate approval (already committed)
 | # | Change | Commit | Status |
@@ -52,5 +55,6 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 
 ## E. Import tests reported by the user
 - ORDRSP v1.0.2: runs, "some fields missing" (C2).
+- ORDRSP v1.0.3: tested by the user; fixes in CPI (E1EDK02 001, attribute contexts) taken over as v1.0.4. Open: E1EDP03 without context, intended?
 - DESADV v1.0.0, INVOIC v1.0.0: "everything works" (user, 2026-11-13). No CPI download yet, so no `feedback/` diff.
 - NShift v1.0.1: "this works" (user, 2026-11-13). The target structure loads after the WSDL fix.

@@ -1,5 +1,13 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.4 — 2026-11-15
+Takes over the user's CPI fixes (`feedback/feedback_v2.docx`, CPI download `feedback/Map_…_ORDRSP (1).zip`; logically identical to the download):
+- `E1EDK02` (QUALF 001) was missing: it now comes from `SplitByValue(removeContexts(ifWithoutElse(@Type = CO, RefNo)))` instead of `createIf` without `removeContexts`. `E1EDK02/BELNR` and `E1EDK01/BELNR` use the same chain.
+- `Date/@Type`, `Date/@Format` (DATUM, EDATU) and `AddArticleNo/@Type` (E1EDP19, IDTNR): context = Item, so each attribute lines up with its element's value.
+- `E1EDP03` taken over exactly as downloaded (attributes without context). Asked whether that is intended.
+- Expected output sample re-indented by the user (content unchanged).
+- All checks passed. The self-test passes.
+
 ## 1.0.3 — 2026-11-15
 Applies the user's feedback document `feedback/Feedback.docx`:
 - `E1EDP03`, `DATUM`, `EDATU` ← the format-718 Date chain (no `createIf`, which suppressed other items' segments). DATUM/EDATU = end of range via the new UDF `substringSafe(value, '9', '17')` (from `udf_library/`), so `20261220` again.

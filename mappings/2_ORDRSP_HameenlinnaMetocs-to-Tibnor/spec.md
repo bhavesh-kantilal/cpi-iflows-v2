@@ -113,6 +113,21 @@ The user's feedback was a Word document with screenshots, not a CPI download, so
 
 `tools/cpimm/diff.py` v1.0.2 → v1.0.3 shows exactly these targets (MENEE, E1EDP02/BELNR, E1EDP03, DATUM, EDATU, E1EDP19) plus the UDF declaration.
 
+### Feedback v2 on v1.0.3 → v1.0.4 (2026-11-15, `feedback/feedback_v2.docx` + CPI download `feedback/Map_…_ORDRSP (1).zip`)
+**Decision (user):** the CPI download is the truth. It is newer than the document, whose screenshot still showed a `createIf` variant for E1EDK02. v1.0.4 is logically identical to the download (`diff.py`: no differences).
+
+What was wrong, in plain words:
+1. **E1EDK02 with QUALF 001 was missing.**
+   - `createIf(Reference/@Type = 'CO')` gives one true/false per Reference, each in its own context. E1EDK02 sits once in the IDoc, so CPI only used the first context: Reference `ZLG`, false, no segment. There was no `removeContexts` after the `createIf`.
+   - **Fix (user):** E1EDK02, E1EDK02/BELNR and E1EDK01/BELNR all come from one chain: `ifWithoutElse(@Type = CO, RefNo)` → `removeContexts` → `SplitByValue`. `E1EDP02/BELNR` keeps `CopyValue(removeContexts(…), 0)`.
+2. **The user's rule for `createIf`:** if a segment uses `createIf`, add `removeContexts` after it and map its fields straight. A `createIf` on the segment combined with `ifWithoutElse` on its fields causes context problems. Otherwise build the segment and its fields from one filtered chain (as now for E1EDK02, E1EDP03, E1EDP19).
+3. **Attribute context.**
+   - An attribute's default context is **its own element**. When it is compared with that element's own value (`Date/@Type`, `Date/@Format` vs `Date`; `AddArticleNo/@Type` vs `AddArticleNo`), the value sits in the parent's (Item) context, so the two queues do not line up.
+   - **Fix (user):** context = Item on those attributes (DATUM, EDATU, E1EDP19, IDTNR).
+   - Not needed where the attribute is compared with a child element (`Quantity/@Type` + `QuantityValue`, `Reference/@Type` + `RefNo`): both sides are in the element's context. This is an exception to the "no context settings on lower-level fields" rule (REVIEW.md).
+4. The expected output sample was re-indented by the user; its content is unchanged.
+- **Open question to the user:** in the download, **E1EDP03 itself** uses `Date/@Type` / `@Format` **without** the Item context, while DATUM/EDATU use it. Taken over exactly. Is this intentional, or should E1EDP03 use the same chain as DATUM/EDATU?
+
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).

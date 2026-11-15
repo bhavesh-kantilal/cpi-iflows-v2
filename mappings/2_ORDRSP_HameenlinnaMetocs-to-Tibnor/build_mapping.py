@@ -33,9 +33,16 @@ b = Builder(NAME,
 C, F = b.const, b.fn
 
 
-def S(path: str):
-    """Source field; ns0: on every element step, attributes unprefixed (CONFIRMED by import test)."""
-    return b.src("/" + "/".join(s if s.startswith("@") else f"{NS}:{s}" for s in path.strip("/").split("/")))
+def _ns(path: str) -> str:
+    return "/" + "/".join(s if s.startswith("@") else f"{NS}:{s}" for s in path.strip("/").split("/"))
+
+
+def S(path: str, context: str | None = None):
+    """Source field; ns0: on every element step, attributes unprefixed (CONFIRMED by import test).
+    context: needed for an attribute compared with the value of its OWN element (Date/@Type vs Date):
+    an attribute's default context is its element, the element's value sits in the parent's context
+    (user's CPI fix, feedback v2 2026-11-15)."""
+    return b.src(_ns(path), context=_ns(context) if context else None)
 
 
 def eq(a, value):
@@ -47,10 +54,11 @@ def each(v):
     return F("SplitByValue", F("removeContexts", v), type="0")
 
 
-def by_type(node, value, field=None):
-    """Value of node (or node/field) where node/@Type = value. PO D_7140 pattern: mapWithDefault on both inputs."""
+def by_type(node, value, field=None, attr_context=None):
+    """Value of node (or node/field) where node/@Type = value. PO D_7140 pattern: mapWithDefault on both inputs.
+    attr_context: set when the value is the node itself (AddArticleNo), see S()."""
     val = S(f"{node}/{field}") if field else S(node)
-    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@Type"), default_value=""), value),
+    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@Type", attr_context), default_value=""), value),
              F("mapWithDefault", val, default_value=""), keepss="false")
 
 
@@ -59,8 +67,11 @@ IT = f"{M}/Item"
 T = "/ORDERS01/IDOC"
 
 # ---- header values --------------------------------------------------------------------
-po_no = F("removeContexts", F("ifWithoutElse", eq(S(f"{M}/Reference/@Type"), "CO"),
-                              S(f"{M}/Reference/RefNo"), keepss="false"))                     # #8, #10, #16
+co_ref = F("ifWithoutElse", eq(S(f"{M}/Reference/@Type"), "CO"), S(f"{M}/Reference/RefNo"), keepss="false")
+po_no = F("removeContexts", co_ref)                                                          # #16 (CopyValue)
+# #8, #10: one value per CO reference; feeds E1EDK01/BELNR, E1EDK02 and E1EDK02/BELNR (user's CPI fix v2:
+# createIf(@Type = CO) without removeContexts only saw the first Reference, so E1EDK02 001 was missing)
+po_chain = each(co_ref)
 is_doc_date = eq(S(f"{M}/DocumentId/Date/@Type"), "137")
 is_metocs = F("startWith2", S(f"{M}/Header/ApplicationId"), C("METOCS"))                      # VM-01
 
@@ -91,15 +102,15 @@ b.map(f"{D}/RCVLAD", S(f"{M}/Header/InterchangeRecipient"))
 # ---- header segments (#8-11) ------------------------------------------------------------
 b.map(f"{T}/E1EDK01", C(""))
 b.map(f"{T}/E1EDK01/@SEGMENT", C("1"))
-b.map(f"{T}/E1EDK01/BELNR", po_no)
+b.map(f"{T}/E1EDK01/BELNR", po_chain)
 b.map(f"{T}/E1EDK03", F("createIf", is_doc_date))         # optional container: createIf
 b.map(f"{T}/E1EDK03/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK03/IDDAT", C("012"))
 b.map(f"{T}/E1EDK03/DATUM", F("ifWithoutElse", is_doc_date, S(f"{M}/DocumentId/Date"), keepss="false"))
-b.map(f"{T}/E1EDK02", F("createIf", eq(S(f"{M}/Reference/@Type"), "CO")))   # QUALF 001
+b.map(f"{T}/E1EDK02", po_chain)                                  # QUALF 001, one per CO reference
 b.map(f"{T}/E1EDK02/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK02/QUALF", C("001"))
-b.map(f"{T}/E1EDK02/BELNR", po_no)
+b.map(f"{T}/E1EDK02/BELNR", po_chain)
 b.map(f"{T}/E1EDK02[1]", C(""))                           # QUALF 002: DocumentNo is mandatory
 b.map(f"{T}/E1EDK02[1]/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK02[1]/QUALF", C("002"))
@@ -112,13 +123,13 @@ keep_item = F("and", eq(S(f"{IT}/Property/@Type"), "12"),
 line_no = F("formatNumber", S(f"{IT}/LineNo"), nformat="#", separator=".")                  # '010' -> '10'
 qty = each(by_type(f"{IT}/Quantity", "21", "QuantityValue"))
 unit = each(by_type(f"{IT}/Quantity", "21", "MeasureUnit"))
-is_718 = F("and", eq(S(f"{IT}/Date/@Type"), "55"), eq(S(f"{IT}/Date/@Format"), "718"))
+is_718 = F("and", eq(S(f"{IT}/Date/@Type", IT), "55"), eq(S(f"{IT}/Date/@Format", IT), "718"))   # context Item (v2)
 # User feedback 2026-11-15 (Feedback.docx, CPI screenshot): E1EDP03, DATUM and EDATU all come from the
 # filtered format-718 Date chain; the segment is NOT built with createIf (SUPPRESS hid other items' segments).
 date_718 = each(F("ifWithoutElse", is_718, S(f"{IT}/Date"), keepss="false"))
 # End of the range 'YYYYMMDD-YYYYMMDD', after the filter (only 718 values reach it): library UDF substringSafe
 conf_date = b.udf("substringSafe", "substringSafe", date_718, C("9"), C("17"))
-art_in = each(by_type(f"{IT}/AddArticleNo", "IN"))    # PO D_7140
+art_in = each(by_type(f"{IT}/AddArticleNo", "IN", attr_context=IT))    # PO D_7140; @Type context Item (v2)
 
 P = f"{T}/E1EDP01"
 b.map(P, F("removeContexts", F("ifWithoutElse", keep_item, C(""), keepss="false")))
@@ -134,7 +145,11 @@ b.map(f"{P}/E1EDP02/QUALF", C("001"))
 # header PO number on every item: CopyValue index 0 (user feedback 2026-11-15, instead of useOneAsMany)
 b.map(f"{P}/E1EDP02/BELNR", F("CopyValue", po_no, nnumber="0"))
 b.map(f"{P}/E1EDP02/ZEILE", line_no)
-b.map(f"{P}/E1EDP03", date_718)                           # #18: one per format-718 date (user's logic)
+# #18: one per format-718 date. Taken over exactly from the user's CPI download v2: here the Date attributes
+# have NO context setting (DATUM/EDATU use context Item). Asked the user whether this is intentional.
+date_718_seg = each(F("ifWithoutElse", F("and", eq(S(f"{IT}/Date/@Type"), "55"), eq(S(f"{IT}/Date/@Format"), "718")),
+                      S(f"{IT}/Date"), keepss="false"))
+b.map(f"{P}/E1EDP03", date_718_seg)
 b.map(f"{P}/E1EDP03/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP03/IDDAT", C("001"))
 b.map(f"{P}/E1EDP03/DATUM", conf_date)
