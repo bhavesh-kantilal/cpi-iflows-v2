@@ -39,6 +39,8 @@ def references():
             skipped.append(f"{p.relative_to(REF).as_posix()} ({e})")
             continue
         parts = p.relative_to(REF).parts
+        if parts[0] == "iflows":
+            parts = parts[1:]
         code = parts[0] if parts[1] == "mapping" else f"{parts[0]} › {p.stem}"     # standalone vs inside an iFlow
         refs.append((code, "L3" if m.name in generated else "L1", p.relative_to(REF).as_posix(), m))
     return refs, skipped
@@ -89,6 +91,107 @@ def skeleton(x, by_uid, depth=4):
     if depth == 0 or not x.args:
         return name
     return f"{name}(" + ", ".join(skeleton(a.expr, by_uid, depth - 1) for a in x.args) + ")"
+
+
+def _ln(e):
+    return e.tag.split("}")[-1] if isinstance(e.tag, str) else ""
+
+
+def _props(node):
+    """ifl:property key/value pairs of a BPMN node."""
+    out = {}
+    for pr in node.iter():
+        if _ln(pr) == "property":
+            k = next((c.text for c in pr if _ln(c) == "key"), None)
+            v = next((c.text for c in pr if _ln(c) == "value"), None)
+            if k:
+                out[k] = v or ""
+    return out
+
+
+def xslt_purpose(path: Path) -> str:
+    """What an XSLT does, read from the file (sort keys, grouping keys), never guessed."""
+    from lxml import etree
+    try:
+        r = etree.parse(str(path)).getroot()
+    except Exception:
+        return "(not readable)"
+    sorts = [e.get("select") for e in r.iter() if _ln(e) == "sort"]
+    groups = [e.get("group-by") or e.get("group-adjacent") for e in r.iter() if _ln(e) == "for-each-group"]
+    keys = [e.get("name") for e in r.iter() if _ln(e) == "key"]
+    bits = []
+    if sorts:
+        bits.append("sorts by " + ", ".join(f"`{s}`" for s in sorts))
+    if groups:
+        bits.append("groups by " + ", ".join(f"`{' '.join(g.split())}`" for g in groups))
+    if keys:
+        bits.append("xsl:key " + ", ".join(f"`{k}`" for k in keys))
+    return "; ".join(bits) or "no sort/group statements"
+
+
+def iflow_steps():
+    """Per iFlow and process: steps in flow order (breadth-first from the start event along sequenceFlow)."""
+    from lxml import etree
+    flows = []
+    for f in sorted(REF.glob("iflows/*/src/main/resources/scenarioflows/integrationflow/*.iflw")):
+        iflow = f.relative_to(REF / "iflows").parts[0]
+        res = f.parents[2]                                   # …/src/main/resources
+        root = etree.parse(str(f)).getroot()
+        pname = {p.get("id"): p.get("name") for p in root.iter() if _ln(p) == "process"}
+        for proc in [p for p in root.iter() if _ln(p) == "process"]:
+            nodes, nxt, start = {}, defaultdict(list), []
+            for c in proc:
+                ln = _ln(c)
+                if ln == "sequenceFlow":
+                    nxt[c.get("sourceRef")].append(c.get("targetRef"))
+                elif ln not in ("extensionElements",):
+                    nodes[c.get("id")] = (ln, c.get("name") or "", _props(c))
+                    if ln == "startEvent":
+                        start.append(c.get("id"))
+            order, seen, queue = [], set(), list(start)
+            while queue:
+                n = queue.pop(0)
+                if n in seen or n not in nodes:
+                    continue
+                seen.add(n)
+                order.append(n)
+                queue += nxt.get(n, [])
+            def reach(a, graph):
+                out, q = set(), list(graph.get(a, []))
+                while q:
+                    x = q.pop()
+                    if x not in out:
+                        out.add(x)
+                        q += graph.get(x, [])
+                return out
+            prev = defaultdict(list)
+            for a, bs in nxt.items():
+                for b_ in bs:
+                    prev[b_].append(a)
+            steps = []
+            for n in order:
+                ln, name, pr = nodes[n]
+                kind = pr.get("activityType") or ln
+                detail = ""
+                if kind == "Mapping":
+                    mname = pr.get("mappingname", "")
+                    uri = pr.get("mappinguri", "") or pr.get("mappingpath", "")
+                    if pr.get("mappingType") == "MessageMapping" or ".mmap" in uri:
+                        detail = f"Message Mapping `{mname}`"
+                        kind = "MessageMapping"
+                    else:
+                        x = next((p for ext in (".xslt", ".xsl") for p in [res / "mapping" / (mname + ext)] if p.exists()), None)
+                        detail = f"XSLT `{mname}`" + (f" ({xslt_purpose(x)})" if x else "")
+                        kind = "XSLT"
+                elif kind == "Script":
+                    detail = f"script `{pr.get('script', '')}`" + (f" › `{pr.get('scriptFunction')}`" if pr.get("scriptFunction") else "")
+                elif kind == "ProcessCallElement":
+                    detail = f"calls process `{pname.get(pr.get('processId'), pr.get('processId'))}`"
+                if kind in ("StartEvent", "EndEvent", "startEvent", "endEvent"):
+                    continue
+                steps.append((kind, name, detail, n, reach(n, prev), reach(n, nxt)))
+            flows.append((iflow, proc.get("name") or proc.get("id"), steps))
+    return flows
 
 
 def local(path):
@@ -220,6 +323,35 @@ def main():
     w("|---|---|---|")
     for sk, c in chains.most_common(40):
         w(f"| `{sk}` | {c} | {', '.join(sorted(chain_files[sk]))} |")
+    w("")
+    w("## 4. Mappings in their iFlow (steps before and after)")
+    w("Read from the `.iflw` files in `_reference/iflows/`. **Before / After** list only the steps on a path "
+      "into / out of the mapping step (other gateway branches are left out), in flow order. "
+      "A message mapping is linked by name to its `.mmap` (also to a standalone export of the same name).")
+    flows = iflow_steps()
+    linked = set()
+    for iflow, proc, steps in flows:
+        mm = [i for i, s in enumerate(steps) if s[0] == "MessageMapping"]
+        if not mm:
+            continue
+        for i in mm:
+            name = steps[i][2].split("`")[1]
+            linked.add(name)
+            anc, desc = steps[i][4], steps[i][5]          # only steps on a path to / from this step
+            w("")
+            w(f"### `{name}`: iFlow `{iflow}` › process “{proc}” › step “{steps[i][1]}”")
+            before = [f"{k} “{n}”" + (f": {d}" if d else "") for k, n, d, sid, _, _ in steps if sid in anc]
+            after = [f"{k} “{n}”" + (f": {d}" if d else "") for k, n, d, sid, _, _ in steps if sid in desc]
+            w("- **Before:** " + (" → ".join(before) if before else "(nothing; first step)"))
+            w("- **After:** " + (" → ".join(after) if after else "(nothing; last step)"))
+    w("")
+    w("### All iFlow processes (complete step lists)")
+    for iflow, proc, steps in flows:
+        w(f"- `{iflow}` › “{proc}”: " + (" → ".join(f"{k} “{n}”" + (f" ({d})" if d else "") for k, n, d, *_ in steps) or "(no steps)"))
+    w("")
+    nolink = sorted({m.name for _, lvl, _, m in refs} - linked)
+    w("### Mappings without a known iFlow (please provide the iFlow export)")
+    w(", ".join(f"`{n}`" for n in nolink) or "—")
     text = "\n".join(L) + "\n"
     if "--check" in sys.argv:
         ok = OUT.exists() and OUT.read_text(encoding="utf-8") == text

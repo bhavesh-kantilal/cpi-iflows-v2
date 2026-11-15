@@ -8,7 +8,8 @@ The ground truth lives in `_reference/`:
 
 ## Folder layout
 ```
-_reference/                 reference exports (<Name>.zip + extracted <Name>/), README, FORMAT_NOTES, IFLOW_CONVENTIONS
+_reference/                 reference exports (<Name>.zip + extracted <Name>/), README, FORMAT_NOTES, IFLOW_CONVENTIONS, CATALOG
+  iflows/                   whole iFlow exports (<iFlowName>.zip + extracted), the context of the mappings
 tools/                      reusable generator / validation scripts
 udf_library/                reusable Groovy UDFs (README: when to use each one)
 docs/explained/             plain-language explanations of lessons learned

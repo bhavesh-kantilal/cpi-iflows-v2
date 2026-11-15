@@ -13,16 +13,16 @@ Items marked **NOT COVERED** do not appear in any reference. If a build needs on
 | INV | `MapToRFC_BAPI_INCOMINGINVOICE_GETDETAIL/mapping/MapToRFC_BAPI_INCOMINGINVOICE_GETDETAIL.mmap` (+ `.zip`) |
 | CLF | `Map_SmarTeam_MSAP_DIR_CLFMAS02/mapping/Map_SmarTeam_MSAP_DIR_CLFMAS02.mmap` (+ `.zip`) |
 | DOC | `Map_SmarTeam_MSAP_DIR_DOCMAS05/mapping/Map_SmarTeam_MSAP_DIR_DOCMAS05.mmap` (+ `.zip`) |
-| DIR | `I2052_P_DocumentInfoRecord_Update_SmarTeam_HTTPToJMS/src/main/resources/mapping/Map_SmartTeam_MSAP_CreateDIR.mmap` |
+| DIR | `iflows/I2052_P_DocumentInfoRecord_Update_SmarTeam_HTTPToJMS/src/main/resources/mapping/Map_SmartTeam_MSAP_CreateDIR.mmap` |
 | CCM | `CostCentertoMedius/mapping/CostCentertoMedius.mmap` (+ `.zip`) |
 | FLAT | `MM_MediusInvoice_To_IFSSE/mapping/MM_MediusInvoice_To_IFSSE.mmap` (+ `.zip`) |
 | JDBC | `MapBPToDDSJDBC/mapping/MapBPToDDSJDBC.mmap` (+ `.zip`) |
 | JE | `MapToJournalEntryRequest/mapping/MapToJournalEntryRequest.mmap` (+ `.zip`) |
 | SUP | `SupplierMastertoMedius/mapping/SupplierMastertoMedius.mmap` (+ `.zip`) |
-| I0115 | `I0115_Invoice_Medius_GSAP_ProcessPostedInvoices_JMSToRFC/` (iFlow export) |
-| I2052P | `I2052_P_DocumentInfoRecord_Update_SmarTeam_HTTPToJMS/` (iFlow export) |
-| I2052 | `I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc/` (iFlow export) |
-| I0701 | `I0701_P_JMSDispatcher_MSAP_PlantMaintenance/` (iFlow export) |
+| I0115 | `iflows/I0115_Invoice_Medius_GSAP_ProcessPostedInvoices_JMSToRFC/` (iFlow export) |
+| I2052P | `iflows/I2052_P_DocumentInfoRecord_Update_SmarTeam_HTTPToJMS/` (iFlow export) |
+| I2052 | `iflows/I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc/` (iFlow export) |
+| I0701 | `iflows/I0701_P_JMSDispatcher_MSAP_PlantMaintenance/` (iFlow export) |
 
 ---
 

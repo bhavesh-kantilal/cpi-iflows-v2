@@ -40,6 +40,11 @@
 - Business Partner SOAP is mapped to a Supplier master in Medius
 - Shows: JSON target with nested arrays and duplicate subtree, isNil, ifSWithoutElse, value mapping, Groovy UDFs
 
+---
+
+# iFlow exports (in `iflows/`)
+Whole iFlows: drop `<iFlowName>.zip` into `_reference/iflows/` and add a line here. `tools/catalog.py` links every message mapping to the iFlow steps before and after it.
+
 ## I0115_Invoice_Medius_GSAP_ProcessPostedInvoices_JMSToRFC
 - Has my most complex iFlow
 - Handles Medius Invoice processing and then pushes messages to subsequent flows for attachment etc.
