@@ -116,6 +116,36 @@ Whole iFlows: drop `<iFlowName>.zip` into `_reference/iflows/` and add a line he
 - Added 2026-11-15 (user). Message mappings: `Map_SmartTeam_MSAP_CreateDIR`
 - Steps before/after each mapping: `_reference/CATALOG.md` §4
 
+## FSAP_Controlling_MasterData (package, added 2026-11-15)
+Full CPI package export (hash-format). Contains 26 iFlows across the FSAP Controlling domain:
+- Parents: I0539_P (CostCenter), I0541_P (InternalOrder), I0545_P (WBSElement), I0544_P (BusinessPartner), I0574_P, I0578_P, I0579_P, I0588_P, I0589_P
+- Children (old JMSToREST/SOAP/SFTP): I0540, I0541, I0544, I0545, I0579 (and MSAP/MobileExpenses variants)
+- These parents use the **old custom-loop** receiver determination (QUEUE_LIST/QUEUE_INDEX/RestorePayload scripts) — not yet upgraded to the SSAB_Dispatcher pattern
+- Zip: `_reference/iflows/FSAP_Controlling_MasterData.zip`; extracted hash entries in `_reference/iflows/FSAP_Controlling_MasterData/` (read in-memory with Python zipfile; not individual iFlow folders)
+
+## UTIL_JMSDispatcher (package, added 2026-11-15)
+Two dispatcher iFlows (SmarTeam and MSAP PlantMaintenance):
+- I0700_P_JMSDispatcher_SmarTeam (v1.0) — template dispatcher for SmarTeam queue
+- I0701_P_JMSDispatcher_MSAP_PlantMaintenance (v1.1) — dispatcher for MSAP plant maintenance queue
+- These are the reference implementation of Pattern D (JMS Dispatcher)
+- Zip: `_reference/iflows/UTIL_JMSDispatcher.zip`
+
+## MSAP_PlantMaintenance_MasterData (package, added 2026-11-15)
+Full CPI package export (hash-format). Contains new-pattern parent + child iFlows:
+- I2049_P_MaterialBOM_MSAP_AMQPToJMS (v1.0.3) — AMQP parent with new arr_receivers Iterating Splitter pattern + ReceiverDetermination.groovy
+- I2050_P_MaintenanceBOM_MSAP_AMQPToJMS (v1.0.3) — same pattern
+- I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP (v1.0.2) — child (our build)
+- I2050_MaintananceBOM_MSAP_SmarTeam_PDToHTTP (v1.0.2) — child (our build)
+- Zip: `_reference/iflows/MSAP_PlantMaintenance_MasterData.zip`
+
+## GlobalMediusInvoice_artifacts (package, added 2026-11-15)
+Full CPI package export with 29 iFlows + 8 value mappings for the Medius Invoice integration:
+- Timer parents (I0115_P_*) — poll Medius REST API, iterate per company code, send to old per-interface JMS queues
+- Central router (I0115_Invoice_Medius_ProcessPostedInvoices_RouteAndProcessInvoice_JMSToPD) — most complex flow; 13+ subprocesses, routes by company/InvoiceType to FSAP/GSAP/MSAP/OTM children
+- Children: FSAP SOAP, GSAP RFC (v1.229), GSAP/FSAP/MSAP MFILES REST, OTM HTTP, GSAP KSeF ID Update
+- Uses old per-interface queues (not dispatcher pattern yet); no SSAB_Dispatcher_ReceiverIFlow
+- Zip: `_reference/iflows/GlobalMediusInvoice_artifacts (3).zip` (paths too long for Windows extraction — read in-memory only)
+
 ---
 
 # Generated mappings (added 2026-11-15, evidence level L3; refreshed with each new version)
