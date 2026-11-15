@@ -86,6 +86,8 @@ Sources: I0115, I0701, I2052, I2052P.
   ```
 - The `.iflw` file name does **not** match the iFlow name in three of four exports. See IFLOW_CONVENTIONS.md, "Observed deviations".
 - **NOT COVERED**: a MANIFEST for a standalone Message Mapping artifact. None exists, and the build target does not need one.
+- **WSDLs that import XSDs by URL** (`<import schemaLocation="https://…">`): CPI does not fetch them, and the structure stays empty. The schemas must be inside the WSDL: one inline `<schema>` per namespace, joined by namespace-only `<import namespace="…"/>`. That is the layout of the SAP WSDLs in the references (CCM, JE, SUP, MAT). `tools/wsdl_inline.py` builds such a copy from the downloaded XSDs.
+  - Each inlined schema must keep its own `xmlns:tns` (and other prefix) declarations; otherwise `type="tns:…"` silently points to the WSDL's `tns`. **CONFIRMED 2026-11-15** by NShift v1.0.0 (empty Consignment in CPI) → v1.0.1 (works). See `docs/explained/wsdl-imports-and-namespaces.md`.
 
 ---
 
@@ -153,6 +155,7 @@ Each mapping has one `lnkRole role="SOURCE_IFR_MESS"` and one `lnkRole role="TAR
 | IDoc XSD | `xsd` | `CLFMAS.CLFMAS02.xsd` | `src/main/resources/xsd` | `CLFMAS02` | — | CLF target; DOC target `DOCMAS.DOCMAS05.xsd` / `DOCMAS05` |
 | WSDL (RFC) | `wsdl` | file name | `src/main/resources/wsdl` | message element (e.g. `BAPI_ACC_DOCUMENT_POST`) | `urn:sap-com:document:sap:rfc:functions` | ACC target, INV target |
 | WSDL (SOAP) | `wsdl` | `DOC_WEBI_PRODUCTMDMBULKREPLICATEREQUEST.WSDL` | `src/main/resources/wsdl` | `ProductMDMBulkReplicateRequestMessage` | `http://sap.com/xi/SAPGlobal20/Global` | MAT source |
+| WSDL whose message name ≠ element name | `wsdl` | `NShift_ConsignmentWS.wsdl` | `src/main/resources/wsdl` | the part's **element** name `book` (WSDL message is `ConsignmentEndpoint_book`) | the element's namespace `http://www.spedpoint.com/consignment/types` | NShift target. **CONFIRMED 2026-11-15**: the user's import of NShift v1.0.1 loaded the full `book` structure. In all other references message and element share one name |
 | XSD in wsdl folder | `xsd` | `A_DocumentInfoRecordEntityPOST.xsd` | `src/main/resources/wsdl` | `A_DocumentInfoRecord` | — | DIR target |
 | XSD with a targetNamespace | `xsd` | `Ordrsp_1_0_0.xsd` | `src/main/resources/xsd` | `OrdrspInterchange` | the targetNamespace URI, e.g. `http://www.ruukki.com/schemas/eai/internal/production/eruukki` | ORDRSP source. **CONFIRMED 2026-11-13** by the user's CPI download: without elem 4, CPI does not load the XSD on import ("Add source message") |
 | JSON (OpenAPI 3.0.3) | `json` | `Medius_Swagger.json` | `src/main/resources/json` | `<api path>__$delim$__<HTTP METHOD>__$delim$__Request`, e.g. `/integration/masterdata/v1/dimensionValueImportBatches__$delim$__POST__$delim$__Request` | empty, written `<elem></elem>` (not `<elem/>`) | CCM target |
@@ -287,7 +290,7 @@ Every standard function seen, with its parameters. An input count comes from the
 | `formatNumber` with `0.###` | 1 | removes trailing zero decimals (`432.000` → `432`). **CONFIRMED**: the ORDERS v1.0.0 output matched the sample. | ORDERS |
 | `count` | 1 | none (no `<bindings>`): the number of values in the input's context. **CONFIRMED** in the user's CPI edit: `count(POSEX [context /ORDERS02/IDOC])` → NumberOfLineItems. | ORDERS feedback |
 | `counter` | 0 | `ini`, `inc` | ACC, INV |
-| `CopyValue` | 1 | `nnumber` `0` | ACC, INV, DOC |
+| `CopyValue` | 1 | `nnumber` `0` | ACC, INV, DOC. **User rule (2026-11-15):** a header value on every item (e.g. PO number → E1EDP02/BELNR) is `CopyValue(value, 0)`, not `useOneAsMany`. **CONFIRMED** in ORDRSP v1.0.3/v1.0.4 (BELNR on every item, also when the source queue is `removeContexts(ifWithoutElse(…))`). |
 | `mapWithDefault` | 1 | `default_value` | ACC, INV |
 | `TransformDate` | 1 | `iform` `yyyy-MM-dd`, `oform` `yyyyMMdd`, `calend` (`<calend_props><fd>1</fd><md>1</md><le>true</le></calend_props>`) | INV |
 | `currentDate` | 0 | `oform` `yyyyMMdd`, `calend` (same calend_props) | CLF |
@@ -311,6 +314,9 @@ Every standard function seen, with its parameters. An input count comes from the
 - **`ifSWithoutElse`** has the same pins and `keepss` param as `ifWithoutElse`. Source: SUP, e.g. `ifSWithoutElse(not(isNil(CashDiscountTermsCode)), CashDiscountTermsCode)`. **UNVERIFIED**: probably the "keep context changes" variant, by analogy with `iF`/`iFS`.
 - **`createIf`**: 1 input (a boolean), used on structure nodes to create the node only when true. Source: ACC `.../ACCOUNTTAX/item` and `item[2]`.
   - **User convention (2026-11-13):** container ("tag") nodes come from an **empty constant**, or `createIf(condition)` when the node is optional. An element that carries its own value (simple content with attributes, e.g. `Reference`, `PartyId`) is **not** a tag and keeps its source value.
+  - **`createIf` on a repeating condition needs `removeContexts` after it.** A condition on a repeating source (e.g. `Reference/@Type = 'CO'`, one value per Reference) has one context per occurrence; a target that occurs once only reads the first context. ORDRSP v1.0.3: `createIf(Reference/@Type = 'CO')` read only the first Reference (`ZLG`, false) and E1EDK02 was missing. **CONFIRMED 2026-11-15** (user's fix).
+  - **User rule (2026-11-15):** a segment built with `createIf` (+ `removeContexts`) gets **straight maps** for its fields. Never combine `createIf` on the segment with `ifWithoutElse` on its fields (context problems). Otherwise build the segment **and** its fields from one filtered value chain: `ifWithoutElse(condition, value)` → `removeContexts` → `SplitByValue(Each Value)`, with the segment fed from the same chain.
+  - **Optional item segments** (one per item, e.g. E1EDP03, E1EDP19): use that filtered value chain, **not** `createIf` on a per-child condition. Its SUPPRESS values hid the segments of other items (ORDRSP v1.0.2 → v1.0.3, user's queue screenshot). **CONFIRMED 2026-11-15**.
 
 ### 3.6 Context handling
 - **`removeContexts`** (1 input): ACC, e.g. `removeContexts(/root/invoice/taxLines/taxCode)`.
@@ -331,10 +337,14 @@ Every standard function seen, with its parameters. An input count comes from the
   - Without the attribute the source keeps its default parent context.
 - **`mapWithDefault` after a context change does not fill the gaps.** **CONFIRMED 2026-11-13** in the user's ORDRSP v1.0.0 simulation. `context=Item` on `Property/PropertyText`, then `mapWithDefault`: the missing values were not added, the queues drifted apart, and no item was created.
   - The user's fix in CPI is to apply `mapWithDefault` in the field's own context first, then `formatByExample`.
-- **Qualifier filter on repeating children (user's PO pattern, confirmed working in CPI on ORDRSP v1.0.1):** no context settings on the sources.
+- **Qualifier filter on repeating children (user's PO pattern, confirmed working in CPI on ORDRSP v1.0.1):**
   - Item node: `removeContexts(ifWithoutElse(condition, const ""))`
   - Item value: `ifWithoutElse(stringEquals(mapWithDefault(@Type), 'X'), mapWithDefault(value))` → `removeContexts` → `SplitByValue(Each Value)`
   - It assumes exactly one matching value per item.
+- **Context of an attribute.** An attribute's default context is **its own element**. **CONFIRMED 2026-11-15** (user's CPI fix, ORDRSP v1.0.4):
+  - Attribute compared with a **child** element (`Quantity/@Type` + `Quantity/QuantityValue`, `Reference/@Type` + `Reference/RefNo`): both are in the element's context and line up. **No context setting.**
+  - Attribute compared with its **own element's value** (`Date/@Type`, `Date/@Format` vs `Date`; `AddArticleNo/@Type` vs `AddArticleNo`): the value sits in the **parent's** context. Set the attribute's `context` to the parent (e.g. `…/Item`), otherwise conditions pair with the wrong values.
+  - A misaligned chain can still give the right **segment count** (a segment only counts values) while the **field values** are wrong (ORDRSP E1EDP03 v1.0.4 → v1.0.5). Feed a segment and its fields from the same aligned chain.
 - **Functions on a queue run on all its values**, including those that a later `ifWithoutElse` filters out. Example: `substring(Date, 9, 8)` placed *before* the filter failed on a 6-character week date (ORDRSP v1.0.1, user's simulation). Value transforms that can fail (`substring` and the like) go **after** the filter. The failure is CONFIRMED; the explanation is my analysis.
 
 ### 3.7 Shared nodes and groups
@@ -435,7 +445,8 @@ Sources: MAT (`concatText`), ACC (5 scripts), INV (8 scripts), DIR (`DetemineTex
   <bindings><param name="vmdefault"><value/></param><param name="vmstrategy"><value>2</value></param>
   <param name="table"><value><properties><property name="01">Design</property><property name="02">Design &amp; Plan</property></properties></value></param></bindings>
   ```
-  - `vmstrategy` `2` goes with an empty `vmdefault` in all FixValues examples. **UNVERIFIED**: probably "use key" or "empty".
+  - `vmstrategy` `2` with an empty `vmdefault` = **"Use Key"** (value not in the table → the input passes unchanged). **CONFIRMED 2026-11-15**: user's MENEE rule M → MTR (ORDRSP v1.0.3), and the user's earlier statement that MAT `Status/Description` (`2`/empty) is "Use Key" in the UI.
+  - `vmstrategy` `1` + `vmdefault` = "Use Default Value" (ORDERS VM tables, imported and working).
 - **NOT COVERED**: the Value Mapping artifact itself (`value_mapping.xml` etc.). No export exists in the references, and the I0115 MANIFEST shows only `scriptcollection.UTIL_GetValueMapping`.
 
 ---
@@ -473,7 +484,7 @@ Confirmed by the user on 2026-11-13 (now marked CONFIRMED above):
 - multi-output `from` numbering
 
 **Still open. Settle these with UI screenshots after the first example mapping is built.** The user knows the CPI UI, not the internal XML. Ask one item at a time, naming the mapping and field so the user can screenshot that function's settings.
-1. **FixValues `vmstrategy` numbers.** The data shows `2`/empty (e.g. Material `Status/Description`, which the user says is "Use Key" in the UI) and `1`/`VST` (ACC). The user's first guess was 0 = Use Key, 1 = Default, 2 = Throw Exception, which conflicts with the data. Screenshot Material `Status/Description` and the ACC FixValues with `VST`.
+1. ~~**FixValues `vmstrategy` numbers.**~~ **Settled 2026-11-15:** `2` = Use Key, `1` = Use Default Value (§3.11). Original question: the data shows `2`/empty (e.g. Material `Status/Description`, which the user says is "Use Key" in the UI) and `1`/`VST` (ACC). The user's first guess was 0 = Use Key, 1 = Default, 2 = Throw Exception, which conflicts with the data. Screenshot Material `Status/Description` and the ACC FixValues with `VST`.
 2. **valuemap `vmstrategy` 2.** Seen in SUP `currencyCode` (FSAP/CountryCode → Medius/CurrencyCode). Screenshot that lookup's "if value not found" setting.
 3. **`iF` vs `iFS`, and `ifWithoutElse` vs `ifSWithoutElse`.** Which UI checkbox differs (probably "Keep Context Changes")? What is `keepss` (probably "Keep Suppressed Values")?
 4. **The standard function table (§3.4).** The user will check it with screenshots: text, boolean, arithmetic/format and node/date/context functions.

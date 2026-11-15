@@ -10,6 +10,8 @@ The ground truth lives in `_reference/`:
 ```
 _reference/                 reference exports (<Name>.zip + extracted <Name>/), README, FORMAT_NOTES, IFLOW_CONVENTIONS
 tools/                      reusable generator / validation scripts
+udf_library/                reusable Groovy UDFs (README: when to use each one)
+docs/explained/             plain-language explanations of lessons learned
 mappings/<Folder>/          one folder = one mapping
   spec.md                   spec + "Decisions" section
   <mapping sheet>           whatever sheet the user provides (xlsx/csv/…)
@@ -33,6 +35,7 @@ mappings/<Folder>/          one folder = one mapping
 ## Building a mapping
 - Build strictly following `_reference/FORMAT_NOTES.md`. **Never invent XML structure that is not seen in the references.**
 - If something is needed that the references don't show (anything marked NOT COVERED, or a function with no catalog entry), **stop and ask**.
+- **WSDLs that import XSDs by URL:** CPI does not fetch them. Ask before downloading. Keep the files unchanged in `schemas/downloaded/`, and build a self-contained copy with `tools/wsdl_inline.py` (FORMAT_NOTES §1.1). The original WSDL stays unchanged.
 - If you rely on an item marked UNVERIFIED, say so to the user.
 - The mapping is written in `mappings/<Folder>/build_mapping.py` with the toolkit's `Builder` (`tools/README.md`). XML is produced only by `tools/cpimm/model.py`, which renders only the structures described in FORMAT_NOTES. Running the script builds, packages and checks.
 - **Before every build, run `py -I tools/mm.py selftest`.** It must pass: every standard reference `.mmap` round-trips byte-identically and all its paths are found in its schemas. Run it again after any toolkit change.
@@ -45,8 +48,18 @@ mappings/<Folder>/          one folder = one mapping
 - **Leading zeros**: use standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric (e.g. POSEX). Use a UDF (`removezeros`) only for values that may contain letters (e.g. IDTNR).
 - **Standard functions before UDFs.** Use a Groovy UDF only when no standard function does the job (e.g. `count` instead of a counting UDF). Prefer reusing a reference UDF unchanged over writing a new one.
 - **Sample files**: check the encoding. A file with `<?xml version="1.0"?>` and no encoding declaration must be UTF-8, or the CPI mapping simulator won't load it. Make a UTF-8 copy (`*_utf8.xml`) and never change the user's original.
-  - A root with `xmlns:xsi` + `xsi:schemaLocation` breaks the mapping simulator (`prefix "ns6" … is not bound`). Make a copy without those two attributes (`*_sim.xml`) for simulation (ORDRSP, 2026-11-13). Runtime behaviour in the iFlow is not tested yet.
-- **Qualifier filters on repeating source children** (e.g. `Quantity[@Type='21']`, `Property[@Type='12']`): follow the user's PO pattern (FORMAT_NOTES §3.6). No context settings on lower-level source fields and no UDF. Put value transforms that can fail (e.g. `substring`) after the filter. (User rule, 2026-11-13.)
+  - A root with `xmlns:xsi` + `xsi:schemaLocation` breaks the mapping simulator (`prefix "ns6" … is not bound`). Make a copy without those attributes with `py -I tools/sim_copy.py <file>` (`*_sim.xml`) for simulation (ORDRSP, 2026-11-13). Runtime behaviour in the iFlow is not tested yet.
+- **Qualifier filters on repeating source children** (e.g. `Quantity[@Type='21']`, `Property[@Type='12']`): follow the user's PO pattern (FORMAT_NOTES §3.6). No UDF. Put value transforms that can fail (e.g. `substring`) after the filter. (User rule, 2026-11-13.)
+  - **Context settings only for attributes compared with their own element's value** (`Date/@Type` vs `Date` → context = Item). An attribute compared with a child element (`Quantity/@Type` + `QuantityValue`) gets no context. Never `mapWithDefault` after a context change. (FORMAT_NOTES §3.6, user's fix ORDRSP v1.0.4, 2026-11-15.)
+  - **A segment and its fields use the same aligned chain.** A misaligned chain can give the right segment count with wrong field values (ORDRSP E1EDP03 v1.0.5).
+- **`createIf`** (user rule 2026-11-15, FORMAT_NOTES §3.5):
+  - On a repeating condition, follow it with `removeContexts`. The segment's fields are then **straight maps**.
+  - Never `createIf` on a segment together with `ifWithoutElse` on its fields. Instead feed the segment and its fields from one filtered chain (`ifWithoutElse` → `removeContexts` → `SplitByValue`).
+  - Optional **item** segments (one per item, e.g. E1EDP03, E1EDP19) always come from that filtered chain, never from `createIf` on a per-child condition.
+- **Header value on every item:** `CopyValue(value, 0)`, not `useOneAsMany` (user rule 2026-11-15).
+- **Value tables:** FixValues "Use Key" (`vmstrategy 2`, empty default) passes unknown values through, e.g. unit M → MTR. Use it instead of if-then-else.
+- **Layout (user rule 2026-11-15):** share logic between targets only when the editor canvas stays clean: no overlapping bricks, and a shared brick in the same column for all its targets (like E1EDK03 + DATUM). Otherwise split. The toolkit does this (`Builder`), and the build checks reject overlaps.
+- **UDF library:** reusable UDFs live in `udf_library/` (see its README). A mapping copies the file **unchanged** into its `scripts/`. Prefer the standard function, e.g. `substring`; use a library UDF such as `substringSafe` only when the standard one may fail (value length not certain).
 - **Build output** goes to `mappings/<Folder>/build/` as:
   - `<MappingName>.zip`, importable, with the same layout as the standalone reference zips (FORMAT_NOTES §1.1): root `mapping/`, `script/`, `xsd/`, `wsdl/`. No MANIFEST, `.project` or `metainfo.prop`.
   - The extracted `<MappingName>/` folder next to the zip.
@@ -59,10 +72,14 @@ mappings/<Folder>/          one folder = one mapping
 3. The zip structure matches the references: entries at the root, only the allowed folders, the `.mmap` name equals the mapping name, every `UsedFuncLib` script is present in `script/`, and every schema in `lnks` is present.
 4. The `.mmap` envelope matches FORMAT_NOTES §2.1: one line, no BOM, no prolog.
 5. No `claude` or `anthropic` string, and no tool or AI metadata, in any file inside the zip. `modifBy` and `owner` stay empty, as in the references.
+6. Every `type=` / `ref=` / `base=` reference in the zip's XSD and WSDL files resolves (NShift v1.0.0: unresolved types gave an empty structure in CPI).
+7. No overlapping bricks on any editor canvas.
+
+Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `check_paths`).
 
 ## CHANGELOG
 - Each mapping folder has a `CHANGELOG.md`. Add an entry for **every** build:
-  `## <x.y.z> — <YYYY-MM-DD>` followed by what changed.
+  `## <x.y.z> — <YYYY-MM-DD HH:MM> CET` (time of the build commit, Central European Time: CET in winter, CEST in summer) followed by what changed in plain words. (User, 2026-11-15: a date alone is not enough when several versions are made on one day.)
 - Versions start at `1.0.0`. Bump the patch for fixes and the minor for spec or scope changes.
 
 ## Naming
