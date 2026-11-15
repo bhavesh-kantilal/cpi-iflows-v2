@@ -187,6 +187,46 @@ b.map(f"{CO}/Target/ns2:date", delivery)
 
 m = b.finish()
 
+def wsdl_import_test():
+    """User's test (2026-11-15): does CPI resolve the NShift types when the XSDs are imported into the mapping
+    as separate resources, instead of being inlined in the WSDL? Two variants, same mapping logic as the build:
+      A  NShift_ConsignmentWS_urlimport.wsdl  = the user's Target.wsdl byte for byte (imports by https URL)
+      B  NShift_ConsignmentWS_fileimport.wsdl = Target.wsdl with only the two schemaLocation values changed
+                                                 to the plain XSD file names
+    Output: build/test_wsdl_import/<Name>_TestA/B.zip (mapping + WSDL + scripts, NO XSDs) and xsd_to_import/."""
+    import copy
+    import re
+    import shutil
+    S_ = HERE / "schemas"
+    out = HERE / "build" / "test_wsdl_import"
+    xsds = {"https://service.web-ta.net/ws/services/ConsignmentWS?xsd=1": "ConsignmentWS_xsd1.xsd",
+            "https://service.web-ta.net/ws/services/ConsignmentWS?xsd=2": "ConsignmentWS_xsd2.xsd"}
+    src = (S_ / "Target.wsdl").read_bytes()
+    (S_ / "NShift_ConsignmentWS_urlimport.wsdl").write_bytes(src)
+    rel = src
+    for url, f in xsds.items():
+        rel, n = re.subn(rb'schemaLocation="' + re.escape(url.encode()) + rb'"', b'schemaLocation="' + f.encode() + b'"', rel)
+        assert n == 1, url
+    (S_ / "NShift_ConsignmentWS_fileimport.wsdl").write_bytes(rel)
+    (out / "xsd_to_import").mkdir(parents=True, exist_ok=True)
+    for f in xsds.values():
+        shutil.copyfile(S_ / "downloaded" / f, out / "xsd_to_import" / f)
+    for tag, wsdl in (("TestA", "NShift_ConsignmentWS_urlimport.wsdl"), ("TestB", "NShift_ConsignmentWS_fileimport.wsdl")):
+        v = copy.deepcopy(m)
+        v.name = f"{NAME}_{tag}"
+        v.target.elems[0] = wsdl
+        z = package(v, HERE, out)
+        errs = check_build(z, v.name)
+        expected = [e for e in errs if "unresolved" in e]          # types live in the XSDs imported in CPI
+        other = [e for e in errs if e not in expected]
+        print(z.name, f"| {len(expected)} expected unresolved type refs (XSDs not in the zip)",
+              "| other checks:", "PASSED" if not other else other)
+
+
+if __name__ == "__main__" and "--wsdl-import-test" in sys.argv:
+    wsdl_import_test()
+    sys.exit(0)
+
 if __name__ == "__main__":
     z = package(m, HERE, HERE / "build")
     errs = check_build(z, NAME) + check_paths(m, HERE / "build" / NAME)

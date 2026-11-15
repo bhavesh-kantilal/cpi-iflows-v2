@@ -1,0 +1,1267 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Published by JAX-WS RI (https://github.com/eclipse-ee4j/metro-jax-ws). RI's version is Eclipse Metro/2.4.7 (RELEASE-2.4.7-1ccd54b; 2021-10-15T10:09:37+0000) JAXWS-RI/2.3.5 JAXWS-API/2.3.3 JAXB-RI/2.3.5 JAXB-API/2.3.3 git-revision#1ccd54b. -->
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://www.spedpoint.com/consignment/types" xmlns:ns2="http://www.spedpoint.com/common/webservice/types/v1_0" xmlns:ns3="http://www.spedpoint.com/consignment/types/v1_0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.spedpoint.com/consignment" name="ConsignmentWS" targetNamespace="http://www.spedpoint.com/consignment">
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.spedpoint.com/consignment/types/v1_0" xmlns:ns3="http://www.spedpoint.com/common/webservice/types/v1_0" xmlns:tns="http://www.spedpoint.com/consignment/types" targetNamespace="http://www.spedpoint.com/consignment/types">
+			<import namespace="http://www.spedpoint.com/consignment/types/v1_0" schemaLocation="ConsignmentWS_xsd1.xsd"/>
+			<import namespace="http://www.spedpoint.com/common/webservice/types/v1_0" schemaLocation="ConsignmentWS_xsd2.xsd"/>
+			<complexType name="ConsignmentResult">
+				<sequence>
+					<element maxOccurs="unbounded" minOccurs="0" name="consignments" nillable="true" type="ns2:Consignment"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="errors" nillable="true" type="ns3:Error"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="documents" nillable="true" type="tns:Document"/>
+					<element maxOccurs="1" minOccurs="0" name="receipt" nillable="true" type="tns:Receipt"/>
+					<element name="statusCode" type="int"/>
+				</sequence>
+			</complexType>
+			<complexType name="Document">
+				<sequence>
+					<element name="name" minOccurs="0" nillable="true" type="string"/>
+					<element name="contentType" nillable="true" type="string"/>
+					<element name="data" nillable="true" type="string"/>
+					<element name="encoding" nillable="true" type="string"/>
+					<element name="type" type="int"/>
+				</sequence>
+			</complexType>
+			<complexType name="Receipt">
+				<sequence>
+					<element name="URL" nillable="true" type="string"/>
+					<element name="HTML" nillable="true" type="string"/>
+					<element name="PDF" nillable="true" type="tns:Document"/>
+					<element name="resources" maxOccurs="unbounded" minOccurs="0" type="tns:Document"/>
+				</sequence>
+			</complexType>
+			<complexType name="Notification">
+				<sequence>
+					<element name="method" nillable="false" type="string"/>
+					<element name="role" nillable="false" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="PrintResult">
+				<sequence>
+					<element maxOccurs="unbounded" minOccurs="0" name="documents" nillable="true" type="tns:Document"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="errors" nillable="true" type="ns3:Error"/>
+					<element name="statusCode" type="int"/>
+				</sequence>
+			</complexType>
+			<complexType name="PriceResultList">
+				<sequence>
+					<element name="priceResult" type="tns:PriceResult" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+				</sequence>
+			</complexType>
+			<complexType name="PriceResult">
+				<sequence>
+					<element name="consignmentNo" type="string" minOccurs="1" maxOccurs="1"/>
+					<element name="consignmentId" type="string" minOccurs="0" maxOccurs="1"/>
+					<element name="statusCode" type="string" minOccurs="1"/>
+					<element name="description" type="string" minOccurs="0"/>
+					<element name="calculatedPrice" type="tns:CalculatedPrice" minOccurs="0" maxOccurs="1"/>
+				</sequence>
+			</complexType>
+			<complexType name="CalculatedPrice">
+				<sequence>
+					<element name="price" type="float" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<element name="currency" type="string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<element name="priceDetail" type="tns:PriceDetail" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</complexType>
+			<complexType name="PriceDetail">
+				<sequence>
+					<element name="price" type="float" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<element name="currency" type="string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<element name="code" type="string" minOccurs="0" maxOccurs="1"/>
+					<element name="sortOrder" type="int" minOccurs="0" maxOccurs="1"/>
+				</sequence>
+			</complexType>
+			<complexType name="archive">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="archiveResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="book">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="Consignment" nillable="true" type="ns2:Consignment"/>
+					<element name="transactionId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="bookResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="consolidate">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="arrayOfConsignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="consolidateResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="copy">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="Consignment" nillable="true" type="ns2:Consignment"/>
+				</sequence>
+			</complexType>
+			<complexType name="copyResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="create">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+				</sequence>
+			</complexType>
+			<complexType name="createResponse">
+				<sequence>
+					<element name="result" nillable="true" type="ns2:Consignment"/>
+				</sequence>
+			</complexType>
+			<complexType name="delete">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="deleteResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignmentId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignmentIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignmentNo">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignmentNoResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignorReference">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="reference" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByConsignorReferenceResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findById">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="id" type="int"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByPackageId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="packageId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByPackageIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findAllByPackageId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="packageId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findAllByPackageIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByReference">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="name" type="string"/>
+					<element name="reference" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByReferenceResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByTransactionId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="transactionId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="findByTransactionIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="getTransactionId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+				</sequence>
+			</complexType>
+			<complexType name="getTransactionIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isArchived">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isArchivedResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="isBooked">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isBookedResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="isComplete">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isCompleteResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="isOrdered">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isOrderedResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="isPrintable">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isPrintableResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="isPrinted">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="isPrintedResponse">
+				<sequence>
+					<element name="result" type="boolean"/>
+				</sequence>
+			</complexType>
+			<complexType name="order">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="orderResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="print">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="arrayOfConsignmentNo" nillable="true" type="string"/>
+					<element name="type" type="int"/>
+					<element name="format" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="printLabel">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element type="string" name="consignmentNo"/>
+					<element type="string" name="arrayOfPackageIds" maxOccurs="unbounded" minOccurs="1"/>
+					<element name="format" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="printWaybill">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element type="string" name="consignmentNo"/>
+				</sequence>
+			</complexType>
+			<complexType name="printResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:PrintResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="save">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="Consignment" nillable="true" type="ns2:Consignment"/>
+					<element name="TransactionId" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="saveResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="split">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="splitResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:ConsignmentResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="ConsignmentServiceException">
+				<complexContent>
+					<extension base="ns3:ServiceException">
+						<sequence/>
+					</extension>
+				</complexContent>
+			</complexType>
+			<complexType name="getCalculatedPrice">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element maxOccurs="unbounded" minOccurs="0" name="arrayOfConsignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="getCalculatedPriceResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:PriceResultList"/>
+				</sequence>
+			</complexType>
+			<complexType name="GoodsItemResult">
+				<sequence>
+					<element name="consignmentMergeKey" type="string"/>
+					<element name="consignmentNo" type="string"/>
+					<element name="addedPackageId" type="string" minOccurs="0" nillable="true"/>
+					<element name="deletedPackageId" type="string" minOccurs="0" nillable="true"/>
+					<element name="errors" maxOccurs="unbounded" minOccurs="0" nillable="true" type="ns3:Error"/>
+				</sequence>
+			</complexType>
+			<complexType name="cancelResult">
+				<sequence>
+					<element name="consignmentNo" type="string"/>
+					<element name="errors" maxOccurs="unbounded" minOccurs="0" nillable="true" type="ns3:Error"/>
+					<element name="statusCode" type="int"/>
+				</sequence>
+			</complexType>
+			<complexType name="addGoodsRow">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="GoodsItem" type="ns2:GoodsItem"/>
+					<element name="consignmentMergeKey" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="addGoodsRowResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:GoodsItemResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="deletePackageId">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentMergeKey" type="string"/>
+					<element name="packageId" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="deletePackageIdResponse">
+				<sequence>
+					<element name="result" nillable="true" type="tns:GoodsItemResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="cancel">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+					<element name="consignmentNo" nillable="true" type="string"/>
+				</sequence>
+			</complexType>
+			<complexType name="cancelResponse">
+				<sequence>
+					<element name="result" type="tns:cancelResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="getConsignmentTemplates">
+				<sequence>
+					<element name="AuthenticationToken" nillable="true" type="ns3:AuthenticationToken"/>
+				</sequence>
+			</complexType>
+			<complexType name="getConsignmentTemplatesResponse">
+				<sequence>
+					<element name="result" type="tns:ConsignmentTemplatesResult"/>
+				</sequence>
+			</complexType>
+			<complexType name="ConsignmentTemplatesResult">
+				<sequence>
+					<element name="consignmentTemplate" minOccurs="0" maxOccurs="unbounded" nillable="true" type="tns:ConsignmentTemplate"/>
+					<element name="errors" maxOccurs="unbounded" minOccurs="0" nillable="true" type="ns3:Error"/>
+				</sequence>
+			</complexType>
+			<complexType name="ConsignmentTemplate">
+				<sequence>
+					<element name="name" type="string"/>
+					<element name="description" type="string"/>
+				</sequence>
+			</complexType>
+			<element name="archive" type="tns:archive"/>
+			<element name="archiveResponse" type="tns:archiveResponse"/>
+			<element name="book" type="tns:book"/>
+			<element name="bookResponse" type="tns:bookResponse"/>
+			<element name="consolidate" type="tns:consolidate"/>
+			<element name="consolidateResponse" type="tns:consolidateResponse"/>
+			<element name="copy" type="tns:copy"/>
+			<element name="copyResponse" type="tns:copyResponse"/>
+			<element name="create" type="tns:create"/>
+			<element name="createResponse" type="tns:createResponse"/>
+			<element name="delete" type="tns:delete"/>
+			<element name="deleteResponse" type="tns:deleteResponse"/>
+			<element name="findByConsignmentId" type="tns:findByConsignmentId"/>
+			<element name="findByConsignmentIdResponse" type="tns:findByConsignmentIdResponse"/>
+			<element name="findByConsignmentNo" type="tns:findByConsignmentNo"/>
+			<element name="findByConsignmentNoResponse" type="tns:findByConsignmentNoResponse"/>
+			<element name="findByConsignorReference" type="tns:findByConsignorReference"/>
+			<element name="findByConsignorReferenceResponse" type="tns:findByConsignorReferenceResponse"/>
+			<element name="findById" type="tns:findById"/>
+			<element name="findByIdResponse" type="tns:findByIdResponse"/>
+			<element name="findByPackageId" type="tns:findByPackageId"/>
+			<element name="findByPackageIdResponse" type="tns:findByPackageIdResponse"/>
+			<element name="findAllByPackageId" type="tns:findAllByPackageId"/>
+			<element name="findAllByPackageIdResponse" type="tns:findAllByPackageIdResponse"/>
+			<element name="findByReference" type="tns:findByReference"/>
+			<element name="findByReferenceResponse" type="tns:findByReferenceResponse"/>
+			<element name="findByTransactionId" type="tns:findByTransactionId"/>
+			<element name="findByTransactionIdResponse" type="tns:findByTransactionIdResponse"/>
+			<element name="getTransactionId" type="tns:getTransactionId"/>
+			<element name="getTransactionIdResponse" type="tns:getTransactionIdResponse"/>
+			<element name="isArchived" type="tns:isArchived"/>
+			<element name="isArchivedResponse" type="tns:isArchivedResponse"/>
+			<element name="isBooked" type="tns:isBooked"/>
+			<element name="isBookedResponse" type="tns:isBookedResponse"/>
+			<element name="isComplete" type="tns:isComplete"/>
+			<element name="isCompleteResponse" type="tns:isCompleteResponse"/>
+			<element name="isOrdered" type="tns:isOrdered"/>
+			<element name="isOrderedResponse" type="tns:isOrderedResponse"/>
+			<element name="isPrintable" type="tns:isPrintable"/>
+			<element name="isPrintableResponse" type="tns:isPrintableResponse"/>
+			<element name="isPrinted" type="tns:isPrinted"/>
+			<element name="isPrintedResponse" type="tns:isPrintedResponse"/>
+			<element name="order" type="tns:order"/>
+			<element name="orderResponse" type="tns:orderResponse"/>
+			<element name="print" type="tns:print"/>
+			<element name="printLabel" type="tns:printLabel"/>
+			<element name="printWaybill" type="tns:printWaybill"/>
+			<element name="printResponse" type="tns:printResponse"/>
+			<element name="save" type="tns:save"/>
+			<element name="saveResponse" type="tns:saveResponse"/>
+			<element name="split" type="tns:split"/>
+			<element name="splitResponse" type="tns:splitResponse"/>
+			<element name="getCalculatedPrice" type="tns:getCalculatedPrice"/>
+			<element name="getCalculatedPriceResponse" type="tns:getCalculatedPriceResponse"/>
+			<element name="addGoodsRow" type="tns:addGoodsRow"/>
+			<element name="addGoodsRowResponse" type="tns:addGoodsRowResponse"/>
+			<element name="deletePackageId" type="tns:deletePackageId"/>
+			<element name="deletePackageIdResponse" type="tns:deletePackageIdResponse"/>
+			<element name="ConsignmentServiceException" type="tns:ConsignmentServiceException"/>
+			<element name="cancel" type="tns:cancel"/>
+			<element name="cancelResponse" type="tns:cancelResponse"/>
+			<element name="getConsignmentTemplates" type="tns:getConsignmentTemplates"/>
+			<element name="getConsignmentTemplatesResponse" type="tns:getConsignmentTemplatesResponse"/>
+		</schema>
+	</types>
+	<message name="ConsignmentServiceException">
+		<part element="ns1:ConsignmentServiceException" name="ConsignmentServiceException"/>
+	</message>
+	<message name="ConsignmentEndpoint_archive">
+		<part element="ns1:archive" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_archiveResponse">
+		<part element="ns1:archiveResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_book">
+		<part element="ns1:book" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_bookResponse">
+		<part element="ns1:bookResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_consolidate">
+		<part element="ns1:consolidate" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_consolidateResponse">
+		<part element="ns1:consolidateResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_copy">
+		<part element="ns1:copy" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_copyResponse">
+		<part element="ns1:copyResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_create">
+		<part element="ns1:create" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_createResponse">
+		<part element="ns1:createResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_delete">
+		<part element="ns1:delete" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_deleteResponse">
+		<part element="ns1:deleteResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignmentId">
+		<part element="ns1:findByConsignmentId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignmentIdResponse">
+		<part element="ns1:findByConsignmentIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignmentNo">
+		<part element="ns1:findByConsignmentNo" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignmentNoResponse">
+		<part element="ns1:findByConsignmentNoResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignorReference">
+		<part element="ns1:findByConsignorReference" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByConsignorReferenceResponse">
+		<part element="ns1:findByConsignorReferenceResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findById">
+		<part element="ns1:findById" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByIdResponse">
+		<part element="ns1:findByIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByPackageId">
+		<part element="ns1:findByPackageId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findAllByPackageId">
+		<part element="ns1:findAllByPackageId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByPackageIdResponse">
+		<part element="ns1:findByPackageIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findAllByPackageIdResponse">
+		<part element="ns1:findAllByPackageIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByReference">
+		<part element="ns1:findByReference" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByReferenceResponse">
+		<part element="ns1:findByReferenceResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByTransactionId">
+		<part element="ns1:findByTransactionId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_findByTransactionIdResponse">
+		<part element="ns1:findByTransactionIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_getTransactionId">
+		<part element="ns1:getTransactionId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_getTransactionIdResponse">
+		<part element="ns1:getTransactionIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isArchived">
+		<part element="ns1:isArchived" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isArchivedResponse">
+		<part element="ns1:isArchivedResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isBooked">
+		<part element="ns1:isBooked" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isBookedResponse">
+		<part element="ns1:isBookedResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isComplete">
+		<part element="ns1:isComplete" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isCompleteResponse">
+		<part element="ns1:isCompleteResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isOrdered">
+		<part element="ns1:isOrdered" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isOrderedResponse">
+		<part element="ns1:isOrderedResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isPrintable">
+		<part element="ns1:isPrintable" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isPrintableResponse">
+		<part element="ns1:isPrintableResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_isPrinted">
+		<part element="ns1:isPrinted" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_isPrintedResponse">
+		<part element="ns1:isPrintedResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_order">
+		<part element="ns1:order" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_orderResponse">
+		<part element="ns1:orderResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_print">
+		<part element="ns1:print" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_printLabel">
+		<part element="ns1:printLabel" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_printWaybill">
+		<part element="ns1:printWaybill" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_printResponse">
+		<part element="ns1:printResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_save">
+		<part element="ns1:save" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_saveResponse">
+		<part element="ns1:saveResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_split">
+		<part element="ns1:split" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_splitResponse">
+		<part element="ns1:splitResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_getCalculatedPrice">
+		<part element="ns1:getCalculatedPrice" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_getCalculatedPriceResponse">
+		<part element="ns1:getCalculatedPriceResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_addGoodsRow">
+		<part element="ns1:addGoodsRow" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_addGoodsRowResponse">
+		<part element="ns1:addGoodsRowResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_deletePackageId">
+		<part element="ns1:deletePackageId" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_deletePackageIdResponse">
+		<part element="ns1:deletePackageIdResponse" name="result"/>
+	</message>
+	<message name="ConsignmentEndpoint_cancel">
+		<part element="ns1:cancel" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_cancelResponse">
+		<part element="ns1:cancelResponse" name="response"/>
+	</message>
+	<message name="ConsignmentEndpoint_getConsignmentTemplates">
+		<part element="ns1:getConsignmentTemplates" name="parameters"/>
+	</message>
+	<message name="ConsignmentEndpoint_getConsignmentTemplatesResponse">
+		<part element="ns1:getConsignmentTemplatesResponse" name="response"/>
+	</message>
+	<portType name="ConsignmentEndpoint">
+		<operation name="archive">
+			<input message="tns:ConsignmentEndpoint_archive"/>
+			<output message="tns:ConsignmentEndpoint_archiveResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="book">
+			<input message="tns:ConsignmentEndpoint_book"/>
+			<output message="tns:ConsignmentEndpoint_bookResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="consolidate">
+			<input message="tns:ConsignmentEndpoint_consolidate"/>
+			<output message="tns:ConsignmentEndpoint_consolidateResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="copy">
+			<input message="tns:ConsignmentEndpoint_copy"/>
+			<output message="tns:ConsignmentEndpoint_copyResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="create">
+			<input message="tns:ConsignmentEndpoint_create"/>
+			<output message="tns:ConsignmentEndpoint_createResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="delete">
+			<input message="tns:ConsignmentEndpoint_delete"/>
+			<output message="tns:ConsignmentEndpoint_deleteResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByConsignmentId">
+			<input message="tns:ConsignmentEndpoint_findByConsignmentId"/>
+			<output message="tns:ConsignmentEndpoint_findByConsignmentIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByConsignmentNo">
+			<input message="tns:ConsignmentEndpoint_findByConsignmentNo"/>
+			<output message="tns:ConsignmentEndpoint_findByConsignmentNoResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByConsignorReference">
+			<input message="tns:ConsignmentEndpoint_findByConsignorReference"/>
+			<output message="tns:ConsignmentEndpoint_findByConsignorReferenceResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findById">
+			<input message="tns:ConsignmentEndpoint_findById"/>
+			<output message="tns:ConsignmentEndpoint_findByIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByPackageId">
+			<input message="tns:ConsignmentEndpoint_findByPackageId"/>
+			<output message="tns:ConsignmentEndpoint_findByPackageIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findAllByPackageId">
+			<input message="tns:ConsignmentEndpoint_findAllByPackageId"/>
+			<output message="tns:ConsignmentEndpoint_findAllByPackageIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByReference">
+			<input message="tns:ConsignmentEndpoint_findByReference"/>
+			<output message="tns:ConsignmentEndpoint_findByReferenceResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="findByTransactionId">
+			<input message="tns:ConsignmentEndpoint_findByTransactionId"/>
+			<output message="tns:ConsignmentEndpoint_findByTransactionIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="getTransactionId">
+			<input message="tns:ConsignmentEndpoint_getTransactionId"/>
+			<output message="tns:ConsignmentEndpoint_getTransactionIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isArchived">
+			<input message="tns:ConsignmentEndpoint_isArchived"/>
+			<output message="tns:ConsignmentEndpoint_isArchivedResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isBooked">
+			<input message="tns:ConsignmentEndpoint_isBooked"/>
+			<output message="tns:ConsignmentEndpoint_isBookedResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isComplete">
+			<input message="tns:ConsignmentEndpoint_isComplete"/>
+			<output message="tns:ConsignmentEndpoint_isCompleteResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isOrdered">
+			<input message="tns:ConsignmentEndpoint_isOrdered"/>
+			<output message="tns:ConsignmentEndpoint_isOrderedResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isPrintable">
+			<input message="tns:ConsignmentEndpoint_isPrintable"/>
+			<output message="tns:ConsignmentEndpoint_isPrintableResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="isPrinted">
+			<input message="tns:ConsignmentEndpoint_isPrinted"/>
+			<output message="tns:ConsignmentEndpoint_isPrintedResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="order">
+			<input message="tns:ConsignmentEndpoint_order"/>
+			<output message="tns:ConsignmentEndpoint_orderResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="print">
+			<input message="tns:ConsignmentEndpoint_print"/>
+			<output message="tns:ConsignmentEndpoint_printResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="printLabel">
+			<input message="tns:ConsignmentEndpoint_printLabel"/>
+			<output message="tns:ConsignmentEndpoint_printResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="printWaybill">
+			<input message="tns:ConsignmentEndpoint_printWaybill"/>
+			<output message="tns:ConsignmentEndpoint_printResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="save">
+			<input message="tns:ConsignmentEndpoint_save"/>
+			<output message="tns:ConsignmentEndpoint_saveResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="split">
+			<input message="tns:ConsignmentEndpoint_split"/>
+			<output message="tns:ConsignmentEndpoint_splitResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="getCalculatedPrice">
+			<input message="tns:ConsignmentEndpoint_getCalculatedPrice"/>
+			<output message="tns:ConsignmentEndpoint_getCalculatedPriceResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="addGoodsRow">
+			<input message="tns:ConsignmentEndpoint_addGoodsRow"/>
+			<output message="tns:ConsignmentEndpoint_addGoodsRowResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="deletePackageId">
+			<input message="tns:ConsignmentEndpoint_deletePackageId"/>
+			<output message="tns:ConsignmentEndpoint_deletePackageIdResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="cancel">
+			<input message="tns:ConsignmentEndpoint_cancel"/>
+			<output message="tns:ConsignmentEndpoint_cancelResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+		<operation name="getConsignmentTemplates">
+			<input message="tns:ConsignmentEndpoint_getConsignmentTemplates"/>
+			<output message="tns:ConsignmentEndpoint_getConsignmentTemplatesResponse"/>
+			<fault message="tns:ConsignmentServiceException" name="ConsignmentServiceException"/>
+		</operation>
+	</portType>
+	<binding name="ConsignmentEndpointBinding" type="tns:ConsignmentEndpoint">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="archive">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="book">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="consolidate">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="copy">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="create">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="delete">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByConsignmentId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByConsignmentNo">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByConsignorReference">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findById">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByPackageId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findAllByPackageId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByReference">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="findByTransactionId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="getTransactionId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isArchived">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isBooked">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isComplete">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isOrdered">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isPrintable">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="isPrinted">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="order">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="print">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="printLabel">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="printWaybill">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="save">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="split">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="getCalculatedPrice">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="addGoodsRow">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="deletePackageId">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="cancel">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+		<operation name="getConsignmentTemplates">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ConsignmentServiceException">
+				<soap:fault name="ConsignmentServiceException" use="literal"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="ConsignmentWS">
+		<port binding="tns:ConsignmentEndpointBinding" name="ConsignmentEndpointPort">
+			<soap:address location="https://service.web-ta.net/ws/services/ConsignmentWS"/>
+		</port>
+	</service>
+</definitions>

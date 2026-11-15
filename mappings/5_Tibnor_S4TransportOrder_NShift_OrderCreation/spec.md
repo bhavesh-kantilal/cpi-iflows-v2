@@ -79,3 +79,11 @@ See the Mapping sheet for all 22 rows. In short:
   - New build check `schema_ref_errors` in `tools/cpimm/check.py`: every `type=` / `ref=` / `base=` reference in a zip's XSD or WSDL must resolve to a definition in its namespace. It passes on every reference and mapping schema and reports the 151 errors in the v1.0.0 zip.
 - The mapping logic is unchanged.
 - **User, 2026-11-13: v1.0.1 "works".** Adding the new check to the CLAUDE.md build-check list waits for the user's review (`REVIEW.md` A1).
+
+## Test 2026-11-15: XSDs as separate resources instead of inlined (user's question)
+The user remembers that CPI resolves a WSDL's imports when the XSDs are imported into the same mapping, so no inlined copy would be needed. Two test variants, with the same mapping logic as v1.0.2, built with `py -I build_mapping.py --wsdl-import-test` into `build/test_wsdl_import/`:
+- **TestA** `…_Book_TestA.zip`: the user's `Target.wsdl` byte for byte (`schemas/NShift_ConsignmentWS_urlimport.wsdl`). Its imports still point to `https://service.web-ta.net/…?xsd=1/2`. This tests whether CPI matches the imported XSDs **by namespace**.
+- **TestB** `…_Book_TestB.zip`: the same WSDL with only the two `schemaLocation` values changed to the file names `ConsignmentWS_xsd1.xsd` / `ConsignmentWS_xsd2.xsd` (`schemas/NShift_ConsignmentWS_fileimport.wsdl`). This tests whether CPI matches them **by file name**. Offline, the WSDL schema compiles together with the two XSDs next to it.
+- Both zips contain no XSD. The XSDs to import are `build/test_wsdl_import/xsd_to_import/ConsignmentWS_xsd1.xsd` and `…xsd2.xsd`, unchanged from the download.
+- Build checks: everything passes except the expected 5 unresolved type references per zip (the types are in the XSDs that are imported in CPI).
+- **Result:** pending the user's CPI test. If A or B works, that becomes the rule for URL-imported XSDs (instead of or next to `tools/wsdl_inline.py`), and v1.0.3 is built that way.
