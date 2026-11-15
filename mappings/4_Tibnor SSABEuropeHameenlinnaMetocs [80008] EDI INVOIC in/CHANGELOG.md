@@ -1,6 +1,13 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC
 
-## 1.0.0 — 2026-11-13
+## 1.0.1 — 2026-11-15 11:43 CET
+- Applies the rules accepted in the review of 2026-11-15:
+  - PO number and invoice date on every item (E1EDP02/BELNR, E1EDP03/DATUM) use `CopyValue(value, 0)` instead of `useOneAsMany`.
+  - Attribute context: `AddArticleNo/@Type` (IDTNR) gets context Item, and `DocumentId/Date/@Type` (header DATUM) gets context DocumentId, because each is compared with its own element's value.
+  - New editor layout (no overlaps).
+- The output should be unchanged for the samples. Re-test in CPI recommended.
+
+## 1.0.0 — 2026-11-13 06:47 CET
 - First build from `25224_INVOIC_HameenlinnaMetocs-to-Tibnor_MappingSpec_v0.1.xlsx`: rows 1–29, as 77 target mappings.
 - Source `Harmonized_Mill_Invoice_0_0_4_AoC.xsd` (Invoice, no namespace). Target `INVOIC.INVOIC01.xsd` (INVOIC01).
 - Standard functions only, using the user's PO filter pattern and the ORDRSP conventions. No UDF.

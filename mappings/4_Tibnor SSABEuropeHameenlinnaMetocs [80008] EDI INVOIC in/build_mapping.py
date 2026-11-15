@@ -33,10 +33,12 @@ def eq(a, value):
     return F("stringEquals", a, C(value))
 
 
-def by_attr(node, attr, value, field=None):
-    """Value of node (or node/field) where node/@attr = value. PO D_7140 pattern: mapWithDefault on both inputs."""
+def by_attr(node, attr, value, field=None, attr_context=None):
+    """Value of node (or node/field) where node/@attr = value. PO D_7140 pattern: mapWithDefault on both inputs.
+    attr_context: when the value is the node itself (attribute vs its own element's value), the attribute's
+    context must be the parent (FORMAT_NOTES 3.6, ORDRSP v1.0.4)."""
     val = S(f"{node}/{field}") if field else S(node)
-    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@{attr}"), default_value=""), value),
+    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@{attr}", context=attr_context), default_value=""), value),
              F("mapWithDefault", val, default_value=""), keepss="false")
 
 
@@ -51,8 +53,8 @@ def each(v):
 
 
 def per_item(v):
-    """Header value repeated once per Item: useOneAsMany(value, all LineNo in one context, LineNo per Item)."""
-    return F("useOneAsMany", v, F("removeContexts", S(f"{IT}/LineNo")), S(f"{IT}/LineNo"))
+    """Header value on every Item: CopyValue index 0 (CLAUDE.md rule, ORDRSP v1.0.3)."""
+    return F("CopyValue", v, nnumber="0")
 
 
 H = "/Invoice"
@@ -63,7 +65,7 @@ T = "/INVOIC01/IDOC"
 is_metocs = F("startWith2", S(f"{H}/Header/SourceSystem"), C("METOCS"))                    # VM-01
 is_380 = eq(S(f"{H}/Header/DocumentType"), "380")                                          # VM-03
 currency = header(by_attr(f"{H}/Currency", "Type", "1", "CurrencyCode"))
-inv_date = header(by_attr(f"{H}/DocumentId/Date", "Type", "149"))
+inv_date = header(by_attr(f"{H}/DocumentId/Date", "Type", "149", attr_context=f"{H}/DocumentId"))
 po_no = F("formatNumber", header(by_attr(f"{H}/Reference", "Type", "ON", "ReferenceIdentification")),
           nformat="0000000000", separator=".")                                             # #23: 10 digits
 line_no = F("formatNumber", S(f"{IT}/LineNo"), nformat="#", separator=".")                 # '000010' -> '10'
@@ -149,7 +151,7 @@ b.map(f"{P}/E1EDP03/DATUM", per_item(inv_date))
 b.map(f"{P}/E1EDP19", C(""))                              # #26: created even without a UA article (as today)
 b.map(f"{P}/E1EDP19/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP19/QUALF", C("001"))
-b.map(f"{P}/E1EDP19/IDTNR", each(by_attr(f"{IT}/AddArticleNo", "Type", "UA")))
+b.map(f"{P}/E1EDP19/IDTNR", each(by_attr(f"{IT}/AddArticleNo", "Type", "UA", attr_context=IT)))
 b.map(f"{P}/E1EDP26", C(""))
 b.map(f"{P}/E1EDP26/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP26/QUALF", C("003"))
