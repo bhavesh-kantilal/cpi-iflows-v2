@@ -181,6 +181,28 @@ def schema_ref_errors(data: bytes) -> list[str]:
     return errs
 
 
+def layout_overlaps(m: Mapping) -> list[str]:
+    """No two bricks on one editor canvas (a group of targets, or a single target) at the same x/y
+    (user feedback ORDRSP 2026-11-15: overlapping bricks make the mapping unreadable)."""
+    canvases: dict[str, list] = {}
+    for i, t in enumerate(m.targets):
+        canvases.setdefault(t.group or f"#{i}", []).append(t)
+    errs = []
+    for name, ts in canvases.items():
+        seen: dict[tuple, str] = {}
+        for t in ts:
+            bricks = [(t.xy, f"target {t.path}")] if t.expr is not None else []
+            if t.expr is not None:
+                bricks += [(n.xy, f"{getattr(n, 'fname', None) or n.path} in {t.path}")
+                           for n in walk(t.expr) if isinstance(n, (Func, Src)) and n.xy]
+            for xy, what in bricks:
+                if xy in seen:
+                    errs.append(f"layout overlap at {xy}: {what} / {seen[xy]}")
+                else:
+                    seen[xy] = what
+    return errs
+
+
 def check_build(zip_path: Path, name: str) -> list[str]:
     """Zip structure like the standalone references + well-formed XML + no forbidden strings."""
     errs = []
@@ -204,6 +226,7 @@ def check_build(zip_path: Path, name: str) -> list[str]:
         except Exception as e:                                # noqa: BLE001
             errs.append(f".mmap not readable/standard: {e}")
             return errs
+        errs += layout_overlaps(m)
         for s in m.udfs:
             if f"script/{s}" not in names:
                 errs.append(f"declared UDF script missing: script/{s}")
