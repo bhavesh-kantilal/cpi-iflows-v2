@@ -32,9 +32,9 @@ SAP Cloud Integration **message mappings**, built as importable zips from a writ
 | Mapping | Current | From → to |
 |---|---|---|
 | [ORDERS](mappings/1_ORDERS_Tibnor-to-HameenlinnaMetocs/CHANGELOG.md) | 1.1.1 | Tibnor S/4 IDoc ORDERS02 → Metocs hub OrdersMessage |
-| [ORDRSP](mappings/2_ORDRSP_HameenlinnaMetocs-to-Tibnor/CHANGELOG.md) | 1.0.5 | Metocs hub OrdrspInterchange → Tibnor IDoc ORDERS01 |
+| [ORDRSP](mappings/2_ORDRSP_HameenlinnaMetocs-to-Tibnor/CHANGELOG.md) | 1.0.6 | Metocs hub OrdrspInterchange → Tibnor IDoc ORDERS01 |
 | [DESADV](mappings/3_Tibnor%20SSABEuropeHameenlinnaMetocs%20%5B80008%5D%20EDI%20DESADV%20in/CHANGELOG.md) | 1.0.1 | Metocs hub DeliveryBatch → Tibnor IDoc DELVRY01 |
-| [INVOIC](mappings/4_Tibnor%20SSABEuropeHameenlinnaMetocs%20%5B80008%5D%20EDI%20INVOIC%20in/CHANGELOG.md) | 1.0.1 | Metocs hub Invoice → Tibnor IDoc INVOIC01 |
+| [INVOIC](mappings/4_Tibnor%20SSABEuropeHameenlinnaMetocs%20%5B80008%5D%20EDI%20INVOIC%20in/CHANGELOG.md) | 1.0.2 | Metocs hub Invoice → Tibnor IDoc INVOIC01 |
 | [NShift](mappings/5_Tibnor_S4TransportOrder_NShift_OrderCreation/CHANGELOG.md) | 1.0.3 | S/4 TM freight order → nShift ConsignmentWS `book` |
 
 ## Lessons learned, in order

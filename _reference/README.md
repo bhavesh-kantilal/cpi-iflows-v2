@@ -118,14 +118,14 @@ Whole iFlows: drop `<iFlowName>.zip` into `_reference/iflows/` and add a line he
 
 ---
 
-# Generated mappings (added 2026-11-15, evidence level L3)
+# Generated mappings (added 2026-11-15, evidence level L3; refreshed with each new version)
 Built by the toolkit in this repo (`mappings/<folder>/build/`), imported and tested by the user in CPI. **Not CPI downloads**: they show what works in CPI, not how CPI itself writes a mapping (for that, the original exports above are the evidence, L1). Each has its own `spec.md` and `CHANGELOG.md` in `mappings/`.
 
 ## Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02 (v1.1.1)
 - Tibnor S/4 IDoc ORDERS02 → Hämeenlinna Metocs hub OrdersMessage (XSD, no namespace)
 - Shows: partner/qualifier filters on IDoc segments (removeContexts(ifWithoutElse(stringEquals…))), FixValues tables with default (vmstrategy 1), container constants + createIf, duplicate subtrees (Party, Reference, PartyId), formatNumber `#` / `0.###`, count, getProperty, UDFs removezeros + cropText/hasBestText
 
-## Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP (v1.0.5)
+## Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP (v1.0.6)
 - Hub OrdrspInterchange (namespaced XSD, qualified) → Tibnor S/4 IDoc ORDRSP/ORDERS01
 - Shows: `ns0:` on every source step + namespace as 4th link elem, attribute context = Item (Date/@Type vs Date), item segments from filtered chain (ifWithoutElse → removeContexts → SplitByValue), CopyValue 0 for header→item, FixValues Use Key (vmstrategy 2), createIf + removeContexts rule, library UDF substringSafe. Contains the user's own CPI corrections (v1.0.4)
 
@@ -133,7 +133,7 @@ Built by the toolkit in this repo (`mappings/<folder>/build/`), imported and tes
 - Hub DeliveryBatch (namespaced XSD) → Tibnor S/4 IDoc DESADV/DELVRY01
 - Shows: multi-output Groovy UDF (groupByHeat, outputs 0–6 incl. plain arg for 0), flattening with useOneAsMany(line field, SinglePart, SinglePart), TransformDate, CopyValue 0 per group
 
-## Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC (v1.0.1)
+## Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC (v1.0.2)
 - Hub Invoice (XSD, no namespace) → Tibnor S/4 IDoc INVOIC/INVOIC01 (MM)
 - Shows: attribute filters with mapWithDefault (PO pattern), attribute context on AddArticleNo/@Type and DocumentId/Date/@Type, CopyValue, repeating segment from source node (E1EDK04 ← Tax), concat with delimiter, formatNumber `0000000000`
 

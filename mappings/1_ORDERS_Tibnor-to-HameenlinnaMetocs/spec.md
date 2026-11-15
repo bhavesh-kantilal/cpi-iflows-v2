@@ -110,3 +110,8 @@ The output contains only these Party fields:
 - CPI re-serializes XSDs on export: attribute order and CDATA change, but all paths are identical. The builds keep the user's original XSD files.
 - **Decided 2026-11-13 (user): Reference keeps its values** ← BELNR / 'S' / 'TPO'. The empty-constant CPI edit was not intended. Simple-content elements that carry a value are not "tags".
 - **Known risk (from v1.0.0 design):** Property text pairs E1EDP19 QUALF (context per item) with KTEXT (context per segment). This is correct with one E1EDP19 per item, as in all samples, but may mis-pair if an item also has e.g. a QUALF 002 segment. Fix it once there is a sample.
+
+## UDF call-outs (rule R2, 2026-11-15)
+- **Bhavesh, I built `hasBestText` (`TibnorOrdersHelpers.groovy`) because** Property/PropertyText (row 46) is only sent for items that have an E1EDPT1 text with TDID `BEST`, and no standard function answers "does this item contain a value X among its segments" per item. Standard alternative: `exists` / `stringEquals` + `ifWithoutElse` on E1EDPT1/TDID with the context set to E1EDP01. Why not then: at v1.0.0 neither `exists` nor the context rules (R3, attribute context) were known. Candidate to replace at the next version.
+- **Bhavesh, I built `cropText` because** the KTEXT must be cut to 35 characters, the reference UDF `cropString` is fixed at 50, and a standard `substring(0, 35)` fails on shorter texts. Today's alternative: library UDF `substringSafe(value, '0', '35')` (udf_library). Candidate to replace at the next version.
+- **`removezeros`** (reference CostCentertoMedius, unchanged): IDTNR may contain letters, so `formatNumber '#'` would fail (CLAUDE.md leading-zero rule).
