@@ -195,6 +195,7 @@ def wsdl_import_test():
                                                  to the plain XSD file names
     Output: build/test_wsdl_import/<Name>_TestA/B.zip (mapping + WSDL + scripts, NO XSDs) and xsd_to_import/."""
     import copy
+    import zipfile
     import re
     import shutil
     S_ = HERE / "schemas"
@@ -211,11 +212,36 @@ def wsdl_import_test():
     (out / "xsd_to_import").mkdir(parents=True, exist_ok=True)
     for f in xsds.values():
         shutil.copyfile(S_ / "downloaded" / f, out / "xsd_to_import" / f)
-    for tag, wsdl in (("TestA", "NShift_ConsignmentWS_urlimport.wsdl"), ("TestB", "NShift_ConsignmentWS_fileimport.wsdl")):
+    # TestD: schemaLocation as a path into CPI's xsd/ resource folder (the WSDL itself sits in wsdl/)
+    xsdpath = src
+    for url, f in xsds.items():
+        xsdpath, n = re.subn(rb'schemaLocation="' + re.escape(url.encode()) + rb'"',
+                             b'schemaLocation="../xsd/' + f.encode() + b'"', xsdpath)
+        assert n == 1, url
+    (S_ / "NShift_ConsignmentWS_xsdpathimport.wsdl").write_bytes(xsdpath)
+    # Plain archive for a manual "Add target message" upload: WSDL (file-name imports) + both XSDs, flat
+    with zipfile.ZipFile(out / "upload_archive_NShift_ConsignmentWS_with_xsds.zip", "w", zipfile.ZIP_DEFLATED) as za:
+        za.writestr("NShift_ConsignmentWS_fileimport.wsdl", rel)
+        for f in xsds.values():
+            za.write(S_ / "downloaded" / f, f)
+    # A, B: XSDs to import by hand. C: XSDs inside the zip next to the WSDL (wsdl/). D: XSDs inside the zip in xsd/.
+    variants = (("TestA", "NShift_ConsignmentWS_urlimport.wsdl", None),
+                ("TestB", "NShift_ConsignmentWS_fileimport.wsdl", None),
+                ("TestC", "NShift_ConsignmentWS_fileimport.wsdl", "wsdl"),
+                ("TestD", "NShift_ConsignmentWS_xsdpathimport.wsdl", "xsd"))
+    for tag, wsdl, xsd_folder in variants:
         v = copy.deepcopy(m)
         v.name = f"{NAME}_{tag}"
         v.target.elems[0] = wsdl
         z = package(v, HERE, out)
+        if xsd_folder:
+            with zipfile.ZipFile(z, "a", zipfile.ZIP_DEFLATED) as zz:
+                for f in xsds.values():
+                    zz.write(S_ / "downloaded" / f, f"{xsd_folder}/{f}")
+            for f in xsds.values():
+                d = out / v.name / xsd_folder
+                d.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(S_ / "downloaded" / f, d / f)
         errs = check_build(z, v.name)
         expected = [e for e in errs if "unresolved" in e]          # types live in the XSDs imported in CPI
         other = [e for e in errs if e not in expected]

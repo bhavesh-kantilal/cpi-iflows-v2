@@ -91,4 +91,11 @@ The user remembers that CPI resolves a WSDL's imports when the XSDs are imported
   - **TestB:** the same.
   - Selecting either WSDL by hand as the target message fails with `Cannot import file 'NShift_ConsignmentWS_fileimport.wsdl'; XSD: Type reference 'http://www.spedpoint.com/consignment/types/v1_0#Consignment' is unresolved` (and the same for AuthenticationToken, Error, GoodsItem, ServiceException …). The URL-import WSDL gives the same error.
   - **Conclusion:** CPI reads a WSDL on its own. It does not follow `schemaLocation` to the internet address, nor to a file name, nor to XSDs imported into the same mapping. The types must be inside the WSDL, as in the inlined `NShift_ConsignmentWS.wsdl` (v1.0.1/v1.0.2, working). The rule in CLAUDE.md / FORMAT_NOTES §1.1 stays.
-  - Not tested: a WSDL and its XSDs uploaded together as one archive, or a `schemaLocation` path into CPI's `xsd/` folder (`../xsd/…`).
+  - Not tested yet: a WSDL and its XSDs uploaded together as one archive, or a `schemaLocation` path into CPI's `xsd/` folder (`../xsd/…`).
+
+### Follow-up test 2026-11-15 (user: try both before ruling anything out)
+Same build command, more output in `build/test_wsdl_import/`:
+- **TestC** `…_Book_TestC.zip` (one archive): the WSDL with file-name imports (as TestB) **plus both XSDs in the same `wsdl/` folder** of the mapping zip. The WSDL and its XSDs reach CPI together, side by side (an XSD in `wsdl/` is seen in reference DIR).
+- **upload_archive_NShift_ConsignmentWS_with_xsds.zip**: only the WSDL (file-name imports) and the two XSDs, flat, for a manual upload in "Add target message", if CPI accepts an archive there.
+- **TestD** `…_Book_TestD.zip` (schemaLocation path): the WSDL imports `../xsd/ConsignmentWS_xsd1.xsd` / `…xsd2.xsd` (`schemas/NShift_ConsignmentWS_xsdpathimport.wsdl`), and the XSDs are inside the zip in `xsd/`, CPI's XSD resource folder. No manual step.
+- **Result:** pending the user's CPI test.
