@@ -125,10 +125,9 @@ b.map(f"{P}/AddressLine3", F("iF", we_ort01, is_oy, table(ag_partn, [("0010", "K
 b.map(f"{P}/PostalCode", F("iF", we_pstlz, is_oy, table(ag_partn, [("0010", "73129"), ("0310", "1081")])))
 b.map(f"{P}/CountryCode", partner("AG", "LAND1"))
 bname_raw = partner("AG", "BNAME")
-bname = nonempty(bname_raw)
 b.map(f"{P}/Contact", exists(bname_raw))              # container: createIf (user feedback 1.1.0)
 b.map(f"{P}/Contact/@Type", C("PD"))
-b.map(f"{P}/Contact/ContactName", bname)
+b.map(f"{P}/Contact/ContactName", bname_raw)            # straight under createIf (same condition)
 telf1 = nonempty(F("replaceString", F("replaceString", partner("AG", "TELF1"), C("-"), C("")), C(" "), C("")))
 b.map(f"{P}/Contact/CommId", telf1)
 b.map(f"{P}/Contact/CommId/@Type", C("TE"))
@@ -157,14 +156,13 @@ b.map(f"{T}/Currency", C("EUR"))                                                
 b.map(f"{T}/Currency/@Type", C("5"))
 lkond_raw = header_qualified("E1EDK17", "001", "LKOND")
 lktext_raw = header_qualified("E1EDK17", "001", "LKTEXT")
-lkond, lktext = nonempty(lkond_raw), nonempty(lktext_raw)
 b.map(f"{T}/TermsOfDelivery", exists(lkond_raw))      # container: createIf (user feedback 1.1.0)
 b.map(f"{T}/TermsOfDelivery/@Type", C("6"))
-b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond)
+b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond_raw)   # straight under createIf
 b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode/@CodeSet", C("Z2K"))
 b.map(f"{T}/TermsOfDelivery/Location", exists(lktext_raw))
 b.map(f"{T}/TermsOfDelivery/Location/@Type", C("1"))
-b.map(f"{T}/TermsOfDelivery/Location/LocationText", lktext)
+b.map(f"{T}/TermsOfDelivery/Location/LocationText", lktext_raw)   # straight under createIf
 
 # ---- Items (#43-51) -----------------------------------------------------------------------
 E = f"{I}/E1EDP01"
@@ -181,7 +179,7 @@ b.map(f"{T}/Item", S(E))
 b.map(f"{T}/Item/LineNo", F("formatNumber", S(f"{E}/POSEX"), nformat="#", separator="."))
 b.map(f"{T}/Item/AddArticleNo", b.udf("removezeros", "removezeros", idtnr001))
 b.map(f"{T}/Item/AddArticleNo/@Type", C("UA"))
-b.map(f"{T}/Item/Property", F("createIf", has_best))  # container: only items with a BEST text
+b.map(f"{T}/Item/Property", prop_text)              # segment from the same chain as PropertyText (createIf rule)
 b.map(f"{T}/Item/Property/@Type", C("44"))
 b.map(f"{T}/Item/Property/PropertyText", prop_text)
 b.map(f"{T}/Item/Quantity", C(""))                    # container: every PO item has a quantity (user)
