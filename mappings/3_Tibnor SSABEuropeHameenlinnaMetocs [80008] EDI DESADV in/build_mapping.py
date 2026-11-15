@@ -88,8 +88,8 @@ def g(name):
 
 
 def per_group(v):
-    """Header value repeated once per group: useOneAsMany(value, groups in one context, one context per group)."""
-    return F("useOneAsMany", v, b.out(groups, OUT["posnr"]), g("posnr"))
+    """Header value on every group (E1EDL24): CopyValue index 0 (CLAUDE.md rule, ORDRSP v1.0.3)."""
+    return F("CopyValue", v, nnumber="0")
 
 
 # ---- control record EDI_DC40 (#1-7) ---------------------------------------------------------
