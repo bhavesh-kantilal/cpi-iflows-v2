@@ -126,7 +126,10 @@ What was wrong, in plain words:
    - **Fix (user):** context = Item on those attributes (DATUM, EDATU, E1EDP19, IDTNR).
    - Not needed where the attribute is compared with a child element (`Quantity/@Type` + `QuantityValue`, `Reference/@Type` + `RefNo`): both sides are in the element's context. This is an exception to the "no context settings on lower-level fields" rule (REVIEW.md).
 4. The expected output sample was re-indented by the user; its content is unchanged.
-- **Open question to the user:** in the download, **E1EDP03 itself** uses `Date/@Type` / `@Format` **without** the Item context, while DATUM/EDATU use it. Taken over exactly. Is this intentional, or should E1EDP03 use the same chain as DATUM/EDATU?
+- **E1EDP03 without the Item context (v1.0.4, answered 2026-11-15 → v1.0.5):** the user confirmed it should be consistent. Why it worked anyway (user's queue screenshots):
+  - Without the context, the true/false list (one context per Date) and the Date list (one context per Item) are split differently. `ifWithoutElse` paired the conditions with the wrong Dates: the output held `202651`, `20261218` … instead of the ranges.
+  - Every item has exactly one format-718 date, so each item still got exactly one value. A **segment** only counts values (one value = one segment), so E1EDP03 was right by luck. A **field** writes the value, so DATUM would have been wrong.
+  - It breaks with an item that has no or two 718 dates. **Rule: the segment and its fields use the same correctly aligned chain.** v1.0.5: E1EDP03 ← the Item-context chain shared with DATUM/EDATU.
 
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).

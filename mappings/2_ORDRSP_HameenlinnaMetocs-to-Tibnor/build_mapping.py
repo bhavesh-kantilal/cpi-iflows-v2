@@ -145,11 +145,9 @@ b.map(f"{P}/E1EDP02/QUALF", C("001"))
 # header PO number on every item: CopyValue index 0 (user feedback 2026-11-15, instead of useOneAsMany)
 b.map(f"{P}/E1EDP02/BELNR", F("CopyValue", po_no, nnumber="0"))
 b.map(f"{P}/E1EDP02/ZEILE", line_no)
-# #18: one per format-718 date. Taken over exactly from the user's CPI download v2: here the Date attributes
-# have NO context setting (DATUM/EDATU use context Item). Asked the user whether this is intentional.
-date_718_seg = each(F("ifWithoutElse", F("and", eq(S(f"{IT}/Date/@Type"), "55"), eq(S(f"{IT}/Date/@Format"), "718")),
-                      S(f"{IT}/Date"), keepss="false"))
-b.map(f"{P}/E1EDP03", date_718_seg)
+# #18: one per format-718 date, the same Item-context chain as DATUM/EDATU (user 2026-11-15: keep segment and
+# fields consistent; without the context the segment count is right by luck, the values are not)
+b.map(f"{P}/E1EDP03", date_718)
 b.map(f"{P}/E1EDP03/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP03/IDDAT", C("001"))
 b.map(f"{P}/E1EDP03/DATUM", conf_date)

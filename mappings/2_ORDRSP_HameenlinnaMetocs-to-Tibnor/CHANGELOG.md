@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.5 — 2026-11-15
+- `E1EDP03` now uses the same Item-context Date chain as DATUM/EDATU (user: keep segment and fields consistent). Before, the segment count was right only because every item has exactly one format-718 date; the values were paired with the wrong Dates.
+- Logically identical to the user's CPI download except E1EDP03 (as in the user's screenshot after the change). All checks passed.
+
 ## 1.0.4 — 2026-11-15
 Takes over the user's CPI fixes (`feedback/feedback_v2.docx`, CPI download `feedback/Map_…_ORDRSP (1).zip`; logically identical to the download):
 - `E1EDK02` (QUALF 001) was missing: it now comes from `SplitByValue(removeContexts(ifWithoutElse(@Type = CO, RefNo)))` instead of `createIf` without `removeContexts`. `E1EDK02/BELNR` and `E1EDK01/BELNR` use the same chain.
