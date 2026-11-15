@@ -47,6 +47,14 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | C9 | NShift | Mapping name `Map_TibnorS4_NShift_TransportOrder_Book` was chosen by Claude, not given by the user | Open |
 | C10 | NShift | The spec workbook `S4TM-NShift_TransportOrder_Book_MappingSpec_v0.1.xlsx` was written by Claude (layout copied from the INVOIC workbook) | Open |
 | C11 | All | Control record handled as ORDRSP: SNDPOR / RCVPOR / RCVPRN from exchange properties, STD constants, REFMES empty | Open |
+| C12 | MAT (`Map_Material_SmartTeam` › `Descriptions/Description/@lang`) | Context on `Description/@languageCode` (to `Product/Description`): works for 0/1/2 languages, reason not recalled, not deeply tested (user, re-learn Q6) | Open (later) |
+| C13 | DESADV | `groupByHeat` UDF vs the user's standard: XSLT sort in the iFlow + SplitByValue value change + formatByExample + sum. Decide in the iFlow phase (re-learn Q1) | Open |
+
+## A2. Proposals from the re-learn (waiting for approval)
+| # | Proposal | Where | Evidence | Status |
+|---|---|---|---|---|
+| R1 | SplitByValue "value change" groups consecutive equal values only: the source must be sorted by the key; if it isn't, sort it in an XSLT step in the iFlow before the mapping | FORMAT_NOTES §3.6 + CLAUDE.md conventions | L2 (user, Q1) + L1 (I0115 `SortByTaxLines` before ACC and INV) | Open |
+| R2 | UDF call-out, question format, re-learn includes the iFlow (text in the chat of 2026-11-15) | CLAUDE.md | User request | Open |
 
 ## D. Other actions taken
 | # | Action | Status |
