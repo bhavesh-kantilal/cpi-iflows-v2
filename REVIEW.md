@@ -58,6 +58,7 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | R3 | To lift a field to a higher level, set `context=` on the source (JournalEntry style, shows in italics in the editor). Use `removeContexts` only when all contexts must be removed | CLAUDE.md conventions + FORMAT_NOTES §3.6 | L2 (user, Q3) + L1 (JE ProductTaxItem, INV GLACCOUNTDATA) | Open |
 | R4 | `mapWithDefault` after a context change only when the business context guarantees at most one occurrence per new context (e.g. an invoice header field). Otherwise `mapWithDefault` in the field's own context first, then `removeContexts` / `formatByExample` | FORMAT_NOTES §3.6 (narrows the ORDRSP v1.0.0 statement) | L2 (user, Q4) + L1 (ACC item[6], SUP identifiers) | Open |
 | R5 | Line numbers the source doesn't send: standard `counter` (`ini`/`inc` as needed, e.g. `ini=2` when line 1 is reserved for the vendor line). A UDF only if `counter` can't do it | CLAUDE.md conventions | L2 (user, Q5) + L1 (ACC, JE, INV: 24 uses) | Open |
+| R6 | Before building a mapping, decide what belongs in the iFlow: sorting (R1), splitting into one object per message, filtering by exchange property, logic across segments (XSLT). The mapping stays field-to-field; every such step is named in `spec.md` and called out to the user | CLAUDE.md conventions | L1 (14 iFlows, `docs/explained/relearn-2026-11-15-iflows.md`), waiting for Q9/Q10 | Open |
 
 ## D. Other actions taken
 | # | Action | Status |
