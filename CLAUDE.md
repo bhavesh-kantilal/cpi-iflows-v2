@@ -58,6 +58,17 @@ mappings/<Folder>/          one folder = one mapping
   - Never `createIf` on a segment together with `ifWithoutElse` on its fields. Instead feed the segment and its fields from one filtered chain (`ifWithoutElse` → `removeContexts` → `SplitByValue`).
   - Optional **item** segments (one per item, e.g. E1EDP03, E1EDP19) always come from that filtered chain, never from `createIf` on a per-child condition.
 - **Header value on every item:** `CopyValue(value, 0)`, not `useOneAsMany` (user rule 2026-11-15).
+- **SplitByValue "Value change"** groups only *consecutive* equal values. **Whenever a mapping uses it, ask the user** whether the input must be sorted first, and how: the source may already be sorted, sorting may not be needed, or the user may want it without sorting. If sorting is wanted, it's an XSLT sort step in the iFlow before the mapping (L1: iFlow I0115 XSLT `SortByTaxLines` before `MapToRFC_BAPI_ACC_DOCUMENT_POST`). A sum per group is `sum(formatByExample(value, SplitByValue[value change](removeContexts(key))))` (L1 ACC `CURRENCYAMOUNT/item[2]/AMT_DOCCUR`, confirmed by the user). (R1, 2026-11-15)
+- **Lifting a field to a higher level:** prefer a `context=` setting on the source (JournalEntry style, shown in italics in the editor). Use `removeContexts` when *all* contexts must go. Not a hard rule. (R3, user 2026-11-15)
+- **`mapWithDefault` after a context change** only when the business context guarantees at most one occurrence per new context (e.g. an invoice header field). Otherwise apply `mapWithDefault` in the field's own context first, then `removeContexts` / `formatByExample`. (R4, FORMAT_NOTES §3.6)
+- **Line numbers:** case by case. Only when the source does **not** provide line numbers, consider the standard `counter` (e.g. `ini=2`, `inc=2` when line 1 is reserved for the vendor line, as in ACC). A UDF only if `counter` can't do it. (R5, user 2026-11-15)
+- **iFlow steps around the mapping: a check, not a rule.** Before building, ask whether something belongs in the iFlow, and decide per interface with the user. Candidates seen in the user's iFlows:
+  - a sort step (see "Value change" above)
+  - a splitter when the **target expects one message per object** (I0541, I0544: Medius wants one message per supplier / company code)
+  - XSLT for grouping, filtering, or moving a whole segment to another level (I0161 `LowestLevel`, I0544 `AccountingInformationAllowed`)
+  - removing `xsi:nil` fields that clutter the mapping (I0544 JDBC `removeXSINil`)
+
+  Otherwise a UDF is preferred over XSLT. Every such step is named in the mapping's `spec.md` and called out to the user. (R6, user 2026-11-15)
 - **Value tables:** FixValues "Use Key" (`vmstrategy 2`, empty default) passes unknown values through, e.g. unit M → MTR. Use it instead of if-then-else.
 - **Layout (user rule 2026-11-15):** share logic between targets only when the editor canvas stays clean: no overlapping bricks, and a shared brick in the same column for all its targets (like E1EDK03 + DATUM). Otherwise split. The toolkit does this (`Builder`), and the build checks reject overlaps.
 - **UDF library:** reusable UDFs live in `udf_library/` (see its README). A mapping copies the file **unchanged** into its `scripts/`. Prefer the standard function, e.g. `substring`; use a library UDF such as `substringSafe` only when the standard one may fail (value length not certain).
@@ -106,6 +117,15 @@ Claude keeps no private memory for this project: what is not written in this rep
   (mapping, target field, brick). Generated mappings are not changed unless an approved rule changes.
 - **Generated references** go into `_reference/` marked L3 in its README; they show what works, not how
   SAP itself writes a mapping.
+- **UDF call-out:** whenever Claude writes a UDF (or proposes an iFlow step such as an XSLT), the mapping's
+  `spec.md` Decisions and the chat message say: "Bhavesh, I built `<name>` because `<requirement>`; standard
+  alternative: `<…>`; why not: `<…>`." (R2)
+- **Question format:** every question names `iFlow › mapping › target field (full path)` and the full
+  expression (sources, functions, context settings), so it can be opened in CPI. If the iFlow is not known,
+  say "no iFlow known". (R2)
+- **Re-learn includes the iFlow:** a mapping pattern is always read with the iFlow steps before and after it
+  (`_reference/CATALOG.md` §4; `tools/iflow_import.py` for new iFlow zips). Mappings without an iFlow are
+  listed, and the user is asked for the export. (R2)
 - **New references**: the user drops `<Name>.zip` into `_reference/` and adds a README entry. On "learn new references":
   - extract the zip into `_reference/<Name>/`
   - regenerate `_reference/CATALOG.md` with `py -I tools/catalog.py` (functions, params and patterns, with sources; never edit it by hand)

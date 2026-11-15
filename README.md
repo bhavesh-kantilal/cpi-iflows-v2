@@ -67,6 +67,12 @@ Each lesson links to where it now lives. The level shows how strong the evidence
 - The WSDL link uses the message **element** name (`book`). → FORMAT_NOTES §2.2 (L2)
 - S/4 sends UTC; nShift wants the local calendar day (`toLocalDate` UDF). → `mappings/5_…/spec.md` (L4, the user's test pending)
 
+**Re-learn with the iFlows (15 Nov)**: [report 1](docs/explained/relearn-2026-11-15.md), [report 2](docs/explained/relearn-2026-11-15-iflows.md)
+- SplitByValue "value change" groups only adjacent values: **always ask** whether to sort first (XSLT in the iFlow) or not. → CLAUDE.md, FORMAT_NOTES §3.6 (L1 I0115 `SortByTaxLines` + L2)
+- Lift a field with `context=` (preferred), `removeContexts` when all contexts must go; `mapWithDefault` after a context change only with at most one occurrence per context. → CLAUDE.md, FORMAT_NOTES §3.6 (L1 + L2)
+- Line numbers: case by case; `counter` only when the source has none. `exists` where it reads more clearly. → CLAUDE.md, FORMAT_NOTES §3.4 (L1 + L2)
+- Check per interface whether a step belongs in the iFlow (sort, split per object, XSLT filter/grouping, remove `xsi:nil`); otherwise prefer a UDF. Every UDF and iFlow step is called out to the user, and every question names iFlow › mapping › target. → CLAUDE.md (L1, 14 iFlows + L2)
+
 ## Open
 - Re-learn questions Q1–Q6 → [`docs/explained/relearn-2026-11-15.md`](docs/explained/relearn-2026-11-15.md)
 - Business assumptions per mapping (INVOIC ZEILE, NShift booking design …) → [`REVIEW.md`](REVIEW.md) section C
