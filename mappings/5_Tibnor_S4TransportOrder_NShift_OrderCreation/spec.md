@@ -98,4 +98,12 @@ Same build command, more output in `build/test_wsdl_import/`:
 - **TestC** `…_Book_TestC.zip` (one archive): the WSDL with file-name imports (as TestB) **plus both XSDs in the same `wsdl/` folder** of the mapping zip. The WSDL and its XSDs reach CPI together, side by side (an XSD in `wsdl/` is seen in reference DIR).
 - **upload_archive_NShift_ConsignmentWS_with_xsds.zip**: only the WSDL (file-name imports) and the two XSDs, flat, for a manual upload in "Add target message", if CPI accepts an archive there.
 - **TestD** `…_Book_TestD.zip` (schemaLocation path): the WSDL imports `../xsd/ConsignmentWS_xsd1.xsd` / `…xsd2.xsd` (`schemas/NShift_ConsignmentWS_xsdpathimport.wsdl`), and the XSDs are inside the zip in `xsd/`, CPI's XSD resource folder. No manual step.
-- **Result:** pending the user's CPI test.
+- **Result (user's CPI test, 2026-11-15): TestC works, TestD works.** The full `book` structure loads (AuthenticationToken, Consignment, transactionId). The manual upload archive was not tried (user: not needed).
+  - The three WSDLs differ **only** in the two `schemaLocation` values (lines 6–7). Everything else is byte-identical to the user's `Target.wsdl`:
+    - original: `https://service.web-ta.net/ws/services/ConsignmentWS?xsd=1` / `?xsd=2`
+    - TestB/C: `ConsignmentWS_xsd1.xsd` / `ConsignmentWS_xsd2.xsd`
+    - TestD: `../xsd/ConsignmentWS_xsd1.xsd` / `../xsd/ConsignmentWS_xsd2.xsd`
+  - **What it shows:** CPI resolves `schemaLocation` as a **relative file path from the WSDL's own folder** (`wsdl/`); it does not fetch URLs and does not search by namespace.
+    - TestB and TestC use the same WSDL. B failed because the XSDs imported by hand landed in CPI's `xsd/` folder, not next to the WSDL. C works because the XSDs are in `wsdl/`.
+    - TestD works because `../xsd/` points from `wsdl/` to the `xsd/` folder.
+  - So there are three working options: inline the XSDs into the WSDL (v1.0.2), XSDs next to the WSDL with file-name imports (C), or XSDs in `xsd/` with `../xsd/` imports (D). In C and D the original XSD files stay unchanged and only two attribute values in the WSDL change.
