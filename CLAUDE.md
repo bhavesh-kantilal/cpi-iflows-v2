@@ -93,9 +93,21 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 - Commit or push only as part of a task the user asked for. Recommended: a private remote (GitHub or Azure DevOps) so the repo survives a disk crash.
 
 ## Learning loop
+Claude keeps no private memory for this project: what is not written in this repo is not known.
+- **Evidence levels.** L1 = the user's original export; L2 = the user's CPI download or explicit statement;
+  L3 = Claude's build that the user tested in CPI; L4 = Claude's analysis (UNVERIFIED). Every fact in
+  FORMAT_NOTES and every rule here names its source and level.
+- **Loop for every new lesson:** capture it in the mapping's `spec.md` with its evidence → propose it in
+  `REVIEW.md` → only after the user's approval write it into CLAUDE.md (rule) or FORMAT_NOTES (fact).
+- **Re-learn after every approved lesson or new reference:** run `py -I tools/catalog.py`, then check every
+  rule against all references (supported / contradicted / not seen, with files) in a report under
+  `docs/explained/`. Contradictions and anything not understood go to the user as numbered questions
+  (mapping, target field, brick). Generated mappings are not changed unless an approved rule changes.
+- **Generated references** go into `_reference/` marked L3 in its README; they show what works, not how
+  SAP itself writes a mapping.
 - **New references**: the user drops `<Name>.zip` into `_reference/` and adds a README entry. On "learn new references":
   - extract the zip into `_reference/<Name>/`
-  - update `_reference/CATALOG.md` (functions, params and patterns, with sources)
+  - regenerate `_reference/CATALOG.md` with `py -I tools/catalog.py` (functions, params and patterns, with sources; never edit it by hand)
   - diff against FORMAT_NOTES and propose additions with citations
 - **Feedback** (after the user tests in CPI):
   1. The user downloads the mapping from CPI: package → Artifacts → Actions (…) → **Download**. They save the zip in `mappings/<Folder>/feedback/` and say "feedback is in".
