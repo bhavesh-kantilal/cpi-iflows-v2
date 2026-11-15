@@ -86,4 +86,9 @@ The user remembers that CPI resolves a WSDL's imports when the XSDs are imported
 - **TestB** `…_Book_TestB.zip`: the same WSDL with only the two `schemaLocation` values changed to the file names `ConsignmentWS_xsd1.xsd` / `ConsignmentWS_xsd2.xsd` (`schemas/NShift_ConsignmentWS_fileimport.wsdl`). This tests whether CPI matches them **by file name**. Offline, the WSDL schema compiles together with the two XSDs next to it.
 - Both zips contain no XSD. The XSDs to import are `build/test_wsdl_import/xsd_to_import/ConsignmentWS_xsd1.xsd` and `…xsd2.xsd`, unchanged from the download.
 - Build checks: everything passes except the expected 5 unresolved type references per zip (the types are in the XSDs that are imported in CPI).
-- **Result:** pending the user's CPI test. If A or B works, that becomes the rule for URL-imported XSDs (instead of or next to `tools/wsdl_inline.py`), and v1.0.3 is built that way.
+- **Result (user's CPI test, 2026-11-15): neither works.**
+  - **TestA:** imports, but the `book` structure below AuthenticationToken / Consignment stays orange (unresolved), and the simulation is not possible.
+  - **TestB:** the same.
+  - Selecting either WSDL by hand as the target message fails with `Cannot import file 'NShift_ConsignmentWS_fileimport.wsdl'; XSD: Type reference 'http://www.spedpoint.com/consignment/types/v1_0#Consignment' is unresolved` (and the same for AuthenticationToken, Error, GoodsItem, ServiceException …). The URL-import WSDL gives the same error.
+  - **Conclusion:** CPI reads a WSDL on its own. It does not follow `schemaLocation` to the internet address, nor to a file name, nor to XSDs imported into the same mapping. The types must be inside the WSDL, as in the inlined `NShift_ConsignmentWS.wsdl` (v1.0.1/v1.0.2, working). The rule in CLAUDE.md / FORMAT_NOTES §1.1 stays.
+  - Not tested: a WSDL and its XSDs uploaded together as one archive, or a `schemaLocation` path into CPI's `xsd/` folder (`../xsd/…`).
