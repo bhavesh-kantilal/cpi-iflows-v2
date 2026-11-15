@@ -31,7 +31,31 @@
 - **Q10 — Split before mapping.** iFlows `I0541_…` (Internal Order Splitter) and `I0544_BusinessPartner_FSAP_Medius_JMSToREST` (Splitter Account Information): is "one business object per message, split in the iFlow" your default? That would answer ORDRSP OP-08 (several confirmations per interchange) and NShift OP-01 (one booking per house waybill).
 - **Q11 — removeXSINil.** iFlow `I0544_BusinessPartner_FSAP_StreamServeDDS_JMSToJDBC` › XSLT `removeXSINil` before `MapBPToDDSJDBC`: what goes wrong with `xsi:nil` (the mapping, or the JDBC adapter)?
 
+## 3b. Answers (2026-11-15)
+- **Q7 `exists`** (`I0541` › `InternalOrdertoMediusMap` › `isActive`). *User:* SAP only sends `StatusCreatedIndicator` / `StatusReleasedIndicator` when the status is set on the internal order. `mapWithDefault` would work too, but `exists` makes it easier to understand. **No hard rule:** use what makes logical sense and reads best. → `exists` goes into FORMAT_NOTES (L1 usage, L2 meaning: true when the node is present).
+- **Q8 Clean Namespace** (`I0544_BusinessPartner_FSAP_Medius_JMSToREST`). *User:* doesn't remember. **Read from the iFlow (L4, please confirm):** the script removes every `xsi:` attribute, `xmlns` declaration and element prefix. It sits inside this sequence:
+  1. "Save Payload" stores the original.
+  2. "Clean Namespace" runs.
+  3. "Splitter Account Information" splits with the namespace-free XPath `//BusinessPartnerSUITEReplicateRequestMessage/BusinessPartner/Supplier/AccountingInformation`, one split per company code.
+  4. "Set company Code" sets `CH_CompanyCode`.
+  5. The gateway "Allowed?" checks the company.
+  6. **"Restore Payload" puts the original, namespaced payload back.**
+  7. XSLT `AccountingInformationAllowed` keeps only that company's `AccountingInformation`.
+  8. The mapping `SupplierMastertoMedius` runs; its source still uses `ns0:`.
+
+  So the cleaning only makes the splitter's XPath simple. It is **not** an alternative to `ns0:` in the mapping. Pattern: *split per key on a cleaned copy, restore the original, filter it to the key with an XSLT parameter.*
+- **Q9 XSLT vs UDF.** *User:* no rule; **prefer a UDF when possible**. XSLT is for grouping, filtering, or moving a whole segment from one level to another.
+- **Q10 Split before mapping.** *User:* one BP can carry several AccountingInformation, and Medius expects one message per supplier per company code (and per internal order). Splitting first keeps the mapping at a single object. **Not a general rule:** it follows from what the target expects.
+- **Q11 removeXSINil.** *User:* the BP message has `xsi:nil="true"` on empty fields, which made the mapping messy, so those fields are removed first with an XSLT. Why the supplier BP mapping doesn't do the same is not known.
+
 ## 4. Proposals (need your OK; collected in REVIEW.md)
 - **R1–R5** (unchanged, now with more evidence).
-- **R6 (after Q9/Q10):** "Before building a mapping, decide what belongs in the iFlow: sorting (R1), splitting into one object per message, filtering by exchange property, logic across segments (XSLT). The mapping stays field-to-field." Every such iFlow step is named in the mapping's `spec.md`, and the user is told: "Bhavesh, this needs an iFlow step …".
-- **FORMAT_NOTES:** add `exists` (1 input, a boolean "node present"), once Q7 is answered.
+- **R6 (reworded after Q9–Q11): a check, not a rule.** Before building a mapping, ask whether a step belongs in the iFlow, and decide per interface with the user:
+  - sorting before "value change" grouping (R1)
+  - splitting when the **target expects one message per object** (Q10)
+  - filtering or moving whole segments (XSLT, Q9)
+  - removing `xsi:nil` fields that clutter the mapping (Q11)
+  - otherwise a UDF is preferred over XSLT (Q9)
+
+  Each such step is named in `spec.md` and called out ("Bhavesh, this needs an iFlow step because …").
+- **R7 FORMAT_NOTES:** `exists` (1 input) = true when the source node is present (I0541 `isActive`); use it where it reads more clearly than `mapWithDefault`, with no hard rule (Q7).

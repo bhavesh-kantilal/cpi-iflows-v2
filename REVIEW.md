@@ -49,6 +49,8 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | C11 | All | Control record handled as ORDRSP: SNDPOR / RCVPOR / RCVPRN from exchange properties, STD constants, REFMES empty | Open |
 | C12 | MAT (`Map_Material_SmartTeam` › `Descriptions/Description/@lang`) | Context on `Description/@languageCode` (to `Product/Description`): works for 0/1/2 languages, reason not recalled, not deeply tested (user, re-learn Q6) | Open (later) |
 | C13 | DESADV | `groupByHeat` UDF vs the user's standard: XSLT sort in the iFlow + SplitByValue value change + formatByExample + sum. Decide in the iFlow phase (re-learn Q1) | Open |
+| C14 | I0544 BP Medius | `CleanNamespace.groovy`: read from the iFlow as "namespace-free copy for the splitter XPath, original restored before the mapping" (L4). Please confirm when convenient | Open |
+| C15 | I0544 JDBC vs I0544 BP Medius | Why `removeXSINil` exists only before `MapBPToDDSJDBC` and not before `SupplierMastertoMedius` (user doesn't know) | Open (later) |
 
 ## A2. Proposals from the re-learn (waiting for approval)
 | # | Proposal | Where | Evidence | Status |
@@ -58,7 +60,8 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | R3 | To lift a field to a higher level, set `context=` on the source (JournalEntry style, shows in italics in the editor). Use `removeContexts` only when all contexts must be removed | CLAUDE.md conventions + FORMAT_NOTES §3.6 | L2 (user, Q3) + L1 (JE ProductTaxItem, INV GLACCOUNTDATA) | Open |
 | R4 | `mapWithDefault` after a context change only when the business context guarantees at most one occurrence per new context (e.g. an invoice header field). Otherwise `mapWithDefault` in the field's own context first, then `removeContexts` / `formatByExample` | FORMAT_NOTES §3.6 (narrows the ORDRSP v1.0.0 statement) | L2 (user, Q4) + L1 (ACC item[6], SUP identifiers) | Open |
 | R5 | Line numbers the source doesn't send: standard `counter` (`ini`/`inc` as needed, e.g. `ini=2` when line 1 is reserved for the vendor line). A UDF only if `counter` can't do it | CLAUDE.md conventions | L2 (user, Q5) + L1 (ACC, JE, INV: 24 uses) | Open |
-| R6 | Before building a mapping, decide what belongs in the iFlow: sorting (R1), splitting into one object per message, filtering by exchange property, logic across segments (XSLT). The mapping stays field-to-field; every such step is named in `spec.md` and called out to the user | CLAUDE.md conventions | L1 (14 iFlows, `docs/explained/relearn-2026-11-15-iflows.md`), waiting for Q9/Q10 | Open |
+| R6 | **Check, not rule:** before building, ask whether a step belongs in the iFlow: sort before value-change grouping (R1), split when the target expects one message per object (Q10), XSLT for grouping/filtering/moving whole segments (Q9), remove `xsi:nil` fields that clutter the mapping (Q11); otherwise prefer a UDF over XSLT. Decide per interface with the user, name it in `spec.md`, call it out | CLAUDE.md conventions | L1 (14 iFlows) + L2 (Q9–Q11) | Open |
+| R7 | `exists` (1 input) = true when the source node is present; use where it reads more clearly than `mapWithDefault` (no hard rule) | FORMAT_NOTES §3.4 | L1 (I0541 `isActive`) + L2 (Q7) | Open |
 
 ## D. Other actions taken
 | # | Action | Status |
