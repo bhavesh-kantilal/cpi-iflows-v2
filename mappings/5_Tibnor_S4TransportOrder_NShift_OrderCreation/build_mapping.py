@@ -133,8 +133,9 @@ def part(idx, role, src):
     phone = S(f"{A}/Communication/Telephone/Number/SubscriberID")
     email = S(f"{A}/Communication/Email/URI")
     b.map(f"{P}/Communication", F("createIf", F("or", has(phone), has(email))))        # A10
-    b.map(f"{P}/Communication/ns2:phone", nonempty(phone))
-    b.map(f"{P}/Communication/email", nonempty(email))
+    # createIf on the segment -> straight maps for its fields (CLAUDE.md createIf rule)
+    b.map(f"{P}/Communication/ns2:phone", phone)
+    b.map(f"{P}/Communication/email", email)
 
 
 part(0, "consignor", "ShipperParty")                                                    # A3
@@ -172,7 +173,7 @@ b.map(f"{TP}/PaymentInstruction/@value", F("iF", C("C"), eq(rpa, "CC"), C("P")))
 inco = S("DeliveryTerms/Incoterms/ClassificationCode")
 b.map(f"{TP}/Tod", F("createIf", has(inco)))
 b.map(f"{TP}/Tod/ns2:combiterm", inco)
-b.map(f"{TP}/Tod/ns2:location", nonempty(S("DeliveryTerms/Incoterms/TransferLocationName")))
+b.map(f"{TP}/Tod/ns2:location", S("DeliveryTerms/Incoterms/TransferLocationName"))   # straight under createIf
 pickup = local_date(S("RequestedPickupDateTimePeriod/StartDateTime"), S("ShipFromLocationAddressTimeZoneCode"))
 delivery = local_date(S("RequestedDeliveryDateTimePeriod/StartDateTime"), S("ShipToLocationAddressTimeZoneCode"))
 b.map(f"{TP}/Pickup", C(""))
