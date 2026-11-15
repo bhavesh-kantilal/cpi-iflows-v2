@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.6 — 2026-11-15 13:38 CET
+- Rule R4 (CLAUDE.md): `AddArticleNo/@Type` [context Item] (E1EDP19, IDTNR) goes into the filter without `mapWithDefault`. An item can carry several AddArticleNo, and `mapWithDefault` after a context change doesn't fill gaps. This changes a detail of the user's v1.0.4 CPI version, approved by the user 2026-11-15 ("Docs + R4 fix").
+- All checks passed. Re-test in CPI recommended (E1EDP19/IDTNR).
+
 ## 1.0.5 — 2026-11-15 11:36 CET
 - `E1EDP03` now uses the same Item-context Date chain as DATUM/EDATU (user: keep segment and fields consistent). Before, the segment count was right only because every item has exactly one format-718 date; the values were paired with the wrong Dates.
 - Logically identical to the user's CPI download except E1EDP03 (as in the user's screenshot after the change). All checks passed.

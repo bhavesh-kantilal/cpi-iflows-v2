@@ -135,3 +135,5 @@ What was wrong, in plain words:
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).
 - OP-10 PDF file name, OP-11 BELNR content, OP-13 price, OP-15 cancelled items, OP-16 items without a type-12 property.
+
+- **2026-11-15 Rule R4 applied (user: "Docs + R4 fix only"):** no `mapWithDefault` around an attribute that has a `context=` setting (AddArticleNo/@Type → IDTNR). See CHANGELOG.

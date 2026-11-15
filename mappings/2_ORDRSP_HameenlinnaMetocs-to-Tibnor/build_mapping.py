@@ -58,7 +58,10 @@ def by_type(node, value, field=None, attr_context=None):
     """Value of node (or node/field) where node/@Type = value. PO D_7140 pattern: mapWithDefault on both inputs.
     attr_context: set when the value is the node itself (AddArticleNo), see S()."""
     val = S(f"{node}/{field}") if field else S(node)
-    return F("ifWithoutElse", eq(F("mapWithDefault", S(f"{node}/@Type", attr_context), default_value=""), value),
+    attr = S(f"{node}/@Type", attr_context)
+    # R4 (CLAUDE.md): no mapWithDefault after a context change when the new context can hold several occurrences
+    key = attr if attr_context else F("mapWithDefault", attr, default_value="")
+    return F("ifWithoutElse", eq(key, value),
              F("mapWithDefault", val, default_value=""), keepss="false")
 
 
