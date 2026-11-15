@@ -1,5 +1,11 @@
 # CHANGELOG — Map_TibnorS4_NShift_TransportOrder_Book
 
+## 1.0.3 — 2026-11-15 12:20 CET
+- Target WSDL in the new default form (user decision after tests A–D): `NShift_ConsignmentWS.wsdl` is the user's `Target.wsdl` with **only** the two `schemaLocation` values changed to `../xsd/ConsignmentWS_xsd1.xsd` / `../xsd/ConsignmentWS_xsd2.xsd`.
+- The two NShift XSDs are in the zip's `xsd/` folder, unchanged from the download. They are no longer inlined into the WSDL.
+- The toolkit now packs relatively imported files automatically, and the checks follow the imports (paths, type references).
+- The mapping logic is unchanged (diff against v1.0.2: none). All checks passed. Same layout as TestD, which worked in CPI.
+
 ## 1.0.2 — 2026-11-15 11:43 CET
 - Applies the rules accepted in the review of 2026-11-15:
   - `Communication` (phone, e-mail) and `Tod/location` are straight maps under their `createIf` segments.

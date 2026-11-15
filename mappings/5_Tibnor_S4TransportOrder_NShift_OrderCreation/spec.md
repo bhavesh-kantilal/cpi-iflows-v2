@@ -107,3 +107,4 @@ Same build command, more output in `build/test_wsdl_import/`:
     - TestB and TestC use the same WSDL. B failed because the XSDs imported by hand landed in CPI's `xsd/` folder, not next to the WSDL. C works because the XSDs are in `wsdl/`.
     - TestD works because `../xsd/` points from `wsdl/` to the `xsd/` folder.
   - So there are three working options: inline the XSDs into the WSDL (v1.0.2), XSDs next to the WSDL with file-name imports (C), or XSDs in `xsd/` with `../xsd/` imports (D). In C and D the original XSD files stay unchanged and only two attribute values in the WSDL change.
+- **Decision 2026-11-15 (user): TestD is the default.** NShift v1.0.3 uses it: the WSDL keeps its imports, as `../xsd/` paths, and the XSDs sit in `xsd/`. The inlined WSDL is no longer used. `tools/wsdl_inline.py` stays available as the alternative. Rule in CLAUDE.md and FORMAT_NOTES §1.1.
