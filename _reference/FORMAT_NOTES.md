@@ -341,10 +341,10 @@ Every standard function seen, with its parameters. An input count comes from the
   - CLF `E1AUSPM/ATWRT`: SplitByValue(0, Each Value).
 - **`useOneAsMany`** (3 inputs): pin 0 = value, pin 1 = repeat source, pin 2 = context source. Pins 1 and 2 often point to the same shared Src (`object_uid`). Sources: INV, CLF `/DocumentInfoRecordUpdateRequest/Characteristics/Characteristic/...`.
 - **`formatByExample`** (2 inputs): ACC, INV.
-- **Context of a source field** is the `context="{ancestor path}"` attribute on a Src brick. It sets the context to that ancestor (right-click → Context). Examples:
+- **Context of a source field** is the `context="{ancestor path}"` attribute on a Src brick. It sets the context to that ancestor (right-click → **Contexts** submenu — lists every ancestor node name; checkmark = current setting). Examples:
   - MAT: `<brick context="/ns3:…/Product" gid="0" path="/ns3:…/Product/Plant/PlantID" type="Src">`
   - INV: `context="/root/invoice"` on `/root/invoice/poLines/lineNumber`.
-  - Without the attribute the source keeps its default parent context.
+  - Without the attribute the source keeps its default context = the **immediate parent** node (e.g. for `\MainCategory\Category\Product`, default = `Category`, not `MainCategory` or root). Setting `context=` to the root node of the source structure flattens all occurrences in the entire document into one context. (L1: SAP Help Portal "Set the Mapping Context", 2026-11-15)
 - **`mapWithDefault` after a context change does not fill the gaps.** **CONFIRMED 2026-11-13** in the user's ORDRSP v1.0.0 simulation. `context=Item` on `Property/PropertyText`, then `mapWithDefault`: the missing values were not added, the queues drifted apart, and no item was created.
   - The user's fix in CPI is to apply `mapWithDefault` in the field's own context first, then `formatByExample`.
   - **It is fine when the field occurs at most once per new context**, e.g. a header field. L1: ACC `CURRENCYAMOUNT/item[6]` ← `createIf(not(stringEquals(mapWithDefault(customField_Numeric1 [context /root]), '')))`; SUP `identifiers` (BankAccountID). The user confirmed (2026-11-15, R4): judge it from the business context; the cleaner way is `mapWithDefault` first, then `removeContexts` / `formatByExample`.
