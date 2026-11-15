@@ -1,0 +1,17 @@
+#
+#Sun Nov 15 12:14:33 UTC 2026
+CompanyCodeScope=SE78
+HTTP_Authorization=RoleBased
+HTTP_CSRFProtected=0
+HTTP_UserRole=ESBMessaging.send
+LogPayload=True
+LogPayloadSize=512
+MaxRetries=3
+Medius_Credentials=Medius_OAUTH_Test
+PartnerGroupCodes=
+QUEUE_NAME=I0544_MEDIUS
+SAP_MessageType=BusinessPartnerSUITEBulkReplicateRequest
+SAP_Receiver=Medius
+SAP_Sender=FD1-110
+externalSystemId=FSAP
+ssabQA=ssabQA

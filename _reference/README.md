@@ -60,6 +60,62 @@ Whole iFlows: drop `<iFlowName>.zip` into `_reference/iflows/` and add a line he
 ## I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc
 - Shows a simple iFlow where I get a message from my JMS Dispatcher over PD and post an IDoc over PD
 
+## I0048_CostCenter_COSMAS_COSMAS01_GSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `CostCenterECCToMedius`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0050_InternalOrder_INTERNAL_ORDER_ZINTERNAL_ORDER01_GSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `InternalOrderECCToMedius`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0083_Invoice_Medius_IFSSE_ProcessPostedInvoices_SendAttachmentsAndInvoice_JMSToSFTPToDS
+- Added 2026-11-15 (user). Message mappings: `MM_MediusInvoice_To_IFSSE`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0115_Invoice_Medius_FSAP_ProcessPostedInvoices_PDToSOAP
+- Added 2026-11-15 (user). Message mappings: `MapSpecialTaxCases`, `MapTaxBaseAmount`, `MapToJournalEntryRequest`, `MapToRFC_BAPI_ACC_DOCUMENT_POST`, `MapToRFC_BAPI_ACC_DOCUMENT_POST_OTM`, `MapToRFC_BAPI_INCOMINGINVOICE_GETDETAIL`; XSLT: `CalculateAndAddTaxBaseAmount.xslt`, `CreditMemo_ReverseCharge_PartiallyDeductubile.xslt`, `ReverseCharge_TaxBaseAmount.xslt`, `SortByTaxLines.xslt`, `SpecialTaxCodeLogic.xslt`, `SubsequentCreditDebit.xsl`, `XSLTMapping1.xsl`, `XSL_Group_ToMakeUniqueItems.xslt`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0161_Project_PROJECT_PROJECT02_GSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `CostCenterECCToMedius`, `MapProjectToMedius`, `MapToUserResponsible`; XSLT: `LowestLevel.xslt`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0540_CostCenter_FSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `CostCentertoMedius`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0541_InternalOrder_FSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `InternalOrdertoMediusMap`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0544_BusinessPartner_FSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `CostCentertoMedius`, `SupplierMastertoMedius`; XSLT: `AccountingInformationAllowed.xsl`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0544_BusinessPartner_FSAP_StreamServeDDS_JMSToJDBC
+- Added 2026-11-15 (user). Message mappings: `MapBPToDDSJDBC`; XSLT: `removeXSINil.xslt`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I0545_WBSElement_FSAP_Medius_JMSToREST
+- Added 2026-11-15 (user). Message mappings: `WBSElementToMedius`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I2018_Material_MSAP_SmarTeam_PDToHTTP
+- Added 2026-11-15 (user). Message mappings: `Map_Material_SmartTeam`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_PDToHTTP
+- Added 2026-11-15 (user). Message mappings: `Map_Equipment_SmartTeam`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_PDToHTTP
+- Added 2026-11-15 (user). Message mappings: `Map_FunctionalLocation_SmarTeam`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
+## I2051_P_DocumentInfoRecord_Create_SmarTeam_HTTPToODATA
+- Added 2026-11-15 (user). Message mappings: `Map_SmartTeam_MSAP_CreateDIR`
+- Steps before/after each mapping: `_reference/CATALOG.md` §4
+
 ---
 
 # Generated mappings (added 2026-11-15, evidence level L3)

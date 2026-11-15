@@ -55,6 +55,9 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 |---|---|---|---|---|
 | R1 | SplitByValue "value change" groups consecutive equal values only: the source must be sorted by the key; if it isn't, sort it in an XSLT step in the iFlow before the mapping | FORMAT_NOTES §3.6 + CLAUDE.md conventions | L2 (user, Q1) + L1 (I0115 `SortByTaxLines` before ACC and INV) | Open |
 | R2 | UDF call-out, question format, re-learn includes the iFlow (text in the chat of 2026-11-15) | CLAUDE.md | User request | Open |
+| R3 | To lift a field to a higher level, set `context=` on the source (JournalEntry style, shows in italics in the editor). Use `removeContexts` only when all contexts must be removed | CLAUDE.md conventions + FORMAT_NOTES §3.6 | L2 (user, Q3) + L1 (JE ProductTaxItem, INV GLACCOUNTDATA) | Open |
+| R4 | `mapWithDefault` after a context change only when the business context guarantees at most one occurrence per new context (e.g. an invoice header field). Otherwise `mapWithDefault` in the field's own context first, then `removeContexts` / `formatByExample` | FORMAT_NOTES §3.6 (narrows the ORDRSP v1.0.0 statement) | L2 (user, Q4) + L1 (ACC item[6], SUP identifiers) | Open |
+| R5 | Line numbers the source doesn't send: standard `counter` (`ini`/`inc` as needed, e.g. `ini=2` when line 1 is reserved for the vendor line). A UDF only if `counter` can't do it | CLAUDE.md conventions | L2 (user, Q5) + L1 (ACC, JE, INV: 24 uses) | Open |
 
 ## D. Other actions taken
 | # | Action | Status |

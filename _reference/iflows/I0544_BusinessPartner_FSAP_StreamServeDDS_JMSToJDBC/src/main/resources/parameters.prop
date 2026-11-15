@@ -1,0 +1,18 @@
+#Thu May 28 10:33:45 UTC 2026
+CompanyCodeScope=SE78
+ConnectionTImeout=3
+HTTP_Authorization=RoleBased
+HTTP_CSRFProtected=0
+HTTP_UserRole=ESBMessaging.send
+JDBCAlias=StreamServeDDS
+LogPayload=True
+LogPayloadSize=512
+MaxRetries=3
+Medius_Credentials=Medius_OAUTH_Test
+QUEUE_NAME=I0544_StreamServeDDS
+QueryTimeout=3
+SAP_MessageType=BusinessPartnerSUITEBulkReplicateRequest
+SAP_Receiver=StreamServeDDS
+SAP_Sender=FD1-110
+externalSystemId=FSAP
+ssabQA=ssabQA

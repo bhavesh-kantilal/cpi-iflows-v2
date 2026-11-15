@@ -1,0 +1,20 @@
+#
+#Sun Nov 15 11:55:45 UTC 2026
+AllowedCompanies=FI00,FI17,FI10,SE75,SE77,SE78,SE79
+AlowedCompanies=CZ10,PL10
+AttachmentName=IncomingPayload
+HTTPSessionReuse=onIntegrationFlow
+JMS_DLQ=1
+JMS_ExponentialBackOff=1
+JMS_MaxRetryIntervalInMin=60
+JMS_NoOfConcurrentProcess=1
+JMS_QueueName=I0161_MEDIUS
+JMS_RetryInterval=1
+LogPayload=True
+LogPayloadSize=512
+MaxRetries=3
+Medius_Credentials=Medius_OAUTH_Test
+SAP_MessageType=PROJECT.PROJECT02
+SAP_Receiver=Medius
+SAP_Sender=DR1_350
+tenantName=ssabQA

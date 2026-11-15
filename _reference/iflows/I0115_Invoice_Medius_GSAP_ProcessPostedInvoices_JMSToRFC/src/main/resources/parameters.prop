@@ -1,5 +1,5 @@
 #
-#Fri Nov 13 00:46:25 UTC 2026
+#Sun Nov 15 11:54:32 UTC 2026
 AttachmentDir=/SFTP/Test_IntegrationFile/IFS/ImportInvoice/Attachments/
 AttachmentDirMapping=\\\\SE-BOR-NXFS01\\Test_IntegrationFile\\IFS\\ImportInvoice\\Attachments\\
 AttachmentDirMapping_BO=\\\\srt02089\\FakturaImport\\Attachments\\BLE\\
@@ -12,7 +12,7 @@ CC_LocationID=
 ConcurrentProcess=1
 DLQ=1
 Datastore\ Entry\ ID\ -\ KSeF\ ID\ Update=${property.entryID}
-DocumentType=KR
+DocumentType=K0
 Encrypt\ Stored\ Message=false
 Expiration\ Period=30
 ExpirationPeriod=30

@@ -1,0 +1,16 @@
+#
+#Sun Nov 15 12:14:17 UTC 2026
+AlowedCompanies=
+HTTP_Authorization=RoleBased
+HTTP_CSRFProtected=1
+HTTP_UserRole=ESBMessaging.send
+LogPayload=True
+LogPayloadSize=512
+MaxRetries=3
+Medius_Credentials=Medius_OAUTH_Test
+QUEUE_NAME=I0540_MEDIUS
+SAP_MessageType=CostCentreReplicationBulkRequest
+SAP_Receiver=Medius
+SAP_Sender=FD1_110
+ssabQA=ssabQA
+tenantName=ssabQA

@@ -1,0 +1,21 @@
+#
+#Sun Nov 15 12:14:46 UTC 2026
+AlowedCompanies=SE78
+FSAP_Address=http\://fd1.sap.ssab.com
+FSAP_Authentication=Basic
+FSAP_CSRFProtected=true
+FSAP_Credentials=FSAP_User_DEV
+FSAP_Timeout=1
+HTTP_Authorization=RoleBased
+HTTP_CSRFProtected=1
+HTTP_UserRole=ESBMessaging.send
+LogPayload=True
+LogPayloadSize=512
+MaxRetries=3
+Medius_Credentials=Medius_OAUTH_Test
+OData_metadata_parameters=
+QUEUE_NAME=I0545_MEDIUS
+SAP_MessageType=WBSElementMasterDataReplicationBulkRequest
+SAP_Receiver=Medius
+SAP_Sender=FD1-110
+tenantName=ssabQA

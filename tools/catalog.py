@@ -93,6 +93,16 @@ def skeleton(x, by_uid, depth=4):
     return f"{name}(" + ", ".join(skeleton(a.expr, by_uid, depth - 1) for a in x.args) + ")"
 
 
+def _read(path: Path) -> bytes:
+    """Read a file, also when its Windows path is longer than 260 characters (long iFlow names)."""
+    import os
+    s = str(Path(path).resolve())
+    if os.name == "nt" and not s.startswith("\\\\?\\"):
+        s = "\\\\?\\" + s
+    with open(s, "rb") as fh:
+        return fh.read()
+
+
 def _ln(e):
     return e.tag.split("}")[-1] if isinstance(e.tag, str) else ""
 
@@ -113,7 +123,7 @@ def xslt_purpose(path: Path) -> str:
     """What an XSLT does, read from the file (sort keys, grouping keys), never guessed."""
     from lxml import etree
     try:
-        r = etree.parse(str(path)).getroot()
+        r = etree.fromstring(_read(path))
     except Exception:
         return "(not readable)"
     sorts = [e.get("select") for e in r.iter() if _ln(e) == "sort"]
@@ -136,7 +146,7 @@ def iflow_steps():
     for f in sorted(REF.glob("iflows/*/src/main/resources/scenarioflows/integrationflow/*.iflw")):
         iflow = f.relative_to(REF / "iflows").parts[0]
         res = f.parents[2]                                   # …/src/main/resources
-        root = etree.parse(str(f)).getroot()
+        root = etree.fromstring(_read(f))
         pname = {p.get("id"): p.get("name") for p in root.iter() if _ln(p) == "process"}
         for proc in [p for p in root.iter() if _ln(p) == "process"]:
             nodes, nxt, start = {}, defaultdict(list), []

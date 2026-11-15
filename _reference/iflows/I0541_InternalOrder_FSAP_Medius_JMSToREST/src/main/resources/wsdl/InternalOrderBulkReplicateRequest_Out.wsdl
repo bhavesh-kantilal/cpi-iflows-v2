@@ -1,0 +1,1647 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://sap.com/xi/FI-CO/Global2" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:n1="http://sap.com/xi/SAPGlobal20/Global" targetNamespace="http://sap.com/xi/FI-CO/Global2">
+<wsdl:documentation>
+<sidl:sidl xmlns:sidl="http://www.sap.com/2007/03/sidl"/>
+</wsdl:documentation>
+<wsp:UsingPolicy wsdl:required="true"/>
+<wsp:Policy wsu:Id="IF_IF_InternalOrderBulkReplicateRequest_Out">
+<sapsession:Session xmlns:sapsession="http://www.sap.com/webas/630/soap/features/session/">
+<sapsession:enableSession>false</sapsession:enableSession>
+</sapsession:Session>
+</wsp:Policy>
+<wsp:Policy wsu:Id="OP_IF_OP_InternalOrderBulkReplicateRequest_Out">
+<sapcomhnd:enableCommit xmlns:sapcomhnd="http://www.sap.com/NW05/soap/features/commit/">true</sapcomhnd:enableCommit>
+<sapblock:enableBlocking xmlns:sapblock="http://www.sap.com/NW05/soap/features/blocking/">false</sapblock:enableBlocking>
+<saptrhnw05:required xmlns:saptrhnw05="http://www.sap.com/NW05/soap/features/transaction/">yes</saptrhnw05:required>
+<saprmnw05:enableWSRM xmlns:saprmnw05="http://www.sap.com/NW05/soap/features/wsrm/">true</saprmnw05:enableWSRM>
+</wsp:Policy>
+<wsdl:types>
+<xsd:schema xmlns="http://sap.com/xi/FI-CO/Global2" xmlns:ccts="urn:un:unece:uncefact:documentation:standard:CoreComponentsTechnicalSpecification:3.0" xmlns:xi0="http://sap.com/xi/SAPGlobal20/Global" targetNamespace="http://sap.com/xi/FI-CO/Global2">
+<xsd:simpleType name="ActionCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:enumeration value="01"/>
+<xsd:enumeration value="02"/>
+<xsd:enumeration value="03"/>
+<xsd:enumeration value="04"/>
+<xsd:enumeration value="05"/>
+<xsd:enumeration value="06"/>
+<xsd:length value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="AgencyIdentificationCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="3"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="Amount">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Amount</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="Amount.Content">
+<xsd:attribute name="currencyCode" use="required" type="CurrencyCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="Amount.Content">
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="28"/>
+<xsd:fractionDigits value="6"/>
+<xsd:maxInclusive value="9999999999999999999999.999999"/>
+<xsd:minInclusive value="-9999999999999999999999.999999"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="BinaryObject">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>BinaryObject</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:base64Binary">
+<xsd:attribute name="mimeCode" type="MIMECode"/>
+<xsd:attribute name="characterSetCode" type="CharacterSetCode"/>
+<xsd:attribute name="format" type="xsd:token"/>
+<xsd:attribute name="fileName" type="xsd:string"/>
+<xsd:attribute name="uri" type="xsd:anyURI"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="BusinessDocumentMessageHeader">
+<xsd:sequence>
+<xsd:element name="ID" minOccurs="0" type="BusinessDocumentMessageID"/>
+<xsd:element name="UUID" minOccurs="0" type="UUID"/>
+<xsd:element name="ReferenceID" minOccurs="0" type="BusinessDocumentMessageID"/>
+<xsd:element name="ReferenceUUID" minOccurs="0" type="UUID"/>
+<xsd:element name="CreationDateTime" type="GLOBAL_DateTime"/>
+<xsd:element name="TestDataIndicator" minOccurs="0" type="Indicator"/>
+<xsd:element name="ReconciliationIndicator" minOccurs="0" type="Indicator"/>
+<xsd:element name="SenderBusinessSystemID" minOccurs="0" type="BusinessSystemID"/>
+<xsd:element name="RecipientBusinessSystemID" minOccurs="0" type="BusinessSystemID"/>
+<xsd:element name="SenderParty" minOccurs="0" type="BusinessDocumentMessageHeaderParty"/>
+<xsd:element name="RecipientParty" minOccurs="0" maxOccurs="unbounded" type="BusinessDocumentMessageHeaderParty"/>
+<xsd:element name="BusinessScope" minOccurs="0" maxOccurs="unbounded" type="BusinessScope"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="BusinessDocumentMessageHeaderParty">
+<xsd:sequence>
+<xsd:element name="InternalID" minOccurs="0" type="PartyInternalID"/>
+<xsd:element name="StandardID" minOccurs="0" maxOccurs="unbounded" type="PartyStandardID"/>
+<xsd:element name="ContactPerson" minOccurs="0" type="BusinessDocumentMessageHeaderPartyContactPerson"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="BusinessDocumentMessageHeaderPartyContactPerson">
+<xsd:sequence>
+<xsd:element name="InternalID" minOccurs="0" type="ContactPersonInternalID"/>
+<xsd:element name="OrganisationFormattedName" minOccurs="0" maxOccurs="4" type="LANGUAGEINDEPENDENT_MEDIUM_Name"/>
+<xsd:element name="PersonFormattedName" minOccurs="0" maxOccurs="4" type="LANGUAGEINDEPENDENT_LONG_Name"/>
+<xsd:element name="PhoneNumber" minOccurs="0" maxOccurs="unbounded" type="PhoneNumber"/>
+<xsd:element name="FaxNumber" minOccurs="0" maxOccurs="unbounded" type="PhoneNumber"/>
+<xsd:element name="EmailURI" minOccurs="0" maxOccurs="unbounded" type="EmailURI"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="BusinessDocumentMessageID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="BusinessDocumentMessageID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="BusinessDocumentMessageID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="35"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="BusinessScope">
+<xsd:sequence>
+<xsd:element name="TypeCode" type="BusinessScopeTypeCode"/>
+<xsd:element name="InstanceID" minOccurs="0" type="BusinessScopeInstanceID"/>
+<xsd:element name="ID" minOccurs="0" type="BusinessScopeID"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="BusinessScopeID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="BusinessScopeID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="BusinessScopeID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="36"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="BusinessScopeInstanceID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="BusinessScopeInstanceID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="BusinessScopeInstanceID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="36"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="BusinessScopeTypeCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="BusinessScopeTypeCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="BusinessScopeTypeCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="4"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="BusinessSystemID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CharacterSetCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="Code">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:token">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="ContactPersonInternalID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ContactPersonInternalID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="ContactPersonInternalID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="32"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="ControllingObjectCategoryCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ControllingObjectCategoryCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="ControllingObjectCategoryCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="2"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="CostCentreID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="CostCentreID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="CostCentreID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="32"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CounterValue">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Value</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:maxInclusive value="999999999"/>
+<xsd:minInclusive value="0"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CountryCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="3"/>
+<xsd:minLength value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CountryDiallingCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CurrencyCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:length value="3"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Date">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Date</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:date">
+<xsd:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="DateTime">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>DateTime</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="DateTime.Content">
+<xsd:attribute name="timeZoneCode" type="TimeZoneCode"/>
+<xsd:attribute name="daylightSavingTimeIndicator" type="xsd:boolean"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="DateTime.Content">
+<xsd:restriction base="xsd:dateTime">
+<xsd:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,7})?Z"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="DecimalValue">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Value</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="31"/>
+<xsd:fractionDigits value="14"/>
+<xsd:maxInclusive value="99999999999999999.99999999999999"/>
+<xsd:minInclusive value="-99999999999999999.99999999999999"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Duration">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Duration</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:duration">
+<xsd:pattern value=".{1,20}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="EmailURI">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>URI</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:anyURI">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="EnvironmentInvestmentPurposeCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="EnvironmentInvestmentPurposeCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="EnvironmentInvestmentPurposeCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="5"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="GLOBAL_DateTime">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>DateTime</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:dateTime">
+<xsd:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,7})?Z"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="IOAssignments">
+<xsd:sequence>
+<xsd:element name="CompanyCode" minOccurs="0" type="Code"/>
+<xsd:element name="PlantID" minOccurs="0" type="PlantID"/>
+<xsd:element name="ReceiverPlantID" minOccurs="0" type="PlantID"/>
+<xsd:element name="AccountingBusinessAreaCode" minOccurs="0" type="Code"/>
+<xsd:element name="ResponsibleCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="ReceiverResponsibleCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="Location" minOccurs="0" type="Code"/>
+<xsd:element name="LocationPlant" minOccurs="0" type="PlantID"/>
+<xsd:element name="ReceiverLocationPlant" minOccurs="0" type="PlantID"/>
+<xsd:element name="ProfitCenterID" minOccurs="0" type="ProfitCenterID"/>
+<xsd:element name="ReceiverProfitCenterID" minOccurs="0" type="ProfitCenterID"/>
+<xsd:element name="WorkBreakdownStructureElement" minOccurs="0" type="WBSElement_GFN"/>
+<xsd:element name="ReceiverWorkBreakdownStructureElement" minOccurs="0" type="WBSElement_GFN"/>
+<xsd:element name="TaxJurisdictionCode" minOccurs="0" type="TaxJurisdictionCode"/>
+<xsd:element name="FunctionalAreaID" minOccurs="0" type="LONG_ExpenseClassificationFunctionalAreaCode"/>
+<xsd:element name="ObjectClass" minOccurs="0" type="ControllingObjectCategoryCode"/>
+<xsd:element name="RequestingCompanyCode" minOccurs="0" type="Code"/>
+<xsd:element name="RequestingCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="ReceiverRequestingCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="RequestingOrderID" minOccurs="0" type="InternalOrderID"/>
+<xsd:element name="ReceiverRequestingOrderID" minOccurs="0" type="InternalOrderID"/>
+<xsd:element name="SalesOrder" minOccurs="0" type="SalesOrderID"/>
+<xsd:element name="SalesOrderItem" minOccurs="0" type="NumberValue"/>
+<xsd:element name="PersonResponsibleForCOInternalOrder" minOccurs="0" type="UserAccountID"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOBulkRplctReqMsg">
+<xsd:sequence>
+<xsd:element name="MessageHeader" type="BusinessDocumentMessageHeader"/>
+<xsd:element name="InternalOrderReplicationRequest" maxOccurs="unbounded" type="IORplctReqMsg"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOControlData">
+<xsd:sequence>
+<xsd:element name="IntegratedPlanningIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="RevenuePostingAllowedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatisticalOrderIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="PostingCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="ReceiverPostingCostCenterID" minOccurs="0" type="CostCentreID"/>
+<xsd:element name="TotalCostOfOrderEstimate" minOccurs="0" type="Amount"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOGeneralData">
+<xsd:sequence>
+<xsd:element name="ProcessingGroupCode" minOccurs="0" type="Code"/>
+<xsd:element name="Applicant" minOccurs="0" type="LANGUAGEINDEPENDENT_Text"/>
+<xsd:element name="ApplicantTelephoneNumber" minOccurs="0" type="LANGUAGEINDEPENDENT_Text"/>
+<xsd:element name="PersonResponsible" minOccurs="0" type="LANGUAGEINDEPENDENT_Text"/>
+<xsd:element name="PersonResponsibleTelephoneNumber" minOccurs="0" type="LANGUAGEINDEPENDENT_Text"/>
+<xsd:element name="ApplicationDate" minOccurs="0" type="Date"/>
+<xsd:element name="Department" minOccurs="0" type="LANGUAGEINDEPENDENT_Text"/>
+<xsd:element name="StartOfWork" minOccurs="0" type="Date"/>
+<xsd:element name="EndOfWork" minOccurs="0" type="Date"/>
+<xsd:element name="WorkPermitIssuedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOInvestmentManagement">
+<xsd:sequence>
+<xsd:element name="InvestmentProfileCode" minOccurs="0" type="Code"/>
+<xsd:element name="InvestmentScaleCode" minOccurs="0" type="InvestmentScaleCode"/>
+<xsd:element name="InvestmentReasonCode" minOccurs="0" type="InvestmentReasonCode"/>
+<xsd:element name="EnvironmentalInvestmentReasonCode" minOccurs="0" type="EnvironmentInvestmentPurposeCode"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOPeriodEndClosing">
+<xsd:sequence>
+<xsd:element name="CostingSheetCode" minOccurs="0" type="Code"/>
+<xsd:element name="OverheadKey" minOccurs="0" type="OverheadCostDeterminationOrderGroupCode"/>
+<xsd:element name="ResultsAnalysisCode" minOccurs="0" type="Code"/>
+<xsd:element name="InterestProfileCode" minOccurs="0" type="Code"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IORplctReq">
+<xsd:sequence>
+<xsd:element name="LegacyInternalOrderID" minOccurs="0" type="Code"/>
+<xsd:element name="OrderTypeCode" type="Code"/>
+<xsd:element name="OrderCategoryCode" type="Code"/>
+<xsd:element name="ControllingAreaID" type="Code"/>
+<xsd:element name="Assignments" minOccurs="0" type="IOAssignments"/>
+<xsd:element name="ControlData" minOccurs="0" type="IOControlData"/>
+<xsd:element name="PeriodEndClosing" minOccurs="0" type="IOPeriodEndClosing"/>
+<xsd:element name="GeneralData" minOccurs="0" type="IOGeneralData"/>
+<xsd:element name="InvestmentManagement" minOccurs="0" type="IOInvestmentManagement"/>
+<xsd:element name="Status" minOccurs="0" type="IOStatus"/>
+<xsd:element name="ExtensionElement" minOccurs="0" maxOccurs="unbounded" type="IORplctReqExtensionElement"/>
+</xsd:sequence>
+<xsd:attribute name="ActionCode" type="ActionCode"/>
+<xsd:attribute name="changeOrdinalNumberValue" type="OrdinalNumberValue_V1"/>
+<xsd:attribute name="reconciliationPeriodCounterValue" type="CounterValue"/>
+<xsd:attribute name="InternalOrderID" use="required" type="NOSC_InternalOrderID"/>
+<xsd:attribute name="ReceiverInternalOrderID" type="NOSC_InternalOrderID"/>
+<xsd:attribute name="OrderDescription" type="LANGUAGEINDEPENDENT_MEDIUM_Text"/>
+</xsd:complexType>
+<xsd:complexType name="IORplctReqExtensionElement">
+<xsd:sequence>
+<xsd:element name="ID" type="PropertyID_Core"/>
+<xsd:element name="Value" type="NOFLOAT_ObjectPropertyValue"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IORplctReqMsg">
+<xsd:sequence>
+<xsd:element name="MessageHeader" type="BusinessDocumentMessageHeader"/>
+<xsd:element name="InternalOrder" type="IORplctReq"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="IOStatus">
+<xsd:sequence>
+<xsd:element name="DeletionIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusCreatedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusReleasedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusCompletedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusClosedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusLockedIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusMarkForDeletionIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+<xsd:element name="StatusDeletionIndicator" minOccurs="0" type="OPTIONAL_Indicator"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="Identifier">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:token">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="Indicator">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Indicator</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:boolean"/>
+</xsd:simpleType>
+<xsd:simpleType name="IntegerValue">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Value</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int"/>
+</xsd:simpleType>
+<xsd:complexType name="InternalOrderID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="InternalOrderID.Content">
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="InternalOrderID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="12"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="InvestmentReasonCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="InvestmentReasonCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="InvestmentReasonCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="2"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="InvestmentScaleCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="InvestmentScaleCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="InvestmentScaleCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="2"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="LANGUAGEINDEPENDENT_LONG_Name">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Name</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:maxLength value="80"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="LANGUAGEINDEPENDENT_MEDIUM_Name">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Name</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:maxLength value="40"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="LANGUAGEINDEPENDENT_MEDIUM_Text">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Text</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:maxLength value="40"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="LANGUAGEINDEPENDENT_Text">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Text</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:complexType name="LONG_ExpenseClassificationFunctionalAreaCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="LONG_ExpenseClassificationFunctionalAreaCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="LONG_ExpenseClassificationFunctionalAreaCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="16"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="LanguageCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:language">
+<xsd:maxLength value="9"/>
+<xsd:minLength value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="MEDIUM_Name">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Name</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="MEDIUM_Name.Content">
+<xsd:attribute name="languageCode" type="LanguageCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="MEDIUM_Name.Content">
+<xsd:restriction base="xsd:string">
+<xsd:maxLength value="40"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="MIMECode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="Measure">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Measure</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="Measure.Content">
+<xsd:attribute name="unitCode" use="required" type="MeasureUnitCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="Measure.Content">
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="31"/>
+<xsd:fractionDigits value="14"/>
+<xsd:maxInclusive value="99999999999999999.99999999999999"/>
+<xsd:minInclusive value="-99999999999999999.99999999999999"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="MeasureUnitCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="3"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="NOFLOAT_ObjectPropertyValue">
+<xsd:sequence>
+<xsd:element name="Amount" minOccurs="0" type="Amount"/>
+<xsd:element name="Quantity" minOccurs="0" type="Quantity"/>
+<xsd:element name="DecimalValue" minOccurs="0" type="DecimalValue"/>
+<xsd:element name="IntegerValue" minOccurs="0" type="IntegerValue"/>
+<xsd:element name="Date" minOccurs="0" type="Date"/>
+<xsd:element name="Time" minOccurs="0" type="Time"/>
+<xsd:element name="DateTime" minOccurs="0" type="DateTime"/>
+<xsd:element name="Name" minOccurs="0" type="REGIONDEPENDENTLANGUAGE_Name"/>
+<xsd:element name="Indicator" minOccurs="0" type="Indicator"/>
+<xsd:element name="Measure" minOccurs="0" type="Measure"/>
+<xsd:element name="Code" minOccurs="0" type="Code"/>
+<xsd:element name="Identifier" minOccurs="0" type="Identifier"/>
+<xsd:element name="URI" minOccurs="0" type="URI"/>
+<xsd:element name="BinaryObject" minOccurs="0" type="BinaryObject"/>
+<xsd:element name="Duration" minOccurs="0" type="Duration"/>
+<xsd:element name="Percent" minOccurs="0" type="Percent"/>
+<xsd:element name="Ratio" minOccurs="0" type="Ratio"/>
+<xsd:element name="Text" minOccurs="0" type="Text"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:simpleType name="NOSC_InternalOrderID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="12"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="NumberValue">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Value</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:maxInclusive value="999999999"/>
+<xsd:minInclusive value="0"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="OPTIONAL_Indicator">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Indicator</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:boolean"/>
+</xsd:simpleType>
+<xsd:simpleType name="OrdinalNumberValue_V1">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Value</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal"/>
+</xsd:simpleType>
+<xsd:complexType name="OverheadCostDeterminationOrderGroupCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="OverheadCostDeterminationOrderGroupCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="OverheadCostDeterminationOrderGroupCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="6"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="PartyInternalID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="PartyInternalID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="PartyInternalID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="32"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="PartyStandardID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="PartyStandardID.Content">
+<xsd:attribute name="schemeAgencyID" use="required">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="3"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="PartyStandardID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="13"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Percent">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Percent</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="16"/>
+<xsd:fractionDigits value="6"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="PhoneNumber">
+<xsd:sequence>
+<xsd:element name="AreaID" minOccurs="0" type="PhoneNumberAreaID"/>
+<xsd:element name="SubscriberID" minOccurs="0" type="PhoneNumberSubscriberID"/>
+<xsd:element name="ExtensionID" minOccurs="0" type="PhoneNumberExtensionID"/>
+<xsd:element name="CountryCode" minOccurs="0" type="CountryCode"/>
+<xsd:element name="CountryDiallingCode" minOccurs="0" type="CountryDiallingCode"/>
+<xsd:element name="CountryName" minOccurs="0" type="MEDIUM_Name"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:simpleType name="PhoneNumberAreaID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PhoneNumberExtensionID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PhoneNumberSubscriberID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="30"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="PlantID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="PlantID.Content">
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="PlantID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="4"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ProfitCenterID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="PropertyID_Core">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="PropertyID_Core.Content">
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="PropertyID_Core.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="50"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="Quantity">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Quantity</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="Quantity.Content">
+<xsd:attribute name="unitCode" type="UnitOfMeasureISOCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="Quantity.Content">
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="31"/>
+<xsd:fractionDigits value="14"/>
+<xsd:maxInclusive value="99999999999999999.99999999999999"/>
+<xsd:minInclusive value="-99999999999999999.99999999999999"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="REGIONDEPENDENTLANGUAGE_Name">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Name</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:string">
+<xsd:attribute name="languageCode" type="REGIONDEPENDENT_LanguageCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="REGIONDEPENDENT_LanguageCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:language">
+<xsd:maxLength value="9"/>
+<xsd:minLength value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Ratio">
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="31"/>
+<xsd:fractionDigits value="14"/>
+<xsd:maxInclusive value="99999999999999999.99999999999999"/>
+<xsd:minInclusive value="-99999999999999999.99999999999999"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="SalesOrderID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="SalesOrderID.Content">
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="SalesOrderID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="TaxJurisdictionCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="TaxJurisdictionCode.Content">
+<xsd:attribute name="listID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listVersionID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="listAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="TaxJurisdictionCode.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="15"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="Text">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Text</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:string">
+<xsd:attribute name="languageCode" type="LanguageCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="Time">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Time</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:time">
+<xsd:pattern value="[0-9]{2}:[0-9]{2}:[0-9]{2}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TimeZoneCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="10"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="URI">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>URI</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:anyURI">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="UUID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="UUID.Content">
+<xsd:attribute name="schemeID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="UUID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:length value="36"/>
+<xsd:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="UnitOfMeasureISOCode">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Code</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="3"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="UserAccountID">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="UserAccountID.Content">
+<xsd:attribute name="schemeAgencyID">
+<xsd:simpleType>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="60"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="schemeAgencySchemeAgencyID" type="AgencyIdentificationCode"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="UserAccountID.Content">
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="255"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="WBSElement_GFN">
+<xsd:annotation>
+<xsd:documentation xml:lang="EN">
+<ccts:RepresentationTerm>Identifier</ccts:RepresentationTerm>
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="24"/>
+<xsd:minLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>
+<xsd:schema xmlns="http://sap.com/xi/SAPGlobal20/Global" xmlns:ccts="urn:un:unece:uncefact:documentation:standard:CoreComponentsTechnicalSpecification:3.0" xmlns:xi0="http://sap.com/xi/SAPGlobal20/Global" targetNamespace="http://sap.com/xi/SAPGlobal20/Global">
+<xsd:import namespace="http://sap.com/xi/FI-CO/Global2"/>
+<xsd:element name="InternalOrderBulkReplicateRequest" type="tns:IOBulkRplctReqMsg"/>
+</xsd:schema>
+</wsdl:types>
+<wsdl:message name="InternalOrderBulkReplicateRequest">
+<wsdl:part name="InternalOrderBulkReplicateRequest" element="n1:InternalOrderBulkReplicateRequest"/>
+</wsdl:message>
+<wsdl:portType name="InternalOrderBulkReplicateRequest_Out">
+<wsdl:documentation>
+<sapdoc:sapdoc xmlns:sapdoc="urn:sap:esi:documentation">
+<sapdoc:docitem applicationComponent="CO-OM-OPA"/>
+</sapdoc:sapdoc>
+</wsdl:documentation>
+<wsp:Policy>
+<wsp:PolicyReference URI="#IF_IF_InternalOrderBulkReplicateRequest_Out"/>
+</wsp:Policy>
+<wsdl:operation name="InternalOrderBulkReplicateRequest_Out">
+<wsp:Policy>
+<wsp:PolicyReference URI="#OP_IF_OP_InternalOrderBulkReplicateRequest_Out"/>
+</wsp:Policy>
+<wsdl:input message="tns:InternalOrderBulkReplicateRequest"/>
+</wsdl:operation>
+</wsdl:portType>
+</wsdl:definitions>
