@@ -113,9 +113,11 @@ line_no = F("formatNumber", S(f"{IT}/LineNo"), nformat="#", separator=".")      
 qty = each(by_type(f"{IT}/Quantity", "21", "QuantityValue"))
 unit = each(by_type(f"{IT}/Quantity", "21", "MeasureUnit"))
 is_718 = F("and", eq(S(f"{IT}/Date/@Type"), "55"), eq(S(f"{IT}/Date/@Format"), "718"))
-# User's CPI edit (feedback v1.0.1): direct date, no substring, for now. The substring ran on every Date
-# before the filter (e.g. the 6-char week date) and failed. Open: end of range, see spec.md.
-conf_date = each(F("ifWithoutElse", is_718, S(f"{IT}/Date"), keepss="false"))
+# User feedback 2026-11-15 (Feedback.docx, CPI screenshot): E1EDP03, DATUM and EDATU all come from the
+# filtered format-718 Date chain; the segment is NOT built with createIf (SUPPRESS hid other items' segments).
+date_718 = each(F("ifWithoutElse", is_718, S(f"{IT}/Date"), keepss="false"))
+# End of the range 'YYYYMMDD-YYYYMMDD', after the filter (only 718 values reach it): library UDF substringSafe
+conf_date = b.udf("substringSafe", "substringSafe", date_718, C("9"), C("17"))
 art_in = each(by_type(f"{IT}/AddArticleNo", "IN"))    # PO D_7140
 
 P = f"{T}/E1EDP01"
@@ -123,14 +125,16 @@ b.map(P, F("removeContexts", F("ifWithoutElse", keep_item, C(""), keepss="false"
 b.map(f"{P}/@SEGMENT", C("1"))
 b.map(f"{P}/POSEX", line_no)
 b.map(f"{P}/MENGE", qty)
-b.map(f"{P}/MENEE", F("iF", C("MTR"), eq(unit, "M"), unit))   # #15; iF pins: then, condition, else
+# #15: FixValues 'Use Key' (user feedback 2026-11-15): M -> MTR, any other unit passes unchanged.
+# Use Key = vmstrategy 2 with empty default (FORMAT_NOTES §5 Q1, MAT Status/Description = "Use Key").
+b.map(f"{P}/MENEE", b.table("FixValues", unit, [("M", "MTR")], default="", strategy="2"))
 b.map(f"{P}/E1EDP02", C(""))
 b.map(f"{P}/E1EDP02/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP02/QUALF", C("001"))
-# header PO number once per Item: useOneAsMany(value, all LineNo in one context, LineNo per Item)
-b.map(f"{P}/E1EDP02/BELNR", F("useOneAsMany", po_no, F("removeContexts", S(f"{IT}/LineNo")), S(f"{IT}/LineNo")))
+# header PO number on every item: CopyValue index 0 (user feedback 2026-11-15, instead of useOneAsMany)
+b.map(f"{P}/E1EDP02/BELNR", F("CopyValue", po_no, nnumber="0"))
 b.map(f"{P}/E1EDP02/ZEILE", line_no)
-b.map(f"{P}/E1EDP03", F("createIf", is_718))              # #18: only items with a format-718 date
+b.map(f"{P}/E1EDP03", date_718)                           # #18: one per format-718 date (user's logic)
 b.map(f"{P}/E1EDP03/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP03/IDDAT", C("001"))
 b.map(f"{P}/E1EDP03/DATUM", conf_date)
@@ -138,7 +142,7 @@ b.map(f"{P}/E1EDP20", C(""))                              # one schedule line pe
 b.map(f"{P}/E1EDP20/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP20/WMENG", qty)
 b.map(f"{P}/E1EDP20/EDATU", conf_date)
-b.map(f"{P}/E1EDP19", F("createIf", eq(S(f"{IT}/AddArticleNo/@Type"), "IN")))
+b.map(f"{P}/E1EDP19", art_in)                             # same chain as IDTNR, no createIf (user feedback)
 b.map(f"{P}/E1EDP19/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP19/QUALF", C("001"))
 b.map(f"{P}/E1EDP19/IDTNR", art_in)

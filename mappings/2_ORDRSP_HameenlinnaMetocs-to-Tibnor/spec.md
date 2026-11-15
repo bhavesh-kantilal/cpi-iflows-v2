@@ -95,6 +95,24 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
 - The user reports "some fields missing" and will check later.
 - The XSDs in the download are CPI re-serializations, with the same paths. The builds keep the user's original files.
 
+### Feedback document on v1.0.2 → v1.0.3 (2026-11-15, `feedback/Feedback.docx`)
+The user's feedback was a Word document with screenshots, not a CPI download, so `build_mapping.py` was changed by hand. Each point:
+1. **Layout:** overlapping bricks on a shared canvas (SNDPRT/SNDPRN) are hard to read. **Rule (user):** share logic between targets like E1EDK03 + DATUM when a clean layout is possible, otherwise split. Toolkit:
+   - layout per canvas (group): no overlaps
+   - a shared brick is kept only when it sits in the same column for all its targets; otherwise it is copied per target
+   - new build check `layout_overlaps`
+2. **MENEE:** FixValues with **Use Key** instead of if-then-else: `FixValues(unit, M → MTR)`, `vmstrategy 2`, empty default.
+3. **E1EDP03 / E1EDP19:** `createIf` on the per-Date / per-AddArticleNo condition produced SUPPRESS that suppressed the segments of other items (the user's queue screenshot). Now, as in the user's CPI and PO screenshots:
+   - E1EDP03, DATUM and EDATU come from one chain: `SplitByValue(removeContexts(ifWithoutElse(and(@Type = 55, @Format = 718), Date)))`
+   - E1EDP19 and IDTNR come from the IN-article chain
+4. **DATUM / EDATU:** the end of the range via the user's reference UDF, now **`substringSafe(value, '9', '17')`** (`udf_library/substringSafe.groovy`, copied to `scripts/`). It runs after the filter, so only 17-character format-718 values reach it.
+   - User: SAP's standard `substring` is normally enough. Use the safe UDF only when the length is not certain, and keep it in the repo for reuse.
+   - Same behaviour as the user's code (checked on the documented examples); it only adds `trim()` on the position parameters.
+5. **E1EDP02/BELNR:** `CopyValue(PO number, nnumber 0)` instead of `useOneAsMany` (user's suggestion).
+   - **To check in the simulator:** CopyValue takes value index 0 of the `removeContexts(ifWithoutElse(Reference/@Type = 'CO', RefNo))` queue. If a suppressed value counts as index 0 (the CO reference is the 4th Reference in the sample), BELNR would be empty.
+
+`tools/cpimm/diff.py` v1.0.2 → v1.0.3 shows exactly these targets (MENEE, E1EDP02/BELNR, E1EDP03, DATUM, EDATU, E1EDP19) plus the UDF declaration.
+
 ## Open points from the sheet (not blocking the build)
 - OP-03 Tilkku / Raahe ApplicationIds (VM-01 has only METOCS…).
 - OP-06 whether Tibnor needs SNDLAD/RCVLAD/STD…; OP-07 RCVPRN per environment (now a property).

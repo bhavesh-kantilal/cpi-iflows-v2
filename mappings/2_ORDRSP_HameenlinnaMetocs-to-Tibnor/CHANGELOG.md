@@ -1,5 +1,14 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.3 — 2026-11-15
+Applies the user's feedback document `feedback/Feedback.docx`:
+- `E1EDP03`, `DATUM`, `EDATU` ← the format-718 Date chain (no `createIf`, which suppressed other items' segments). DATUM/EDATU = end of range via the new UDF `substringSafe(value, '9', '17')` (from `udf_library/`), so `20261220` again.
+- `E1EDP19` ← the IN-article chain (no `createIf`).
+- `MENEE` ← `FixValues` M → MTR with "Use Key" (`vmstrategy 2`) instead of `iF`.
+- `E1EDP02/BELNR` ← `CopyValue(PO number, 0)` instead of `useOneAsMany`.
+- Layout: no overlapping bricks; shared logic only where it can be drawn cleanly (toolkit change, new overlap check).
+- All checks passed. The self-test passes. Not yet tested in CPI. CopyValue on a queue with suppressed values is to be checked.
+
 ## 1.0.2 — 2026-11-13
 Applies the user's CPI download of v1.0.1 (`feedback/`, compared with `tools/cpimm/diff.py`, 2 differences, both taken over):
 - **Source XSD link:** a 4th `<elem>` with the targetNamespace `http://www.ruukki.com/schemas/eai/internal/production/eruukki`. Without it, CPI did not load the source XSD on import ("Add source message").

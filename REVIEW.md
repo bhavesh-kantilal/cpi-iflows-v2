@@ -11,6 +11,12 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | A2 | In the sample-files rule, refer to `tools/sim_copy.py` for the `*_sim.xml` copies | CLAUDE.md | Same step, done by a tool since DESADV/INVOIC | Open |
 | A3 | Rule for target WSDLs that import XSDs by URL: download (with approval), keep them in `schemas/downloaded/`, build a self-contained copy with `tools/wsdl_inline.py` | CLAUDE.md or FORMAT_NOTES §1.1 | CPI does not fetch external imports (NShift) | Open |
 | A4 | Note in FORMAT_NOTES §2.2: WSDL link elem 3 = message **element** name, once CPI confirms it on NShift (`book` vs message `ConsignmentEndpoint_book`) | FORMAT_NOTES | Still UNVERIFIED (NShift OP-12) | Open |
+| A5 | FixValues **"Use Key" = `vmstrategy 2`**, empty default (user feedback ORDRSP 2026-11-15; closes part of §5 Q1) | FORMAT_NOTES §3.11, §5 | ORDRSP MENEE | Open |
+| A6 | Optional **item** segments (E1EDP03, E1EDP19…) come from the filtered value chain (`ifWithoutElse` → `removeContexts` → `SplitByValue`), **not** from `createIf` on a per-child condition: its SUPPRESS values hide the segments of other items | FORMAT_NOTES §3.5/§3.6 + CLAUDE.md conventions | ORDRSP feedback 2026-11-15 | Open |
+| A7 | Header value on every item: **`CopyValue` index 0** instead of `useOneAsMany` (once the ORDRSP test confirms BELNR) | CLAUDE.md conventions | ORDRSP feedback 2026-11-15 | Open |
+| A8 | **Layout rule:** share logic between targets only when the canvas stays clean (no overlap, shared brick in one column); otherwise split. Build check `layout_overlaps` | CLAUDE.md conventions + checks list | ORDRSP feedback 2026-11-15 | Open |
+| A9 | **`udf_library/`** in the folder layout: reusable UDFs, copied unchanged into a mapping's `scripts/`. Rule: standard `substring` first, `substringSafe` only when the length is not certain | CLAUDE.md | ORDRSP feedback 2026-11-15 | Open |
+| A10 | Apply A6/A7 to DESADV and INVOIC too (they use `useOneAsMany` / `createIf` the same way), and rebuild ORDERS, DESADV, INVOIC, NShift with the new layout at their next version | mappings | Consistency | Open |
 
 ## B. Toolkit changes made without separate approval (already committed)
 | # | Change | Commit | Status |
@@ -19,11 +25,13 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | B2 | New `tools/sim_copy.py` (simulator copies without `xsi:` attributes) | c051eb8 | Open |
 | B3 | New `tools/wsdl_inline.py` (self-contained WSDL). v1 lost namespace declarations; fixed and self-checking since 75a7f4d | 7fcc03c, 75a7f4d | Open |
 | B4 | New build check `schema_ref_errors` in `tools/cpimm/check.py`, run by `check_build` for every zip | 75a7f4d | Open |
+| B5 | Group-aware layout + clean-or-split sharing in `Builder.finish` / `_layout`; build check `layout_overlaps`. In-memory test: all 5 mappings 0 overlaps, logic unchanged (diff) | ORDRSP v1.0.3 commit | Open |
+| B6 | New `udf_library/` (README + `substringSafe.groovy`) | ORDRSP v1.0.3 commit | Open |
 
 ## C. Mapping decisions and assumptions to confirm
 | # | Mapping | Item | Status |
 |---|---|---|---|
-| C1 | ORDRSP | DATUM / EDATU carry the full range `YYYYMMDD-YYYYMMDD` (user's temporary fix). Proposed fix: filter first, then `substring(9, 8)` | Open |
+| C1 | ORDRSP | DATUM / EDATU carried the full range (user's temporary fix). **Fixed in v1.0.3** with `substringSafe(…, 9, 17)` after the filter, per the user's feedback document | OK (to test in CPI) |
 | C2 | ORDRSP | "Some fields missing" in the user's v1.0.1 test (not specified yet) | Open |
 | C3 | ORDRSP, DESADV, INVOIC | Does the iFlow runtime accept `xsi:schemaLocation` / `xsi:noNamespaceSchemaLocation` in real hub payloads (simulator does not)? | Open |
 | C4 | ORDRSP, DESADV, INVOIC | PO pattern assumes exactly one value per item per qualifier; values shift if one is missing | Open |
