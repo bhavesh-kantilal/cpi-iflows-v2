@@ -27,6 +27,7 @@ Sender system ──HTTPS──▶ I<nnnn>_P_…_HTTPToJMS ──JMS queue──
 - A Content Modifier copies the header into property `CH_SSAB_Dispatcher_ReceiverIFlow`. It also sets a custom status from `${header.SSAB_Dispatcher_ReceiverIFlow.split('_')[0]}`, which is the interface number. [I0701 .iflw]
 - **MaxRetries gateway**: when `${header.SAPJMSRetries} > '{{MaxRetries}}'` (2), the message goes to a JMS receiver for the DLQ `{{JMS_QueueName}}_D` and ends in an escalation end. [I0701 .iflw, parameters.prop]
 - Otherwise the **ProcessDirect receiver** sends to `address=/${header.SSAB_Dispatcher_ReceiverIFlow}`. [I0701 .iflw]
+- **Participant names:** the DLQ JMS receiver is named `<SenderParticipant>_DLQ`, e.g. `MediusDispatcher_DLQ` or `StreamServeDispatcher_DLQ` (not the template's `Receiver1`). The JMS sender channel's system equals its participant name. [L2: user rule 2026-11-16, applied on the tenant; I0710/I0711 1.0.1]
 - One dispatcher serves one target system and area. Any child flow is reached through the header value. [I0701 .iflw, README]
 
 ### 1.3 Child flow, e.g. `I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc`

@@ -752,14 +752,14 @@ def _remove_participant_and_mf(xml: str, participant_name: str) -> str:
 
 def build_i0710_dispatcher():
     """New Medius JMS dispatcher, cloned from I0701."""
-    return build_dispatcher("I0710_P_JMSDispatcher_Medius", "1.0.0", "I0710_Medius",
+    return build_dispatcher("I0710_P_JMSDispatcher_Medius", "1.0.1", "I0710_Medius",
                             "MediusDispatcher", sap_sender="DR1_350")
 
 
 def build_i0711_dispatcher():
     """New StreamServe JMS dispatcher (user 2026-11-16: next number 711), cloned from I0701
     the same way as I0710."""
-    return build_dispatcher("I0711_P_JMSDispatcher_StreamServe", "1.0.0", "I0711_StreamServe",
+    return build_dispatcher("I0711_P_JMSDispatcher_StreamServe", "1.0.1", "I0711_StreamServe",
                             "StreamServeDispatcher", sap_sender="FD1_110")
 
 
@@ -781,6 +781,23 @@ def build_dispatcher(name: str, version: str, queue: str, tag: str, sap_sender: 
     xml = xml.replace(old_name, name)
     xml = xml.replace("MSAPPlantMaintenanceDispatcher", tag)
     xml = xml.replace("I0701_MSAP_PlantMaintenance", queue)
+
+    # DLQ JMS receiver: "<sender>_DLQ" instead of the template's "Receiver1"
+    # (user rule 2026-11-16; already applied by the user on the tenant)
+    root = iflow_lib.parse(xml)
+    B = "{%s}" % iflow_lib.NS["bpmn2"]
+    sender = root.find(f".//{B}messageFlow[@targetRef='StartEvent_2']").get("sourceRef")
+    sender_name = root.find(f".//{B}participant[@id='{sender}']").get("name")
+    dlq = [m for m in root.iter(B + "messageFlow")
+           if iflow_lib.get_prop(root, m, "ComponentType").text == "JMS"
+           and iflow_lib.get_prop(root, m, "direction").text == "Receiver"]
+    assert len(dlq) == 1
+    iflow_lib.get_prop(root, dlq[0], "system").text = sender_name + "_DLQ"
+    # JMS sender channel kept the template's system "SmarTeamJMSDispatcher": use the participant name
+    snd = root.find(f".//{B}messageFlow[@targetRef='StartEvent_2']")
+    iflow_lib.get_prop(root, snd, "system").text = sender_name
+    root.find(f".//{B}participant[@id='{dlq[0].get('targetRef')}']").set("name", sender_name + "_DLQ")
+    xml = iflow_lib.serialize(root)
 
     files[new_iflw_path] = xml.encode("utf-8")
 
