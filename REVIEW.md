@@ -63,6 +63,20 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | R6 | **Check, not rule:** before building, ask whether a step belongs in the iFlow: sort before value-change grouping (R1), split when the target expects one message per object (Q10), XSLT for grouping/filtering/moving whole segments (Q9), remove `xsi:nil` fields that clutter the mapping (Q11); otherwise prefer a UDF over XSLT. Decide per interface with the user, name it in `spec.md`, call it out | CLAUDE.md conventions | L1 (14 iFlows) + L2 (Q9–Q11) | OK (applied 2026-11-15) |
 | R7 | `exists` (1 input) = true when the source node is present; use where it reads more clearly than `mapWithDefault` (no hard rule) | FORMAT_NOTES §3.4 | L1 (I0541 `isActive`) + L2 (Q7) | OK (applied 2026-11-15) |
 
+## A3. Proposals from the I0539 iFlow feedback (2026-11-16, waiting for approval)
+| # | Proposal | Where | Evidence | Status |
+|---|---|---|---|---|
+| F1 | **HTTPS sender role and CSRF: always ask.** SSAB default is `SSAB_MessagingSend_InternalOperations` with CSRF off | CLAUDE.md (iFlow section) + IFLOW_CONVENTIONS | L2 (I0539 feedback doc) | Open |
+| F2 | **Externalize every adapter setting someone may tune** (timeout, proxy, throw exception, retry, authentication, allowed headers, host, body size, PD address). Use the names `HTTP_<Setting>`. When several channels go to the same system, they share one set | IFLOW_CONVENTIONS §naming | L2 (I0539 feedback doc) | Open |
+| F3 | **Diagram rule:** a build that changes process flows must also update BPMNDiagram. Drop orphan shapes and edges, give each flow an edge, and give each step a shape. Enforced by `iflow_lib.check_iflow` in the build and `tools/check_all_iflows.py` | CLAUDE.md checks (iFlows) | L2 (I0539 v1.0.0: "Main Process connection missing") | Open |
+| F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` now reports the same orphan/missing-edge problem in I0539_P, I0541_P, I0545_P, I0541 and I0545 | iflows | `py -I tools/check_all_iflows.py` | Open (after I0539 test) |
+| F5 | Fix the typo `AlowedCompanies` → `AllowedCompanies` in every FSAP iFlow that has it | iflows | L2 (user, 2026-11-16) | Open (I0539 done) |
+
+### Toolkit changes (I0539 v1.1.0)
+- New `tools/iflow_lib.py`: `fix_diagram`, `externalize`, `add_table_row`, `Params` (prop + propdef together), `check_iflow`.
+- `tools/iflow_build_fsap_dispatcher.py`: `--only <iFlow>` switch, and a `post=` hook in `_build_child_pdtorest` that runs the checks.
+- `tools/check_all_iflows.py`: now also runs the diagram and wiring checks.
+
 ## D. Other actions taken
 | # | Action | Status |
 |---|---|---|

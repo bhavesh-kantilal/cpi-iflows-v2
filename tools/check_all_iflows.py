@@ -2,6 +2,8 @@
 import sys, zipfile
 sys.stdout.reconfigure(encoding="utf-8")
 from lxml import etree
+sys.path.insert(0, "tools")
+import iflow_lib
 
 iflows = [
     "I0710_P_JMSDispatcher_Medius",
@@ -49,7 +51,8 @@ for name in iflows:
     # Line count sanity
     line_count = len(xml_bytes.decode("utf-8").splitlines())
 
-    ok = xml_ok and not bad and mf_name == name
+    diag = iflow_lib.check_iflow(xml_bytes.decode("utf-8")) if xml_ok else []
+    ok = xml_ok and not bad and mf_name == name and not diag
     status = "OK " if ok else "FAIL"
     if not ok:
         all_ok = False
@@ -58,6 +61,8 @@ for name in iflows:
         print(f"     XML: {xml_err}")
     if bad:
         print(f"     AI strings in: {bad}")
+    for d in diag:
+        print(f"     DIAGRAM: {d}")
     if mf_name != name:
         print(f"     MANIFEST: '{mf_name}'")
 

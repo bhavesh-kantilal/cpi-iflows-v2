@@ -1,0 +1,13 @@
+#Mon Nov 16 08:43:41 UTC 2026
+AlowedCompanies=SE78
+HTTP_Authorization=RoleBased
+HTTP_CSRFProtected=0
+HTTP_UserRole=SSAB_MessagingSend_InternalOperations
+LogPayload=True
+LogPayloadSize=512
+Medius_Credentials=Medius_OAUTH_Test
+SAP_MessageType=CostCentreReplicationBulkRequest
+SAP_Receiver=Medius
+SAP_Sender=FD1_110
+ssabQA=ssabQA
+tenantName=ssabQA
