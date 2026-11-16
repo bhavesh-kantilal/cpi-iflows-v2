@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?><DeliveryBatch xmlns="http://www.ruukki.com/schemas/eai/rucomef/otc" xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:payload="http://www.ruukki.com/schemas/eai/rucomef/otc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ruukki.com/schemas/eai/rucomef/otc DeliveryBatch_0_8_4.xsd">
+<Header>
+<SchemaId>DespatchAdvice</SchemaId>
+<SchemaVersion>0.8.4</SchemaVersion>
+<InterchangeSender>00372389445741</InterchangeSender>
+<InterchangeRecipient>003723894430</InterchangeRecipient>
+</Header>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <DeliveryBatchId>74476U-01</DeliveryBatchId>
+<SourceSystem>LAHTI</SourceSystem>
+<MessageFunctionCode>NEW</MessageFunctionCode>
+<LanguageCodeIso>EN</LanguageCodeIso>
+<TransmissionTime>2026-11-16T07:27:34</TransmissionTime>
+<DespatchDate>2026-11-16</DespatchDate>
+<OrderDate>2026-10-13</OrderDate>
+<PurchaseOrder>74476U</PurchaseOrder>
+<ShipmentLotId>01</ShipmentLotId>     <DespatchDocument>
+<DocumentName>DespatchAdvice</DocumentName>
+<DocumentType>N787</DocumentType>
+<DocumentId>74476U-01</DocumentId>
+<DocumentDate>2026-11-16</DocumentDate>
+</DespatchDocument>     <DespatchDocument>
+<DocumentName>WayBill</DocumentName>
+<DocumentType>N730</DocumentType>
+<DocumentId>75365</DocumentId>
+<DocumentDate>2026-11-16</DocumentDate>
+</DespatchDocument>     <Reference>
+<ReferenceType>ACE</ReferenceType>
+<ReferenceId>DESPAT_74476U01_20261013_20261116072727.PDF</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>BuyersOrderId</ReferenceType>
+<ReferenceId>46537511</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>CargoId</ReferenceType>
+<ReferenceId>I750</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>CustomerReference</ReferenceType>
+<ReferenceId>46537511</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>LoadId</ReferenceType>
+<ReferenceId>07034</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>     <ConsignorParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</ConsignorParty>
+<BuyerParty>
+<Identifier>
+<IdentifierCode>8387920</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<Identifier>
+<IdentifierCode>003723894502</IdentifierCode>
+<IdentifierCodeAgency>OVT</IdentifierCodeAgency>
+</Identifier>
+<NameOne>TIBNOR OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>NIINISTÖNKATU 7</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>05800 HYVINKÄÄ FINLAND</AddressThree>
+<PostCode>05800</PostCode>
+<City>HYVINKÄÄ</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</BuyerParty>
+<ConsigneeParty>
+<Identifier>
+<IdentifierCode>8387920</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<Identifier>
+<IdentifierCode>003723894502</IdentifierCode>
+<IdentifierCodeAgency>OVT</IdentifierCodeAgency>
+</Identifier>
+<NameOne>TIBNOR OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>NIINISTÖNKATU 7</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>05800 HYVINKÄÄ FINLAND</AddressThree>
+<PostCode>05800</PostCode>
+<City>HYVINKÄÄ</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</ConsigneeParty>
+<CarrierParty>
+<Identifier>
+<IdentifierCode>8367520</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>TRANSPORT SAVIKKO YHTIOT OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>KYTÖSAVUNTIE 2</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>90450 KEMPELE FINLAND</AddressThree>
+<PostCode>90450</PostCode>
+<City>KEMPELE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</CarrierParty>
+<DeliveryTerms>
+<DeliveryTermsCode>CIP</DeliveryTermsCode>
+<DeliTermsCodeSetAgency>INCOTERMS</DeliTermsCodeSetAgency>
+<Destination>HYVINKÄÄ</Destination>
+<DeliveryTermsText>CIP  (INCOTERMS 2020) HYVINKÄÄ</DeliveryTermsText>
+<DeliveryTermsCountry>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</DeliveryTermsCountry>
+</DeliveryTerms>
+<ModeOfTransport>
+<Code>3</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>TRUCK</Text>
+</ModeOfTransport>
+<CountryOfDestination>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfDestination>
+<DeliveryBatchLine>
+<DeliveryBatchLineId>010</DeliveryBatchLineId>
+<CustomersArticleId>380638</CustomersArticleId>
+<CustomsTariffCode>
+<CustomsTariffPlanned>72085299</CustomsTariffPlanned>
+<CustomsTariffActual>72085299</CustomsTariffActual>
+</CustomsTariffCode>
+<ProductGroup>
+<Code>131</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>NAUHALEVYT</Text>
+</ProductGroup>
+<ProductCode>
+<Code>13160</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>H.R. STEEL IN BUNDLES CUT LENG</Text>
+</ProductCode>
+<GradeActual>
+<Code>3056</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>SSAB DOMEX 355MC D/S355MC</Text>
+</GradeActual>
+<Certificate>
+<Code>31</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>EN 10 204-3.1 (2004)</Text>
+</Certificate>
+<Protection>
+<Code>0</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>DRY</Text>
+</Protection>
+<Dimension>
+<ValueName>Length</ValueName>
+<Value>0004000</Value>
+<ValueUnit>MM</ValueUnit>
+</Dimension>
+<Dimension>
+<ValueName>Thickness</ValueName>
+<Value>00008.00</Value>
+<ValueUnit>MM</ValueUnit>
+</Dimension>
+<Dimension>
+<ValueName>Width</ValueName>
+<Value>01800.0</Value>
+<ValueUnit>MM</ValueUnit>
+</Dimension>
+<Dimension>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0012460.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</Dimension>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>00000012460.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>000000028</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<CustomerMark>46537511 380638</CustomerMark>
+<PartialDelivery>
+<Code>1</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text> </Text>
+</PartialDelivery>
+<SinglePart>
+<SinglePartId>25597021 15</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0002305.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00005.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0002298.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0002225.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702115</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>25597021 16</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0002305.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00005.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0002298.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0002225.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702116</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>25597021 17</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0002305.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00005.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0002298.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0002225.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702117</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>25597021 18</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0002305.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00005.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0002298.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0002225.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702118</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>25597021 19</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0002305.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0002225.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00005.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0002298.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0002225.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702119</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>25597021 20</SinglePartId>
+<SinglePartType>SINGLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>GNG-493</ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0001335.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>TheoreticalWeight</ValueName>
+<Value>0001383.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0001335.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00003.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0001408.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0001335.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25597</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+</MaterialBatch>
+<MaterialBatch>
+<MaterialBatchId>2559702120</MaterialBatchId>
+<MaterialBatchType>BUNDLE</MaterialBatchType>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+</DeliveryBatchLine>
+</DeliveryBatch>
