@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Harmonized_Mill_Invoice_0_0_4.xsd">
+<Header>
+<SchemaId>Harmonized_Mill_Invoice_0_0_6.xsd</SchemaId>
+<SchemaVersion>0.0.6</SchemaVersion>
+<MessageFunction>9</MessageFunction>
+<DocumentType>380</DocumentType>
+<SourceSystem>LASKUHA</SourceSystem>
+<InterchangeSender>00372389445751</InterchangeSender>
+<RecipientIdentification>003723894430</RecipientIdentification>
+<TransformToMedia>XML</TransformToMedia>
+<eInvoiceKey>BW00372389443014#BAWCFI22#</eInvoiceKey>
+</Header>
+<DocumentId>
+<DocumentNo>122620723</DocumentNo>
+<Date Type="149" Format="102">20261105</Date>
+</DocumentId>
+<DocumentLanguage>
+<LanguageCode>FI</LanguageCode>
+</DocumentLanguage>
+<FreeText Type="PMD">
+<LanguageCode>FI</LanguageCode>
+</FreeText>
+<FreeText Type="ZGW">
+<Text1>LASKUTUSPAINO: NETTO/NETTO</Text1>
+<Text2>KOKONAISBRUTTOPAINO:      5075 KG</Text2>
+<LanguageCode>FI</LanguageCode>
+</FreeText>
+<Location Type="27">
+<LocationText>SUOMI</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Location Type="28">
+<LocationText>SUOMI</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Reference Type="AAA">
+<ReferenceIdentification>45422J</ReferenceIdentification>
+<Date Type="451" Format="102">20261103</Date>
+</Reference>
+<Reference Type="AAP">
+<ReferenceIdentification>KOKONAISTOIMITUS</ReferenceIdentification>
+</Reference>
+<Reference Type="ACE">
+<ReferenceIdentification>INVOIC_122620723_20261105_1008.PDF</ReferenceIdentification>
+</Reference>
+<Reference Type="BV">
+<ReferenceIdentification>EXTERNAL</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>RäTTE</ReferenceIdentification>
+</Reference>
+<Reference Type="CT">
+<ReferenceIdentification>88888H</ReferenceIdentification>
+</Reference>
+<Reference Type="IA">
+<ReferenceIdentification>FI10</ReferenceIdentification>
+</Reference>
+<Reference Type="ON">
+<ReferenceIdentification>46539612</ReferenceIdentification>
+</Reference>
+<Reference Type="PE">
+<ReferenceIdentification>HML</ReferenceIdentification>
+</Reference>
+<Reference Type="PK">
+<ReferenceIdentification>45422J01</ReferenceIdentification>
+<Date Type="11" Format="102">20261105</Date>
+</Reference>
+<Reference Type="PQ">
+<ReferenceIdentification>838 79205 12262 07239</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZID">
+<ReferenceIdentification>001592778</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPG">
+<ReferenceIdentification>B16A04U</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>WD</ReferenceIdentification>
+</Reference>
+<Party Role="BY">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="CN">
+<PartyId Type="ZTI">8284209</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY 1022 RM</PartyName1>
+<AddressLine1>ASPONKATU 2</AddressLine1>
+<AddressLine3>04400 JÄRVENPÄÄ FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>JÄRVENPÄÄ</City>
+<PostalCode>04400</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="II">
+<PartyId Type="ZTI">0006000</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="IV">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="MF">
+<PartyId Type="ZTI">0003003</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>HÄMEENLINNAN TEHDAS</PartyName2>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="PE">
+<PartyId Type="ZTI">0003003</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="52">00372389445712</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>HÄMEENLINNAN TEHDAS</PartyName2>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>FI-13300 HÄMEENLINNA, FINLAND</AddressLine3>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB HELSINKI</InstitutionName>
+<InstitutionBranchLocation>HELSINKI</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="PR">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="SE">
+<PartyId Type="ZTI">0003003</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyId Type="52">00372389445712</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<PartyName2>HÄMEENLINNAN TEHDAS</PartyName2>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>FI-13300 HÄMEENLINNA, FINLAND</AddressLine3>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactName>H. SUORANTA</ContactName>
+</Contact>
+</Party> <Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+<TermsOfPayment Type="1">
+<TermsOfPaymentCode CodeSet="92">03</TermsOfPaymentCode>
+<TermsOfPaymentText>KÄYTETTÄVISSÄMME  09.12.2026 YLIAIKAKORKO 14.0 %</TermsOfPaymentText>
+<Date Type="140" Format="102">20261209</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+<PercentageBasis/>
+</Percentage>
+</TermsOfPayment>
+<ModeOfTransport Type="20">
+<ModeOfTransportCode>3</ModeOfTransportCode>
+<ModeOfTransportText>AUTO</ModeOfTransportText>
+<CarrierName>KULJETTAVA OY</CarrierName>
+<TransportIdentification>LTH-472</TransportIdentification>
+</ModeOfTransport>
+<TermsOfDelivery Type="6">
+<TermsOfDeliveryCode CodeSet="Z2K">CIP</TermsOfDeliveryCode>
+<TermsOfDeliveryText>CIP  (INCOTERMS 2020) JäRVENPää</TermsOfDeliveryText>
+</TermsOfDelivery>
+<Item>
+<LineNo>010</LineNo>
+<ArticleNo Type="IN">385081</ArticleNo>
+<AddArticleNo Type="HS">72104900</AddArticleNo>
+<ProductProperty Type="14">
+<PropertyText>SUOJAAMATON</PropertyText>
+<LanguageCode>FI</LanguageCode>
+</ProductProperty>
+<Measurement Type="TH" Role="AAE">
+<MeasureValue>0.70</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Quantity Type="12">
+<QuantityValue>5070.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>1.000</QuantityValue>
+<MeasureUnit>PCE</MeasureUnit>
+</Quantity>
+<Quantity Type="21">
+<QuantityValue>5070.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="47">
+<QuantityValue>5070.000</QuantityValue>
+<MeasureUnit>TNE</MeasureUnit>
+</Quantity>
+<FreeText Type="PRD">
+<Text1>KUUMASINKITTYÄ TERÄSTÄ KELOINA, 2-LAATU</Text1>
+<Text2>CR440Y780T-DP-GI40/40-U VW 50065: 2019-08</Text2>
+<Text5>SUOJAAMATON</Text5>
+<LanguageCode>FI</LanguageCode>
+</FreeText>
+<Reference Type="AOU">
+<ReferenceIdentification>0000301110</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>46539612 385081</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPC">
+<ReferenceIdentification>0000010182</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>WD</ReferenceIdentification>
+</Reference>
+<Price Type="AAB">
+<PriceValue>750.00</PriceValue>
+<UnitPriceBasisCode>PT</UnitPriceBasisCode>
+</Price>
+<MonetaryAmount Type="38">
+<MonetaryValue>3802.50</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>3802.50</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+</Item> <NumberOfLineItems>001</NumberOfLineItems>
+<Tax Type="VAT">
+<TaxRate>25.50</TaxRate>
+<MonetaryAmount Type="176">
+<MonetaryValue>969.64</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<TaxCategory>S</TaxCategory>
+</Tax>
+<MonetaryAmount Type="125">
+<MonetaryValue>3802.50</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="39">
+<MonetaryValue>4772.14</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>3802.50</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+</Invoice>

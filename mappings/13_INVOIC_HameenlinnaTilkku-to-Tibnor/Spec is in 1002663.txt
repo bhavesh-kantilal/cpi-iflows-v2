@@ -1,0 +1,2 @@
+The mapping spec for this interface is shared with Raahe Tilkku:
+..\1002663 Tibnor SSABEuropeRaaheTilkku [80067]EDI INVOIC in\1002663_INVOIC_Tilkku-to-Tibnor_MappingSpec_v0.1.xlsx
