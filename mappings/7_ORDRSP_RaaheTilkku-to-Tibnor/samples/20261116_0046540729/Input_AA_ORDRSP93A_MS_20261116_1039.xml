@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?><OrdrspInterchange xmlns="http://www.ruukki.com/schemas/eai/internal/production/eruukki" xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:payload="http://www.ruukki.com/schemas/eai/internal/production/eruukki" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ruukki.com/schemas/eai/internal/production/eruukki Ordrsp_1_0_0.xsd">
+<OrderResponseMessage>
+<Header>
+<MessageName>Ordrsp</MessageName>
+<SchemaId>Ordrsp_1_0_0.xsd</SchemaId>
+<SchemaVersion>1.0.0</SchemaVersion>
+<MessageFunction>9</MessageFunction>
+<ApplicationId>TILKKURA</ApplicationId>
+<InterchangeSender>00372389445741</InterchangeSender>
+<InterchangeRecipient>7080003309006</InterchangeRecipient>
+</Header>
+<DocumentId>
+<DocumentNo>95849A</DocumentNo>
+<Date Type="137" Format="102">20261113</Date>
+<Version>01</Version>
+</DocumentId>
+<Date Type="ZOI" Format="102">20261111</Date>
+<Date Type="4" Format="102">20261112</Date>
+<FreeText Type="ABC">
+<Text1>Other conditions acc. to SSAB's General Conditions of Sale.</Text1>
+<Text2>The conditions are available through your contact person and</Text2>
+<Text3>our web -pages at www.ssab.com/support/orders-and-deliveries</Text3>
+</FreeText>
+<FreeText Type="AFN">
+<Text1>THEORETICAL</Text1>
+</FreeText>
+<FreeText Type="DIN">
+<Text1>DESTINATION NORWAY</Text1>
+</FreeText>
+<FreeText Type="GEN">
+<Text1>WE THANK YOU FOR YOUR ORDER AND CONFIRM HAVING BOOKED IT</Text1>
+<Text2>FOR DELIVERY FROM OUR RAAHE WORKS AS PER THE FOLLOWING</Text2>
+<Text3>SPECIFICATION.</Text3>
+</FreeText>
+<FreeText Type="PMT">
+<Text1>ALL BANK CHARGES OUTSIDE FINLAND FOR BUYER'S ACCOUNT</Text1>
+</FreeText>
+<FreeText Type="ZDT">
+<Text1>W51, 2026</Text1>
+<Text2>EX WORKS</Text2>
+</FreeText>
+<Reference Type="ACE">
+<RefNo>TILKKURA_95849A_01_20261112_261113140708.PDF</RefNo>
+</Reference>
+<Reference Type="CO">
+<RefNo>46540729</RefNo>
+</Reference>
+<Reference Type="CR">
+<RefNo>46540729-3020</RefNo>
+</Reference>
+<Reference Type="CT">
+<RefNo>88888</RefNo>
+</Reference>
+<Reference Type="ZCN">
+<RefNo>HPSPP_NO_TIB</RefNo>
+</Reference>
+<Reference Type="ZCT">
+<RefNo>46</RefNo>
+</Reference>
+<Reference Type="ZID">
+<RefNo>001105584</RefNo>
+</Reference>
+<Reference Type="ZLG">
+<RefNo>EN</RefNo>
+</Reference>
+<Reference Type="ZOT">
+<RefNo>12</RefNo>
+</Reference>
+<Reference Type="ZPG">
+<RefNo>M22A18M</RefNo>
+</Reference>
+<Reference Type="ZST">
+<RefNo>EPL471E3</RefNo>
+</Reference>
+<Party Role="BY">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyId Type="92">0300</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4>NORWAY</AddressLine4>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+<Contact Type="PD">
+<ContactName>TONE SPERRE</ContactName>
+</Contact>
+</Party>
+<Party Role="CN">
+<PartyId Type="ZTI">8426340</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>KORNELIUSMYRVEGEN 5</AddressLine1>
+<AddressLine3>2074 EIDSVOLL VERK NORWAY</AddressLine3>
+<AddressLine4>NORWAY</AddressLine4>
+<City>EIDSVOLL VERK</City>
+<PostalCode>2074</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="IV">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4>NORWAY</AddressLine4>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="MF">
+<PartyId Type="ZTI">0003000</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>RAUTARUUKINTIE 155</AddressLine1>
+<AddressLine3>92100 RAAHE FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>RAAHE</City>
+<PostalCode>92100</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="PR">
+<PartyId Type="ZTI">0142700</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>P.O. BOX 140 FURUSET</AddressLine1>
+<AddressLine3>1001 OSLO NORWAY</AddressLine3>
+<AddressLine4>NORWAY</AddressLine4>
+<City>OSLO</City>
+<PostalCode>1001</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="UD">
+<PartyId Type="ZTI">8426340</PartyId>
+<PartyName1>TIBNOR AS</PartyName1>
+<AddressLine1>KORNELIUSMYRVEGEN 5</AddressLine1>
+<AddressLine3>2074 EIDSVOLL VERK NORWAY</AddressLine3>
+<AddressLine4>NORWAY</AddressLine4>
+<City>EIDSVOLL VERK</City>
+<PostalCode>2074</PostalCode>
+<CountryCode>NO</CountryCode>
+</Party>
+<Party Role="SE">
+<PartyId Type="ZTI">0003000</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>RAUTARUUKINTIE 155</AddressLine1>
+<AddressLine3>92100 RAAHE FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>RAAHE</City>
+<PostalCode>92100</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactId>MLU</ContactId>
+<ContactName>M. LUMIAHO</ContactName>
+<CommId Type="EM">mikko.lumiaho@ssab.com</CommId>
+</Contact>
+<Contact Type="PD">
+<ContactId>798</ContactId>
+<ContactName>FINSTAD NINA BEATE</ContactName>
+</Contact>
+</Party>
+<Tax Type="Vat">
+<TaxRate>0.00</TaxRate>
+<TaxCategory>G</TaxCategory>
+</Tax>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+<TermsOfPayment Type="1">
+<TermsOfPaymentCode CodeSet="91">03</TermsOfPaymentCode>
+<TermsOfPaymentText>30 DAYS FROM INVOICE DATE</TermsOfPaymentText>
+</TermsOfPayment>
+<Penalty>
+<Percentage>
+<PercentageValue>14.00</PercentageValue>
+</Percentage>
+</Penalty>
+<ModeOfTransport Type="20">
+<ModeOfTransportCode>3</ModeOfTransportCode>
+<ModeOfTransportText>TRUCK</ModeOfTransportText>
+</ModeOfTransport>
+<TermsOfDelivery Type="6">
+<TermsOfDeliveryCode CodeSet="Z2K">CIP</TermsOfDeliveryCode>
+<TermsOfDeliveryText>CIP  (INCOTERMS 2020) EIDSVOLL</TermsOfDeliveryText>
+<Location Type="1">
+<LocationText>EIDSVOLL</LocationText>
+</Location>
+</TermsOfDelivery>
+<Item>
+<LineNo>010</LineNo>
+<ArticleNo Type="IN">330057</ArticleNo>
+<AddArticleNo Type="HS">72085120</AddArticleNo>
+<Property Type="ZCM">
+<PropertyCode CodeSet="91">B</PropertyCode>
+<PropertyText>PINK</PropertyText>
+</Property>
+<Property Type="ZST">
+<PropertyCode CodeSet="91">1</PropertyCode>
+<PropertyText>STAPA 1 &gt; 1 LEIMAKENTTä, ALAPÄÄHÄN</PropertyText>
+</Property>
+<Property Type="1">
+<PropertyCode CodeSet="91">NV</PropertyCode>
+<PropertyText>CERTIFICATE: DNV (EN 10 204-3.2/DNV)</PropertyText>
+</Property>
+<Property Type="12">
+<PropertyCode CodeSet="91">1126</PropertyCode>
+<PropertyText>NV E36</PropertyText>
+</Property>
+<Property Type="124">
+<PropertyText>HIGH STRENGTH STEEL FOR SHIP STRUCTURES</PropertyText>
+</Property>
+<Property Type="17">
+<PropertyCode CodeSet="91">I</PropertyCode>
+<PropertyText>TOP: INTERPLATE NQA 805/806  GREY 0.012 MM TEMPORARY CORROSION PROTECTION DURING TRANSPORT AND STORAGE</PropertyText>
+<PropertySide>TP</PropertySide>
+</Property>
+<Property Type="17">
+<PropertyCode CodeSet="91">I</PropertyCode>
+<PropertyText>BOTTOM: INTERPLATE NQA 805/806  GREY 0.012 MM TEMPORARY CORROSION PROTECTION DURING TRANSPORT AND STORAGE</PropertyText>
+<PropertySide>BT</PropertySide>
+</Property>
+<Property Type="171">
+<PropertyCode CodeSet="91">151</PropertyCode>
+</Property>
+<Property Type="2">
+<PropertyCode CodeSet="91">141</PropertyCode>
+<PropertyText>TOLERANCES : EN 10029:2010 CLASS B/SOCIETY'S RULES</PropertyText>
+</Property>
+<Property Type="27">
+<PropertyText>DNV PT.2 CH.2 SEC.2:2026</PropertyText>
+</Property>
+<Property Type="8">
+<PropertyCode CodeSet="91">15102</PropertyCode>
+<PropertyText>NORMALIZED STEEL PLATES SURFACE TREATED</PropertyText>
+</Property>
+<Measurement Type="DEN">
+<MeasureValue>7.85000</MeasureValue>
+</Measurement>
+<Measurement Type="LN">
+<MeasureValue>8000.00000</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Measurement Type="TH">
+<MeasureValue>20.00000</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Measurement Type="WD">
+<MeasureValue>2500.00000</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Quantity Type="21">
+<QuantityValue>19200.00</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="66">
+<QuantityValue>6.00</QuantityValue>
+<MeasureUnit>PCE</MeasureUnit>
+</Quantity>
+<Date Type="55" Format="616">202651</Date>
+<Date Type="55" Format="718">20261214-20261220</Date>
+<FreeText Type="ZCL">
+<Text1>EN 10029:2010 CLASS B/SOCIETY'S RULES</Text1>
+<Text2>Normal tolerances</Text2>
+<Text3>-0.0 MM /  +50.0 MM</Text3>
+</FreeText>
+<FreeText Type="ZCQ">
+<Text1>SSAB</Text1>
+<Text3>-10 % / +10 %</Text3>
+</FreeText>
+<FreeText Type="ZCT">
+<Text1>EN 10029:2010 CLASS B/SOCIETY'S RULES</Text1>
+<Text2>Normal tolerances</Text2>
+<Text3>-0.30 MM /  +1.30 MM</Text3>
+</FreeText>
+<FreeText Type="ZCW">
+<Text1>EN 10029:2010 CLASS B/SOCIETY'S RULES</Text1>
+<Text2>Normal tolerances</Text2>
+<Text3>-0.0 MM /  +20.0 MM</Text3>
+</FreeText>
+<FreeText Type="ZDT">
+<Text1>W51, 2026</Text1>
+<Text2>EX WORKS</Text2>
+</FreeText>
+<FreeText Type="650">
+<Text1>SURFACE CONDITION EN 10 163-2:2005 CLASS A1</Text1>
+</FreeText>
+<Price Type="AAA">
+<PriceValue>1085.00</PriceValue>
+<UnitPriceBasis>1.00</UnitPriceBasis>
+<MeasureUnit>TNE</MeasureUnit>
+</Price>
+<Reference Type="CR">
+<RefNo>46540729 330057</RefNo>
+</Reference>
+<Package>
+<NumberOfPackages>6</NumberOfPackages>
+<Measurement>
+<MeasureValue>3140.00000</MeasureValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Measurement>
+<Marks Type="ColourMarks">PINK</Marks>
+</Package>
+</Item> <Summary>
+<NumberOfLineItems>001</NumberOfLineItems>
+<Quantity Type="21">
+<QuantityValue>19200.00</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="66">
+<QuantityValue>6.00</QuantityValue>
+<MeasureUnit>PCE</MeasureUnit>
+</Quantity>
+</Summary>  </OrderResponseMessage>
+</OrdrspInterchange>
