@@ -417,7 +417,55 @@ def apply_new_loop_to_parent_iflw(xml: str, with_io_splitter: bool = False) -> s
             '        <bpmn2:sequenceFlow id="SequenceFlow_IOSplit_out" sourceRef="CallActivity_IOSplitter" targetRef="CallActivity_21"/>\n'
         )
         xml = xml[:p15_end - len("</bpmn2:process>")] + insert_sf + "    </bpmn2:process>" + xml[p15_end:]
+        # v2.0.0 bug: SequenceFlow_29 already goes Set Monitoring -> splitter, so
+        # SequenceFlow_IOSplit_in was a duplicate (found by the incoming/outgoing check, 2026-11-16)
+        xml = iflow_lib.remove_sequence_flow(xml, "SequenceFlow_IOSplit_in")
 
+    return xml
+
+
+def fix_parent_diagram(xml: str, with_io_splitter: bool = False) -> str:
+    """Parent v2.0.1: make the model's incoming/outgoing match the flows, and redraw
+    Main Process (close the gap left by 'Set Receiver Determination Identifiers')
+    and Send to Receivers (Start -> Get Current Index Receiver -> Send -> End)."""
+    xml, log = iflow_lib.sync_flow_refs(xml)
+    root = iflow_lib.parse(xml)
+    NS = iflow_lib.NS
+    plane = root.find(".//bpmndi:BPMNPlane", NS)
+    shp = {s.get("bpmnElement"): iflow_lib._bounds(s) for s in plane.findall("bpmndi:BPMNShape", NS)}
+    pool_of = {p.get("processRef"): p.get("id") for p in root.iter("{%s}participant" % NS["bpmn2"])
+               if p.get("processRef")}
+    bounds = {}
+
+    # Main Process (Process_15): Set Monitoring Identifiers -> [IO splitter] -> Log Payload, 160 apart
+    smi, lp = shp["CallActivity_19"], shp["CallActivity_21"]
+    if with_io_splitter:
+        bounds["CallActivity_IOSplitter"] = (smi[0] + 160, smi[1], 100, 60)
+    target = smi[0] + (320 if with_io_splitter else 160)
+    dx = target - lp[0]
+    p15 = root.find(".//bpmn2:process[@id='Process_15']", NS)
+    right = {el.get("id") for el in p15 if el.get("id") in shp and shp[el.get("id")][0] >= lp[0]}
+    px, py_, pw, ph = shp[pool_of["Process_15"]]
+    bounds[pool_of["Process_15"]] = (px, py_, pw + dx, ph)
+
+    # Send to Receivers (Process_46): one row, 160 apart, pool shrunk to fit
+    st = shp["StartEvent_47"]
+    get_ = (st[0] + 92, st[1] - 14, 100, 60)
+    send = (get_[0] + 160, get_[1], 100, 60)
+    end = (send[0] + 160, st[1], 32, 32)
+    bounds.update({"CallActivity_GetCurrentReceiver": get_, "ServiceTask_8075": send, "EndEvent_48": end})
+    qx, qy, qw, qh = shp[pool_of["Process_46"]]
+    bounds[pool_of["Process_46"]] = (qx, qy, end[0] + 32 + 84 - qx, qh)
+    # JMS receiver participant stays under Send
+    mf = root.find(".//bpmn2:messageFlow[@sourceRef='ServiceTask_8075']", NS)
+    rcv = mf.get("targetRef")
+    rx, ry, rw, rh = shp[rcv]
+    bounds[rcv] = (send[0] + 50 - rw / 2, ry, rw, rh)
+
+    xml, log2 = iflow_lib.fix_diagram(xml, bounds, shift=(right, dx))
+    for line in log + log2:
+        if not line.startswith("removed orphan"):
+            print("   ", line)
     return xml
 
 
@@ -847,6 +895,14 @@ def _build_parent(bundle_name: str, new_name: str, new_version: str,
     if extra_iflw_transforms:
         xml = extra_iflw_transforms(xml)
 
+    # v2.0.1: model refs + diagram (I0539_P feedback 2026-11-16: gap in Main Process,
+    # no arrows in Send to Receivers)
+    xml = fix_parent_diagram(xml, with_io_splitter=with_io_splitter)
+    problems = iflow_lib.check_iflow(xml)
+    if problems:
+        raise SystemExit(f"{new_name}: checks failed:\n  " + "\n  ".join(problems))
+    print("  checks OK (diagram, wiring)")
+
     files[new_iflw_path] = xml.encode("utf-8")
 
     # Update MANIFEST.MF
@@ -905,7 +961,7 @@ def build_i0539_parent():
     return _build_parent(
         "I0539_P_CostCenter_FSAP_SOAPToJMS",
         "I0539_P_CostCenter_FSAP_SOAPToJMS",
-        "2.0.0",
+        "2.0.1",
         _new_recv_det_i0539(),
     )
 
@@ -914,7 +970,7 @@ def build_i0541_parent():
     return _build_parent(
         "I0541_P_InternalOrder_FSAP_SOAPToJMS",
         "I0541_P_InternalOrder_FSAP_SOAPToJMS",
-        "2.0.0",
+        "2.0.1",
         _new_recv_det_i0541(),
         with_io_splitter=True,
         extra_iflw_transforms=_remove_asap_gateway,
@@ -925,7 +981,7 @@ def build_i0545_parent():
     return _build_parent(
         "I0545_P_WBSElement_FSAP_SOAPToJMS",
         "I0545_P_WBSElement_FSAP_SOAPToJMS",
-        "2.0.0",
+        "2.0.1",
         _new_recv_det_i0545(),
     )
 
@@ -1250,6 +1306,9 @@ ONLY = {
     "I0539_CostCenter_FSAP_Medius_PDToREST": build_i0539_child,
     "I0541_InternalOrder_FSAP_Medius_PDToREST": build_i0541_child,
     "I0545_WBSElement_FSAP_Medius_PDToREST": build_i0545_child,
+    "I0539_P_CostCenter_FSAP_SOAPToJMS": build_i0539_parent,
+    "I0541_P_InternalOrder_FSAP_SOAPToJMS": build_i0541_parent,
+    "I0545_P_WBSElement_FSAP_SOAPToJMS": build_i0545_parent,
 }
 
 

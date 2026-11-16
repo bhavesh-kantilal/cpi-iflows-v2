@@ -68,10 +68,64 @@ def _bounds(shape):
     return tuple(float(b.get(k)) for k in ("x", "y", "width", "height"))
 
 
-def fix_diagram(xml: str, bounds: dict | None = None) -> tuple[str, list[str]]:
+def _flow_node_kinds():
+    return {"startEvent", "endEvent", "callActivity", "serviceTask", "task",
+            "exclusiveGateway", "parallelGateway", "intermediateCatchEvent",
+            "intermediateThrowEvent", "subProcess"}
+
+
+def flow_ref_mismatches(root) -> list[tuple]:
+    """(element, expected_in, expected_out) for every flow node whose
+    <incoming>/<outgoing> lists differ from the sequenceFlows of its process."""
+    out = []
+    for proc in root.iter(_q("bpmn2:process")):
+        flows = proc.findall("bpmn2:sequenceFlow", NS)
+        for el in proc:
+            if etree.QName(el).localname not in _flow_node_kinds():
+                continue
+            i = el.get("id")
+            exp_in = [f.get("id") for f in flows if f.get("targetRef") == i]
+            exp_out = [f.get("id") for f in flows if f.get("sourceRef") == i]
+            has_in = [e.text for e in el.findall("bpmn2:incoming", NS)]
+            has_out = [e.text for e in el.findall("bpmn2:outgoing", NS)]
+            if sorted(has_in) != sorted(exp_in) or sorted(has_out) != sorted(exp_out):
+                out.append((el, exp_in, exp_out))
+    return out
+
+
+def sync_flow_refs(xml: str) -> tuple[str, list[str]]:
+    """Rebuild <incoming>/<outgoing> of flow nodes whose lists do not match the
+    sequenceFlows (e.g. a step still pointing to a removed flow)."""
+    root = parse(xml)
+    log = []
+    for el, exp_in, exp_out in flow_ref_mismatches(root):
+        for e in el.findall("bpmn2:incoming", NS) + el.findall("bpmn2:outgoing", NS):
+            el.remove(e)
+        ext = el.find("bpmn2:extensionElements", NS)
+        pos = (list(el).index(ext) + 1) if ext is not None else 0
+        for tag, ids in (("incoming", exp_in), ("outgoing", exp_out)):
+            for fid in ids:
+                n = etree.Element(_q("bpmn2:" + tag))
+                n.text = fid
+                el.insert(pos, n)
+                pos += 1
+        log.append(f"refs {el.get('id')}: in={exp_in} out={exp_out}")
+    return serialize(root), log
+
+
+def remove_sequence_flow(xml: str, flow_id: str) -> str:
+    root = parse(xml)
+    f = root.find(f".//bpmn2:sequenceFlow[@id='{flow_id}']", NS)
+    f.getparent().remove(f)
+    return serialize(root)
+
+
+def fix_diagram(xml: str, bounds: dict | None = None,
+                shift: tuple | None = None) -> tuple[str, list[str]]:
     """bounds: {bpmnElement_id: (x, y, w, h)} overrides.
+    shift: (ids, dx): move these shapes by dx, and the waypoints of edges between them.
     Returns (xml, log). Removes DI elements whose bpmnElement no longer exists,
-    applies bounds, then (re)creates straight edges for flows touching a moved
+    applies shift and bounds, then (re)creates edges for flows touching a moved
     shape and adds edges for flows that have none."""
     root = parse(xml)
     log = []
@@ -86,13 +140,37 @@ def fix_diagram(xml: str, bounds: dict | None = None) -> tuple[str, list[str]]:
 
     shapes = {s.get("bpmnElement"): s for s in plane.findall("bpmndi:BPMNShape", NS)}
     moved = set()
+    if shift:
+        sids, dx = shift
+        shape_ids = {shapes[r].get("id") for r in sids if r in shapes}
+        for r in sids:
+            if r in shapes:
+                b = shapes[r].find("dc:Bounds", NS)
+                b.set("x", repr(float(b.get("x")) + dx))
+        for e in plane.findall("bpmndi:BPMNEdge", NS):
+            if e.get("sourceElement") in shape_ids and e.get("targetElement") in shape_ids:
+                for wp in e.findall("di:waypoint", NS):
+                    wp.set("x", repr(float(wp.get("x")) + dx))
+        moved |= {r for r in sids if r in shapes}
+        log.append(f"shifted {len(sids)} shapes by {dx}")
     for ref, (x, y, w, h) in (bounds or {}).items():
-        s = shapes[ref]
+        s = shapes.get(ref)
+        if s is None:   # new step without a shape: create it
+            proc_el = root.find(f".//*[@id='{ref}']", NS)
+            s = etree.SubElement(plane, _q("bpmndi:BPMNShape"))
+            s.set("bpmnElement", ref)
+            s.set("id", "BPMNShape_" + ref)
+            etree.SubElement(s, _q("dc:Bounds"))
+            shapes[ref] = s
+            log.append(f"added shape {ref} ({proc_el.get('name') if proc_el is not None else ''})")
         b = s.find("dc:Bounds", NS)
-        for k, v in zip(("x", "y", "width", "height"), (x, y, w, h)):
+        for k, v in zip(("height", "width", "x", "y"), (h, w, x, y)):
             b.set(k, repr(float(v)))
         moved.add(ref)
         log.append(f"bounds {ref} -> {x},{y},{w},{h}")
+    shifted_both = set()
+    if shift:
+        shifted_both = {r for r in shift[0] if r in shapes}
 
     edges = {e.get("bpmnElement"): e for e in plane.findall("bpmndi:BPMNEdge", NS)}
     flows = root.findall(".//bpmn2:sequenceFlow", NS) + root.findall(".//bpmn2:messageFlow", NS)
@@ -103,13 +181,22 @@ def fix_diagram(xml: str, bounds: dict | None = None) -> tuple[str, list[str]]:
             or edges[fid].get("targetElement") != shapes[tgt].get("id"))
         if fid in edges and src not in moved and tgt not in moved and not stale:
             continue
+        if (fid in edges and not stale and src in shifted_both and tgt in shifted_both
+                and src not in (bounds or {}) and tgt not in (bounds or {})):
+            continue   # moved together with its ends
         if src not in shapes or tgt not in shapes:
             log.append(f"WARN no shape for {fid} ({src}->{tgt})")
             continue
         sx, sy, sw, sh = _bounds(shapes[src])
         tx, ty, tw, th = _bounds(shapes[tgt])
-        p1 = (sx + sw, sy + sh / 2)
-        p2 = (tx, ty + th / 2)
+        if tx >= sx + sw:                       # target to the right: side to side
+            p1, p2 = (sx + sw, sy + sh / 2), (tx, ty + th / 2)
+        elif ty >= sy + sh:                     # target below: bottom to top
+            p1, p2 = (sx + sw / 2, sy + sh), (tx + tw / 2, ty)
+        elif ty + th <= sy:                     # target above: top to bottom
+            p1, p2 = (sx + sw / 2, sy), (tx + tw / 2, ty + th)
+        else:                                   # target to the left
+            p1, p2 = (sx, sy + sh / 2), (tx + tw, ty + th / 2)
         if fid in edges:
             e = edges[fid]
             for wp in e.findall("di:waypoint", NS):
@@ -266,6 +353,9 @@ def check_iflow(xml: str, prop: str | None = None, propdef: str | None = None) -
             if el.get("id") not in di_refs:
                 errs.append(f"{kind} {el.get('id')} has no BPMNShape")
     # sequence-flow wiring
+    for el, exp_in, exp_out in flow_ref_mismatches(root):
+        errs.append(f"{el.get('id')} ({el.get('name')}): incoming/outgoing do not match its flows "
+                    f"(expected in={exp_in} out={exp_out})")
     for f in root.iter(_q("bpmn2:sequenceFlow")):
         for end in ("sourceRef", "targetRef"):
             if f.get(end) not in ids:

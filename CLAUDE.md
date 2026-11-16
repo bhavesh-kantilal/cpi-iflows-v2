@@ -96,13 +96,15 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 
 ## Building an iFlow (user rules, 2026-11-16, I0539 feedback)
 - iFlows are built by scripts in `tools/` (e.g. `tools/iflow_build_fsap_dispatcher.py --only <IFlowName>`), which use `tools/iflow_lib.py`. The script is the single source of truth. Feedback is taken over into the script, as with mappings.
-- **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. `iflow_lib.fix_diagram` does this. (I0539 v1.0.0: "Main Process connection missing", L2.)
+- **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. Close gaps left by removed steps. `iflow_lib.fix_diagram` (with `shift=`) and `iflow_lib.sync_flow_refs` do this. (I0539 v1.0.0: "Main Process connection missing"; I0539_P 2.0.0: gap and no arrows, L2.)
+- For a quick visual check without CPI, `py -I tools/iflow_render.py <zip> <out.svg>` draws the diagram.
 - **HTTPS sender role and CSRF: always ask.** SSAB default: `SSAB_MessagingSend_InternalOperations`, CSRF off.
 - **Externalize every adapter setting someone may tune**, with `HTTP_<Setting>` / `<System>_<Setting>` names (IFLOW_CONVENTIONS §1.4, §2.4). Channels to the same system share one set. Fix misspelt parameter names and tell the user that the tenant value must be set again.
 - Every iFlow folder gets a `spec.md` with a Decisions table (user, 2026-11-16).
 - **Checks for every iFlow build** (`iflow_lib.check_iflow`, run in the build and in `tools/check_all_iflows.py`):
   - well-formed XML
   - no orphan diagram elements; every flow has an edge with matching ends; every step has a shape
+  - every step's `<incoming>`/`<outgoing>` match the sequence flows (I0539_P 2.0.0: Log Payload still pointed to a removed flow, and CPI showed a gap)
   - every `{{param}}` is in parameters.prop and propdef, and no unused parameters
   - no `claude`/`anthropic` strings
   - MANIFEST name equals the iFlow name

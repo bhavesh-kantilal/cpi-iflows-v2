@@ -69,7 +69,7 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | F1 | **HTTPS sender role and CSRF: always ask.** SSAB default is `SSAB_MessagingSend_InternalOperations` with CSRF off | CLAUDE.md (iFlow section) + IFLOW_CONVENTIONS | L2 (I0539 feedback doc) | OK (applied 2026-11-16) |
 | F2 | **Externalize every adapter setting someone may tune** (timeout, proxy, throw exception, retry, authentication, allowed headers, host, body size, PD address). Use the names `HTTP_<Setting>`. When several channels go to the same system, they share one set | IFLOW_CONVENTIONS §1.4, §2.4 + CLAUDE.md | L2 (I0539 feedback doc), L3 (v1.1.0 tested) | OK (applied 2026-11-16) |
 | F3 | **Diagram rule:** a build that changes process flows must also update BPMNDiagram. Drop orphan shapes and edges, give each flow an edge, and give each step a shape. Enforced by `iflow_lib.check_iflow` in the build and `tools/check_all_iflows.py` | CLAUDE.md (iFlow section) | L2 (I0539 v1.0.0: "Main Process connection missing") | OK (applied 2026-11-16) |
-| F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` reports the same orphan/missing-edge problem in I0539_P, I0541_P and I0545_P | iflows | `py -I tools/check_all_iflows.py` | Children done (I0541/I0545 v1.1.0); parents open (user will come back) |
+| F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` reports the same orphan/missing-edge problem in I0539_P, I0541_P and I0545_P | iflows | `py -I tools/check_all_iflows.py` | Children done (I0541/I0545 v1.1.0). Parents: diagram and model refs fixed in 2.0.1 (2026-11-16); externalization/role/CSRF for parents not done yet (user is testing) |
 | F5 | Fix the typo `AlowedCompanies` → `AllowedCompanies` in every FSAP iFlow that has it | iflows | L2 (user, 2026-11-16) | Children done (I0539, I0545; I0541 had no typo); parents to check |
 | F6 | Open questions from I0541/I0545: (a) I0541 "Allowed Request Headers" is empty, but `Content-Type` in the others. Set it the same? (b) I0545 `SAP_Sender=FD1-110` vs `FD1_110` elsewhere. Which is right? | iflows | L4 → L2 | OK: (a) ignore; (b) `FD1_110` is right, fixed manually by the user in CPI (2026-11-16) |
 
@@ -79,6 +79,13 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 - `tools/check_all_iflows.py`: now also runs the diagram and wiring checks.
 - I0541/I0545 v1.1.0: `pd_child_feedback_v110(name, body_step, monitor_step, extra_layout, extra)` is the generic version of the I0539 change. The Process_1 layout is placed relative to the pool. `fix_diagram` also redraws edges whose ends no longer match (I0541 splitter removal).
 - Retrigger urlPath bug: v1.0.0 only replaced names ending in `JMSToREST`, so I0541 kept `…_SOAPToREST`. Now it is always set to `/<iFlow name>`.
+- Parents 2.0.1:
+  - `iflow_lib.sync_flow_refs` and `remove_sequence_flow`
+  - `fix_diagram(shift=…)` and edge routing by direction (side, down, up)
+  - new check: incoming/outgoing match the flows
+  - `fix_parent_diagram` in the build script
+  - new `tools/iflow_render.py` (SVG preview)
+  - The I0541_P duplicate flow `SequenceFlow_IOSplit_in` is removed.
 
 ## D. Other actions taken
 | # | Action | Status |
