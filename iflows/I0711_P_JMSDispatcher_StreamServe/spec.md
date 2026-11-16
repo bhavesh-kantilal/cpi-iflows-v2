@@ -12,3 +12,4 @@ Consumes queue `I0711_StreamServe` and calls the StreamServe child named in `SSA
 |---|---|---|---|
 | 2026-11-16 | Number and names for the StreamServe dispatcher | User: next number 711. Name `I0711_P_JMSDispatcher_StreamServe`, queue `I0711_StreamServe`, DLQ `I0711_StreamServe_D` (confirmed) | New dispatcher |
 | 2026-11-16 | Template parameters not used by the flow (IDoc_Authorization, Sender/Receiver_Agency, UserRole=SSAB_MessagingSend_StripSAP, …) | Kept as in I0710 (same template). Clean both dispatchers together later | Open |
+| 2026-11-16 | DLQ receiver name | `<Sender>_DLQ` → `StreamServeDispatcher_DLQ` (user rule) | 1.0.1 |
