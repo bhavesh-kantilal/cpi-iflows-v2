@@ -10,3 +10,5 @@ Receives the FSAP InternalOrderBulkReplicateRequest (SOAP), splits it per intern
 | Date | Question | Answer | Impact |
 |---|---|---|---|
 | 2026-11-16 | 2.0.0 in CPI: Main Process gap and arrow to nothing, no arrows in Send to Receivers (L2, user screenshot of I0539_P) | Apply the I0539 child lesson: the build updates the diagram too, and the model's incoming/outgoing must match the flows | 2.0.1: `fix_parent_diagram`. The build check now also compares incoming/outgoing with the flows |
+| 2026-11-16 | Role, CSRF and externalization for the parent (L2: "apply the role, CSRF and externalization to the parents too") | Same names and values as the children (`HTTP_*`, `PD_*`), plus `JMS_*` for the JMS receiver | 2.1.0 |
+| 2026-11-16 | Leftover `IO_QUEUES` row (`{{IO_QUEUES}}`) found by the parameter check | Removed. The new ReceiverDetermination does not read it | Configure no longer shows `IO_QUEUES, I0541_MEDIUS,I0542_MOBILE` |
