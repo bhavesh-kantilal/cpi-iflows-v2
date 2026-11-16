@@ -71,7 +71,7 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | F3 | **Diagram rule:** a build that changes process flows must also update BPMNDiagram. Drop orphan shapes and edges, give each flow an edge, and give each step a shape. Enforced by `iflow_lib.check_iflow` in the build and `tools/check_all_iflows.py` | CLAUDE.md (iFlow section) | L2 (I0539 v1.0.0: "Main Process connection missing") | OK (applied 2026-11-16) |
 | F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` reports the same orphan/missing-edge problem in I0539_P, I0541_P and I0545_P | iflows | `py -I tools/check_all_iflows.py` | Children done (I0541/I0545 v1.1.0); parents open (user will come back) |
 | F5 | Fix the typo `AlowedCompanies` → `AllowedCompanies` in every FSAP iFlow that has it | iflows | L2 (user, 2026-11-16) | Children done (I0539, I0545; I0541 had no typo); parents to check |
-| F6 | Open questions from I0541/I0545: (a) I0541 "Allowed Request Headers" is empty, but `Content-Type` in the others. Set it the same? (b) I0545 `SAP_Sender=FD1-110` vs `FD1_110` elsewhere. Which is right? | iflows | L4 | Open |
+| F6 | Open questions from I0541/I0545: (a) I0541 "Allowed Request Headers" is empty, but `Content-Type` in the others. Set it the same? (b) I0545 `SAP_Sender=FD1-110` vs `FD1_110` elsewhere. Which is right? | iflows | L4 → L2 | OK: (a) ignore; (b) `FD1_110` is right, fixed manually by the user in CPI (2026-11-16) |
 
 ### Toolkit changes (I0539 v1.1.0)
 - New `tools/iflow_lib.py`: `fix_diagram`, `externalize`, `add_table_row`, `Params` (prop + propdef together), `check_iflow`.

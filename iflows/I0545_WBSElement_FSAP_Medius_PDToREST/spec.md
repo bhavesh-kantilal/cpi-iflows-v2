@@ -27,5 +27,5 @@ Content Modifiers: `ErpSourceId` is set in "Set Monitoring Identifiers", and the
 | 2026-11-16 | OData proxy type was hard-coded `sapcc` | Externalized as `FSAP_ProxyType` ("the more the better"). The name follows the reference pattern (L1: FSAP_ProxyType on OData V4) | New parameter |
 
 ### Not changed (to note)
-- `SAP_Sender=FD1-110` here, but `FD1_110` in I0539/I0541. Carried over from the source unchanged. Please say which one is right.
+- `SAP_Sender=FD1-110` here, but `FD1_110` in I0539/I0541. User 2026-11-16: `FD1_110` is right. The user fixes it manually in CPI, so the build keeps the source value. Take it over at the next feedback download.
 - The OData receiver's `connectionReuse=true` is not externalized: no reference shows it externalized.
