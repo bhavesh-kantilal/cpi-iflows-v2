@@ -269,7 +269,7 @@ PARAM_TMPL = """<parameter>
     <isRequired>false</isRequired>
     <constraint/>
     <description/>
-    <additionalMetadata/>
+    {meta}
   </parameter>"""
 
 
@@ -293,12 +293,19 @@ class Params:
         return re.findall(r"<name>([^<]*)</name>", self.propdef)
 
     # both
-    def add(self, name: str, value: str, type_: str = "xsd:string", ref: tuple | None = None):
-        """ref = (attribute_category, attribute_id, attribute_uilabel)."""
+    def add(self, name: str, value: str, type_: str = "xsd:string", ref: tuple | None = None,
+            combobox: bool | None = None):
+        """ref = (attribute_category, attribute_id, attribute_uilabel).
+        combobox: True/False writes <additionalMetadata><isCombobox>…</isCombobox> (as CPI does
+        for dropdown / checkbox fields, e.g. HTTP_Authorization / HTTP_CSRFProtected)."""
         self.set(name, value)
+        self.propdef = self.propdef.replace("<param_references/>", "<param_references></param_references>")
         if name not in self.names():
             self.propdef = self.propdef.replace(
-                "<param_references>", PARAM_TMPL.format(name=name, type=type_) + "<param_references>", 1)
+                "<param_references>", PARAM_TMPL.format(name=name, type=type_, meta=(
+                    "<additionalMetadata/>" if combobox is None else
+                    "<additionalMetadata>\n      <isCombobox>%s</isCombobox>\n    </additionalMetadata>"
+                    % str(combobox).lower())) + "<param_references>", 1)
         if ref:
             cat, aid, label = ref
             r = (f'<reference attribute_category="{cat}" attribute_id="{aid}" '

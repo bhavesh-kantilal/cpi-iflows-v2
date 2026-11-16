@@ -875,9 +875,81 @@ def Message processData(Message message) {
 """
 
 
+PD_RCV = "ctype::AdapterVariant/cname::ProcessDirect/vendor::SAP/tp::Not Applicable/mp::Not Applicable/direction::Receiver/version::1.1.1/attrId::"
+JMS_RCV = "ctype::AdapterVariant/cname::JMS/tp::Not Applicable/mp::Not Applicable/direction::Receiver/version::1.6.3/attrId::"
+
+# (param, iflw key, current value) on the JMS receiver "JMS" (system CI)
+PARENT_JMS_PARAMS = [
+    ("JMS_ExpirationPeriod", "ExpirationPeriod", "30"),
+    ("JMS_RetentionThresholdAlerting", "RetentionThresholdAlerting", "2"),
+    ("JMS_EncryptMessage", "EncryptMessage", "1"),
+    ("JMS_UseMessageCompression", "UseMessageCompression", "1"),
+    ("JMS_TransferExchangeProperties", "TransferExchangeProperties", "0"),
+]
+
+
+def parent_externalize_v210(name: str):
+    """Parents I0541_P / I0545_P (user 2026-11-16: role, CSRF and externalization as in the
+    children; I0539_P was done by the user in CPI). Returns the post= hook for _build_parent."""
+    def post(files: dict, iflw_path: str) -> None:
+        xml = files[iflw_path].decode("utf-8")
+        pk, dk = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
+        p = iflow_lib.Params(files[pk].decode("utf-8"), files[dk].decode("utf-8"))
+
+        # Leftover of the old queue loop: IO_QUEUES property row in Set Monitoring Identifiers
+        # ({{IO_QUEUES}} in I0541_P, {{I0545_MEDIUS,I0546_MOBILE}} in I0545_P). Nothing reads it.
+        root = iflow_lib.parse(xml)
+        v = iflow_lib.get_prop(root, iflow_lib._owner(root, "Set Monitoring Identifiers", "callActivity"),
+                               "propertyTable")
+        new, k = re.subn(r"<row>(?:(?!</row>).)*<cell id='Name'>IO_QUEUES</cell>(?:(?!</row>).)*</row>",
+                         "", v.text)
+        assert k == 1, "IO_QUEUES row not found"
+        v.text = new
+        xml = iflow_lib.serialize(root)
+        for junk in re.findall(r"<name>([^<]*,[^<]*)</name>", p.propdef) + ["IO_QUEUES"]:
+            p.remove(junk)
+
+        # Retrigger HTTPS sender (same names/values as the children, L3)
+        for param, key, value, combo, type_ in [
+            ("HTTP_UserRole", "userRole", "ESBMessaging.send", None, "xsd:string"),
+            ("HTTP_CSRFProtected", "xsrfProtection", "0", False, "xsd:boolean"),
+            ("HTTP_Authorization", "senderAuthType", "RoleBased", True, "xsd:string"),
+            ("HTTP_MaxBodySize", "maximumBodySize", "40", None, "xsd:string"),
+        ]:
+            xml = iflow_lib.externalize(xml, "HTTPS", key, "{{%s}}" % param, expect=value)
+            p.add(param, value, type_=type_, combobox=combo, ref=("Retrigger", "/attrId::" + key, ""))
+        p.set("HTTP_UserRole", "SSAB_MessagingSend_InternalOperations")
+        p.set("HTTP_CSRFProtected", "0")
+
+        # ProcessDirect sender (from FSAP) and receiver (mail utility)
+        # two messageFlows are named "ProcessDirect" (externalize() needs a unique name): pick by direction
+        root = iflow_lib.parse(xml)
+        pds = [m for m in root.iter("{%s}messageFlow" % iflow_lib.NS["bpmn2"]) if m.get("name") == "ProcessDirect"]
+        by_dir = {iflow_lib.get_prop(root, m, "direction").text: m for m in pds}
+        assert len(pds) == 2 and set(by_dir) == {"Sender", "Receiver"}
+        for d, value, param in (("Sender", "/" + name, "PD_Address"),
+                                ("Receiver", "/I0031_P_UTIL_SendEmail_JMSToMail", "PD_MailAddress")):
+            a = iflow_lib.get_prop(root, by_dir[d], "address")
+            assert a.text == value, a.text
+            a.text = "{{%s}}" % param
+        xml = iflow_lib.serialize(root)
+        p.add("PD_Address", "/" + name, ref=("FSAP", PD_SND + "address", "Address"))
+        p.add("PD_MailAddress", "/I0031_P_UTIL_SendEmail_JMSToMail", ref=("CI_MAIL", PD_RCV + "address", "Address"))
+
+        # JMS receiver to the dispatcher queues
+        for param, key, value in PARENT_JMS_PARAMS:
+            xml = iflow_lib.externalize(xml, "JMS", key, "{{%s}}" % param, expect=value)
+            p.add(param, value, ref=("CI", JMS_RCV + key, ""))
+
+        files[iflw_path] = xml.encode("utf-8")
+        files[pk] = p.prop.encode("utf-8")
+        files[dk] = p.propdef.encode("utf-8")
+    return post
+
+
 def _build_parent(bundle_name: str, new_name: str, new_version: str,
                   recv_det_groovy: str, with_io_splitter: bool = False,
-                  extra_iflw_transforms=None):
+                  extra_iflw_transforms=None, post=None):
     """Generic parent builder. extra_iflw_transforms: optional fn(xml)->xml."""
     print(f"Building {new_name} v{new_version}...")
 
@@ -898,11 +970,6 @@ def _build_parent(bundle_name: str, new_name: str, new_version: str,
     # v2.0.1: model refs + diagram (I0539_P feedback 2026-11-16: gap in Main Process,
     # no arrows in Send to Receivers)
     xml = fix_parent_diagram(xml, with_io_splitter=with_io_splitter)
-    problems = iflow_lib.check_iflow(xml)
-    if problems:
-        raise SystemExit(f"{new_name}: checks failed:\n  " + "\n  ".join(problems))
-    print("  checks OK (diagram, wiring)")
-
     files[new_iflw_path] = xml.encode("utf-8")
 
     # Update MANIFEST.MF
@@ -940,6 +1007,19 @@ def _build_parent(bundle_name: str, new_name: str, new_version: str,
         proj = proj.replace(bundle_name, new_name)
         files[".project"] = proj.encode("utf-8")
 
+    if post is not None:
+        post(files, new_iflw_path)
+        problems = iflow_lib.check_iflow(
+            files[new_iflw_path].decode("utf-8"),
+            files[prop_key].decode("utf-8"),
+            files["src/main/resources/parameters.propdef"].decode("utf-8"),
+        )
+    else:
+        problems = iflow_lib.check_iflow(files[new_iflw_path].decode("utf-8"))
+    if problems:
+        raise SystemExit(f"{new_name}: checks failed:\n  " + "\n  ".join(problems))
+    print("  checks OK (diagram, wiring" + (", parameters)" if post else ")"))
+
     build_dir = make_output_dir(new_name)
     out_zip = os.path.join(build_dir, new_name + ".zip")
     create_iflow_zip(out_zip, files)
@@ -970,10 +1050,11 @@ def build_i0541_parent():
     return _build_parent(
         "I0541_P_InternalOrder_FSAP_SOAPToJMS",
         "I0541_P_InternalOrder_FSAP_SOAPToJMS",
-        "2.0.1",
+        "2.1.0",
         _new_recv_det_i0541(),
         with_io_splitter=True,
         extra_iflw_transforms=_remove_asap_gateway,
+        post=parent_externalize_v210("I0541_P_InternalOrder_FSAP_SOAPToJMS"),
     )
 
 
@@ -981,8 +1062,9 @@ def build_i0545_parent():
     return _build_parent(
         "I0545_P_WBSElement_FSAP_SOAPToJMS",
         "I0545_P_WBSElement_FSAP_SOAPToJMS",
-        "2.0.1",
+        "2.1.0",
         _new_recv_det_i0545(),
+        post=parent_externalize_v210("I0545_P_WBSElement_FSAP_SOAPToJMS"),
     )
 
 
