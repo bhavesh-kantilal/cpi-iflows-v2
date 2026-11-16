@@ -5,7 +5,7 @@ iFlow Builder: FSAP Controlling Masterdata Dispatcher Migration
 Builds 7 iFlows for the FSAP -> Medius dispatcher migration (v1.0 scope: Medius only).
 
 Outputs:
-  iflows/I0702_P_JMSDispatcher_Medius/build/           new Medius dispatcher
+  iflows/I0710_P_JMSDispatcher_Medius/build/           new Medius dispatcher
   iflows/I0539_P_CostCenter_FSAP_SOAPToJMS/build/      updated parent (arr_* loop)
   iflows/I0541_P_InternalOrder_FSAP_SOAPToJMS/build/   updated parent + IDoc splitter
   iflows/I0545_P_WBSElement_FSAP_SOAPToJMS/build/      updated parent
@@ -686,12 +686,12 @@ def _remove_participant_and_mf(xml: str, participant_name: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 1. I0702_P_JMSDispatcher_Medius
+# 1. I0710_P_JMSDispatcher_Medius
 # ---------------------------------------------------------------------------
 
-def build_i0702_dispatcher():
+def build_i0710_dispatcher():
     """New Medius JMS dispatcher, cloned from I0701."""
-    name = "I0702_P_JMSDispatcher_Medius"
+    name = "I0710_P_JMSDispatcher_Medius"
     version = "1.0.0"
     print(f"Building {name} v{version}...")
 
@@ -707,7 +707,7 @@ def build_i0702_dispatcher():
     old_name = "I0701_P_JMSDispatcher_MSAP_PlantMaintenance"
     xml = xml.replace(old_name, name)
     xml = xml.replace("MSAPPlantMaintenanceDispatcher", "MediusDispatcher")
-    xml = xml.replace("I0701_MSAP_PlantMaintenance", "I0702_Medius")
+    xml = xml.replace("I0701_MSAP_PlantMaintenance", "I0710_Medius")
 
     files[new_iflw_path] = xml.encode("utf-8")
 
@@ -718,7 +718,7 @@ def build_i0702_dispatcher():
 
     # Update parameters.prop
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
-    prop = set_param(prop, "JMS_QueueName", "I0702_Medius")
+    prop = set_param(prop, "JMS_QueueName", "I0710_Medius")
     # Update SAP_Sender for FSAP source
     prop = set_param(prop, "SAP_Sender", "DR1_350")
     files["src/main/resources/parameters.prop"] = prop.encode("utf-8")
@@ -759,7 +759,7 @@ def Message processData(Message message) {
     def counter = 0
 
     // Medius -> I0702 common dispatcher queue
-    arr_receiversQueueList.add("I0702_Medius")
+    arr_receiversQueueList.add("I0710_Medius")
     arr_receiversIFlowList.add("I0539_CostCenter_FSAP_Medius_PDToREST")
     counter++
 
@@ -786,7 +786,7 @@ def Message processData(Message message) {
     def counter = 0
 
     // Medius -> I0702 common dispatcher queue (only receiver; ASAP decommissioned)
-    arr_receiversQueueList.add("I0702_Medius")
+    arr_receiversQueueList.add("I0710_Medius")
     arr_receiversIFlowList.add("I0541_InternalOrder_FSAP_Medius_PDToREST")
     counter++
 
@@ -808,7 +808,7 @@ def Message processData(Message message) {
     def counter = 0
 
     // Medius -> I0702 common dispatcher queue
-    arr_receiversQueueList.add("I0702_Medius")
+    arr_receiversQueueList.add("I0710_Medius")
     arr_receiversIFlowList.add("I0545_WBSElement_FSAP_Medius_PDToREST")
     counter++
 
@@ -1079,12 +1079,12 @@ def main():
     results = []
 
     # Dispatcher
-    results.append(build_i0702_dispatcher())
+    results.append(build_i0710_dispatcher())
     write_changelog(
-        "I0702_P_JMSDispatcher_Medius", "1.0.0",
+        "I0710_P_JMSDispatcher_Medius", "1.0.0",
         "New Medius JMS dispatcher for FSAP→Medius interfaces. "
         "Cloned from I0701_P_JMSDispatcher_MSAP_PlantMaintenance. "
-        "Queue: I0702_Medius, DLQ: I0702_Medius_D. "
+        "Queue: I0710_Medius, DLQ: I0710_Medius_D. "
         "Routes via ProcessDirect to child iFlow named in SSAB_Dispatcher_ReceiverIFlow header.",
     )
 
@@ -1094,7 +1094,7 @@ def main():
         "I0539_P_CostCenter_FSAP_SOAPToJMS", "2.0.0",
         "Migrated to new Iterating Splitter + arr_receiversQueueList pattern. "
         "Removed QUEUE_INDEX/QUEUE_LIST_SIZE loop (AddQueueIndex, SetQueueNameHeader, RestorePayload). "
-        "Medius receiver now uses I0702_Medius dispatcher queue. "
+        "Medius receiver now uses I0710_Medius dispatcher queue. "
         "Oracle receiver keeps I0539_ORACLE dedicated queue (dummy iFlow name). "
         "SAP_MessageProcessingLogCustomStatus set per iteration.",
     )
@@ -1105,7 +1105,7 @@ def main():
         "Migrated to new Iterating Splitter + arr_* pattern. "
         "ASAP gateway removed (ASAP decommissioned). "
         "Internal Order Splitter moved to parent (before ReceiverDetermination). "
-        "Only Medius receiver via I0702_Medius dispatcher. "
+        "Only Medius receiver via I0710_Medius dispatcher. "
         "IO_QUEUES (was empty) removed.",
     )
 
@@ -1113,7 +1113,7 @@ def main():
     write_changelog(
         "I0545_P_WBSElement_FSAP_SOAPToJMS", "2.0.0",
         "Migrated to new Iterating Splitter + arr_* pattern. "
-        "Medius receiver uses I0702_Medius dispatcher queue. "
+        "Medius receiver uses I0710_Medius dispatcher queue. "
         "Mobile receiver keeps I0546_MOBILE dedicated queue (dummy iFlow name). "
         "Removed malformed IO_QUEUES parameter artifact.",
     )
@@ -1151,10 +1151,10 @@ def main():
         print(f"  {r}")
     print("=" * 60)
     print("\nNext steps:")
-    print("  1. Import I0702_P_JMSDispatcher_Medius first (creates the dispatcher)")
+    print("  1. Import I0710_P_JMSDispatcher_Medius first (creates the dispatcher)")
     print("  2. Import PDToREST children (I0539/I0541/I0545)")
     print("  3. Import updated parents (I0539_P / I0541_P / I0545_P)")
-    print("  4. Queue I0702_Medius must be created in CPI before deploying dispatcher")
+    print("  4. Queue I0710_Medius must be created in CPI before deploying dispatcher")
     print("  5. Old queues I0540_MEDIUS / I0541_MEDIUS / I0545_MEDIUS drain then retire")
 
 

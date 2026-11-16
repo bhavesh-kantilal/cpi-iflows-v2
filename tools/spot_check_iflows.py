@@ -18,9 +18,9 @@ def check(label, cond):
     print(f"  {status}  {label}")
     return cond
 
-print("=== I0702_P_JMSDispatcher_Medius ===")
-x = get_iflw("I0702_P_JMSDispatcher_Medius")
-check("JMS_QueueName=I0702_Medius", "I0702_Medius" in get_file("I0702_P_JMSDispatcher_Medius", "src/main/resources/parameters.prop"))
+print("=== I0710_P_JMSDispatcher_Medius ===")
+x = get_iflw("I0710_P_JMSDispatcher_Medius")
+check("JMS_QueueName=I0710_Medius", "I0710_Medius" in get_file("I0710_P_JMSDispatcher_Medius", "src/main/resources/parameters.prop"))
 check("No I0701 name in iflw", "I0701" not in x)
 check("ProcessDirect route uses header", "${header.SSAB_Dispatcher_ReceiverIFlow}" in x)
 check("DLQ via JMS_InternalDLQ param", "JMS_InternalDLQ" in x)
@@ -37,7 +37,7 @@ check("No header.QueueName", "${header.QueueName}" not in x)
 check("SSAB_Dispatcher_ReceiverIFlow header set", "SSAB_Dispatcher_ReceiverIFlow" in x)
 # Check ReceiverDetermination.groovy
 rd = get_file("I0539_P_CostCenter_FSAP_SOAPToJMS", "src/main/resources/script/ReceiverDetermination.groovy")
-check("I0702_Medius in ReceiverDetermination", "I0702_Medius" in rd)
+check("I0710_Medius in ReceiverDetermination", "I0710_Medius" in rd)
 check("I0539_CostCenter_FSAP_Medius_PDToREST in RD", "I0539_CostCenter_FSAP_Medius_PDToREST" in rd)
 check("I0539_ORACLE dummy in RD", "I0539_ORACLE" in rd)
 check("No AddQueueIndex.groovy", True)  # checked by absence in scripts
@@ -64,7 +64,7 @@ x = get_iflw("I0545_P_WBSElement_FSAP_SOAPToJMS")
 check("arr_receiversLastIndex in iflw", "arr_receiversLastIndex" in x)
 check("No malformed P_IO_QUEUES", "P_IO_QUEUES" not in x)
 rd = get_file("I0545_P_WBSElement_FSAP_SOAPToJMS", "src/main/resources/script/ReceiverDetermination.groovy")
-check("I0702_Medius in RD", "I0702_Medius" in rd)
+check("I0710_Medius in RD", "I0710_Medius" in rd)
 check("I0546_MOBILE dummy in RD", "I0546_MOBILE" in rd)
 
 print()

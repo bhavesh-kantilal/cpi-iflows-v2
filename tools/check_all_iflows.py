@@ -4,7 +4,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 from lxml import etree
 
 iflows = [
-    "I0702_P_JMSDispatcher_Medius",
+    "I0710_P_JMSDispatcher_Medius",
     "I0539_P_CostCenter_FSAP_SOAPToJMS",
     "I0541_P_InternalOrder_FSAP_SOAPToJMS",
     "I0545_P_WBSElement_FSAP_SOAPToJMS",
