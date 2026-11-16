@@ -1,0 +1,9 @@
+#Mon Nov 16 10:11:00 UTC 2026
+Environment=DEV
+Mail_CC=hans.nehrman@ssab.com
+Mail_Subject=Cloud Integration - ${property.Environment}\: Receiver determination failed for IFlow ${property.IFlowName}
+Mail_To=${property.MailReceivers}
+P_IO_QUEUES=I0540_MEDIUS,I0540_MSAP,I0539_ORACLE
+SAP_MessageType=CostCentreReplicationBulkRequest
+SAP_Sender=FD1-110
+SendingUserRole=SSAB_MessagingSend_InternalOperations

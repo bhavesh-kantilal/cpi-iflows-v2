@@ -1,0 +1,5 @@
+#Mon Nov 16 10:11:00 UTC 2026
+P_IO_QUEUES=I0540_MEDIUS,I0540_MSAP,I0539_ORACLE
+SAP_MessageType=CostCentreReplicationBulkRequest
+SAP_Sender=FD1-110
+SendingUserRole=SSAB_MessagingSend_InternalOperations

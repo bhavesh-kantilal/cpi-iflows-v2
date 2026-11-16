@@ -1,0 +1,266 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:Generator="com.sap.it.gnb.ifl.common.gen.pluggability.api.GeneratorHandler" xmlns:bsn="http://sapcd.com/bsnagt" xmlns:camel="http://camel.apache.org/schema/blueprint" xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cxfcore="http://cxf.apache.org/blueprint/core" xmlns:exsl="http://exslt.org/common" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:hci-ph="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:idocsoap="urn:sap-com:document:sap:idoc:soap:messages" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:ns="https://bsnschemas.netweaver.neo.com/bsnflow" xmlns:orange="http://xi.com/orange" xmlns:sap-cxf-generic-request="http://camel.apache.org/cxf/jaxws/dispatch" xmlns:sap-cxf-generic-request-reply="http://camel.apache.org/cxf/jaxws/provider" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:str="http://exslt.org/strings" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager" xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd           http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd           http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd           http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd           http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd           http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd           http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd           http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd">
+    
+    <reference id="cxfTracingFeatureFactory" interface="com.sap.it.op.agent.trace.cxf.CxfTracingFeatureFactory"/>
+    
+    <bean class="com.sap.esb.monitoring.cxf.runtime.feature.RuntimeFeature" id="cxf.feature.RuntimeFeature"/>
+    
+    <reference id="MessageProcessingLogSink" interface="com.sap.it.op.agent.api.MessageProcessingLogSink"/>
+    
+    <reference id="IntegrationOperationsErrorEventPublisher" interface="com.sap.it.op.ed.IntegrationOperationsErrorEventPublisher"/>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.MplInterceptor" id="itOpAgentMplInterceptor"/>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.MplEventNotifier" id="itOpAgentMplEventNotifier">
+        
+        <property name="messageProcessingLogSink">
+            
+            <ref component-id="MessageProcessingLogSink"/>
+            
+        </property>
+        
+    </bean>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.CustomShutdownStrategy" id="CustomShutdownStrategy">
+        
+        <property name="timeout" value="60"/>
+        
+        <property name="suppressLoggingOnTimeout" value="true"/>
+        
+        <property name="shutdownNowOnTimeout" value="true"/>
+        
+    </bean>
+    
+    <bean class="org.apache.camel.http.base.cookie.InstanceCookieHandler" id="httpSessionCookieHandler">
+        
+        <property name="cookiePolicy">
+            
+            <bean class="com.sap.it.http.cookie.policy.NetscapePolicy"/>
+            
+        </property>
+        
+    </bean>
+    
+    <bean class="org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy" id="sendStrategy"/>
+    
+    <bean class="net.sf.saxon.xpath.XPathFactoryImpl" id="saxonFactory"/>
+    
+    <reference id="secureStore" interface="com.sap.it.nm.security.SecureStore"/>
+    
+    <bean class="com.sap.esb.secure.parameter.impl.SecureParameterAccessFactoryImpl" id="secureParameterAccessFactory">
+        
+        <property name="secureParameterStorage" ref="secureStore"/>
+        
+    </bean>
+    
+    <reference id="clusterLockManager" interface="com.sap.it.nm.concurrent.ClusterLockManager"/>
+    
+    <reference id="authenticationHeaderProvider" interface="com.sap.it.nm.security.AuthenticationHeaderProvider"/>
+    
+    <reference filter="(factoryType=default)" id="connectionFactory" interface="javax.jms.ConnectionFactory"/>
+    
+    <bean class="org.springframework.jms.connection.JmsTransactionManager" id="jmsTransactionManager">
+        
+        <property name="connectionFactory" ref="connectionFactory"/>
+        
+    </bean>
+    
+    <bean class="com.sap.esb.monitoring.mpl.access.jms.MessageListenerContainerFactory" id="messageListenerContainerFactory"/>
+    
+    <bean class="com.sap.it.iflow.saxonee.SaxonEEConsumerFactory" factory-method="getEnterpriseXPathFactoryInstance" id="saxonEEXpathFactory"/>
+    
+    <bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>
+    
+    <bean class="java.util.HashMap" id="userdefinedNamespaces"/>
+    
+    <bean class="org.apache.camel.builder.NoErrorHandlerBuilder" id="noErrorHandler"/>
+    
+    <camel:camelContext id="I0539_P_CostCenter_FSAP_SOAPToJMS" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
+        <camel:globalOptions>
+            <camel:globalOption key="CamelLogDebugBodyMaxChars" value="-1"/>
+            <camel:globalOption key="CamelMaximumEndpointCacheSize" value="50"/>
+        </camel:globalOptions>
+        <camel:streamCaching id="I0539_P_CostCenter_FSAP_SOAPToJMS_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
+        <camel:route errorHandlerRef="noErrorHandler">
+            <camel:from uri="direct://ServiceTask_8075"/>
+            <camel:setProperty id="MessageFlow_8079_223171819557272" name="SAP_IntegrationFlowID">
+                <camel:constant>I0539_P_CostCenter_FSAP_SOAPToJMS</camel:constant>
+            </camel:setProperty>
+            <camel:to uri="dataformat:mime-multipart:marshal?binaryContent=true"/>
+            <camel:to uri="dataformat:sap-gzip:marshal"/>
+            <camel:to uri="dataformat:sap-encrypt:marshal"/>
+            <camel:to uri="sap-jms-util://convertFromProperties?alertInterval=172800000&amp;transferProperties=false"/>
+            <camel:setExchangePattern pattern="InOnly"/>
+            <camel:setHeader name="CamelJmsDestinationName">
+                <camel:exchangeProperty>QueueName</camel:exchangeProperty>
+            </camel:setHeader>
+            <camel:to uri="sap-jms-util://validateDynamicDestinationName"/>
+            <camel:to uri="sap-jms:Queue.Is.Set.Dynamically?connectionFactory=#connectionFactory&amp;transacted=true&amp;transactionManager=#jmsTransactionManager&amp;chunkQueue=C.Queue.Is.Set.Dynamically&amp;maxChunkSize=5242880&amp;timeToLive=2592000000"/>
+            <camel:to uri="sap-jms-util://cleanupConvertedProperties"/>
+        </camel:route>
+        <camel:route id="Process_46">
+            <camel:from uri="direct:Process_46"/>
+            <camel:setHeader id="CallActivity_GetCurrentReceiver_223171821706003" name="SSAB_Dispatcher_ReceiverIFlow">
+                <camel:simple resultType="String">${exchangeProperty.arr_receiversIFlowList[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader name="SAP_MessageProcessingLogCustomStatus">
+                <camel:simple resultType="String">${header.SSAB_Dispatcher_ReceiverIFlow.split('_')[0]}</camel:simple>
+            </camel:setHeader>
+            <camel:setProperty name="QueueName">
+                <camel:simple resultType="String">${exchangeProperty.arr_receiversQueueList[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+            </camel:setProperty>
+            <camel:enrich id="ServiceTask_8075_223171825251953" strategyRef="sendStrategy">
+                <camel:constant>direct://ServiceTask_8075</camel:constant>
+            </camel:enrich>
+        </camel:route>
+        <camel:route id="Process_10">
+            <camel:from id="MessageFlow_39_223171826458370" uri="sap-processdirect:foo?address=/I0539_P_CostCenter_FSAP_SOAPToJMS"/>
+            <camel:to uri="sap-pp-util://sender"/>
+            <camel:to id="CallActivity_43_223171829640616" uri="direct:Process_15"/>
+            <camel:setProperty id="EndEvent_13_223171829888019" name="SAP_MarkMessageAsFailed">
+                <camel:constant>false</camel:constant>
+            </camel:setProperty>
+        </camel:route>
+        <camel:route id="Process_53">
+            <camel:from uri="direct:Process_53"/>
+            <camel:setHeader id="CallActivity_58_223171831211038" name="scriptFile">
+                <camel:constant>getAlertMailReceivers.groovy</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>UTIL_GetAlertMailReceivers</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>groovy</camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setHeader id="CallActivity_57_223171833135266" name="Mail_To">
+                <camel:simple>${exchangeProperty.MailReceivers}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader name="Mail_CC">
+                <camel:constant>hans.nehrman@ssab.com</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="Mail_Subject">
+                <camel:simple resultType="String">Cloud Integration - ${exchangeProperty.Environment}: Receiver determination failed for IFlow ${exchangeProperty.IFlowName}</camel:simple>
+            </camel:setHeader>
+            <camel:setBody>
+                <camel:simple>Receiver determination failed for COSMAS01 from GSAP&lt;br&gt;&lt;br&gt;
+
+Message Id: ${header.SAP_MessageProcessingLogID} &lt;br&gt;
+Correlation Id: ${header.SAP_MplCorrelationId}&lt;br&gt;
+Application Id: ${header.SAP_ApplicationID}&lt;br&gt;&lt;br&gt;
+
+Payload:&lt;br&gt;
+${in.body}</camel:simple>
+            </camel:setBody>
+            <camel:to id="MessageFlow_8084_223171836511914" uri="sap-processdirect:foo?address=/I0031_P_UTIL_SendEmail_JMSToMail"/>
+        </camel:route>
+        <camel:route id="Process_15">
+            <camel:from uri="direct:Process_15"/>
+            <camel:setHeader id="CallActivity_19_223171840212167" name="SAP_ApplicationID">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="java.lang.Long">substring(//*:CostCentre/ID, 5)</camel:xpath>
+            </camel:setHeader>
+            <camel:setHeader name="SAP_MessageType">
+                <camel:constant>CostCentreReplicationBulkRequest</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="SAP_Sender">
+                <camel:constant>FD1-110</camel:constant>
+            </camel:setHeader>
+            <camel:setProperty name="CH_MessageId">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="String">/*[local-name()='CostCentreReplicationBulkRequest']   /*[local-name()='MessageHeader']   /*[local-name()='ID']/text()</camel:xpath>
+            </camel:setProperty>
+            <camel:setProperty name="Environment">
+                <camel:constant>DEV</camel:constant>
+            </camel:setProperty>
+            <camel:setProperty name="IFlowName">
+                <camel:simple>${camelId}</camel:simple>
+            </camel:setProperty>
+            <camel:to id="CallActivity_21_223171845237738" uri="direct:Process_8069"/>
+            <camel:setHeader id="CallActivity_22_223171845631544" name="scriptFile">
+                <camel:constant>logCustomHeaders.groovy</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>UTIL_LogCustomHeaders</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>groovy</camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setHeader id="CallActivity_23_223171847518171" name="scriptFile">
+                <camel:constant>ReceiverDetermination.groovy</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>groovy</camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:choice id="ExclusiveGateway_24_223171849131594">
+                <camel:when>
+                    <camel:simple>${exchangeProperty.arr_receiversLastIndex} &gt;= '0'</camel:simple>
+                    <camel:setProperty id="CallActivity_25_223171851179723" name="sap.loop.counter.CallActivity_25">
+                        <camel:constant>0</camel:constant>
+                    </camel:setProperty>
+                    <camel:setProperty name="sap.loop.condition.CallActivity_25">
+                        <camel:constant>true</camel:constant>
+                    </camel:setProperty>
+                    <camel:loop doWhile="true">
+                        <camel:simple>${exchangeProperty.sap.loop.counter.CallActivity_25} &lt; 10 &amp;&amp; ${exchangeProperty.sap.loop.condition.CallActivity_25} == 'true'</camel:simple>
+                        <camel:to uri="direct:Process_46"/>
+                        <camel:setProperty name="sap.loop.counter.CallActivity_25">
+                            <camel:simple>${exchangeProperty.sap.loop.counter.CallActivity_25}++</camel:simple>
+                        </camel:setProperty>
+                        <camel:choice>
+                            <camel:when>
+                                <camel:simple>${exchangeProperty.CamelLoopIndex} &lt; ${exchangeProperty.arr_receiversLastIndex}</camel:simple>
+                                <camel:setProperty name="sap.loop.condition.CallActivity_25">
+                                    <camel:constant>true</camel:constant>
+                                </camel:setProperty>
+                            </camel:when>
+                            <camel:otherwise>
+                                <camel:setProperty name="sap.loop.condition.CallActivity_25">
+                                    <camel:constant>false</camel:constant>
+                                </camel:setProperty>
+                            </camel:otherwise>
+                        </camel:choice>
+                    </camel:loop>
+                    <camel:choice>
+                        <camel:when>
+                            <camel:simple>${exchangeProperty.sap.loop.condition.CallActivity_25} == 'true'</camel:simple>
+                            <camel:throwException exceptionType="java.lang.IllegalStateException" message="CallActivity_25 : Loop counter reached max. number of iterations"/>
+                        </camel:when>
+                    </camel:choice>
+                </camel:when>
+                <camel:otherwise>
+                    <camel:to id="CallActivity_26_223171852603643" uri="direct:Process_53"/>
+                    <camel:to id="EndEvent_28_223171852982549" uri="sap-error://exception"/>
+                </camel:otherwise>
+            </camel:choice>
+        </camel:route>
+        <camel:route id="Process_1">
+            <camel:from id="MessageFlow_38_223171854266467" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/I0539_P_CostCenter_FSAP_SOAPToJMS&amp;senderAuthType=RoleBased&amp;xsrfProtection=false&amp;returnExceptionToSender=false&amp;userRole=SSAB_MessagingSend_InternalOperations"/>
+            <camel:to uri="sap-pp-util://sender"/>
+            <camel:onException id="MessageFlow_38_223171857026906">
+                <camel:exception>com.sap.esb.size.limiter.SizeLimitExceededException</camel:exception>
+                <camel:handled>
+                    <camel:constant>false</camel:constant>
+                </camel:handled>
+            </camel:onException>
+            <camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>
+            <camel:to id="CallActivity_40_223171858719431" uri="direct:Process_15"/>
+            <camel:setProperty id="EndEvent_2_223171859090736" name="SAP_MarkMessageAsFailed">
+                <camel:constant>false</camel:constant>
+            </camel:setProperty>
+        </camel:route>
+        <camel:route id="Process_8069">
+            <camel:from uri="direct:Process_8069"/>
+            <camel:setHeader id="CallActivity_8073_223171860436355" name="scriptFile">
+                <camel:constant>logPayloadAsAttachment.groovy</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>UTIL_LogPayloadAsAttachment</camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>groovy</camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+        </camel:route>
+    </camel:camelContext>
+    
+</blueprint>
