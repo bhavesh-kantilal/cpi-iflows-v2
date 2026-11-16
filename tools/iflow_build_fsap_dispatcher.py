@@ -1031,19 +1031,46 @@ def _remove_io_splitter(xml: str) -> str:
     return xml
 
 
-# --- Feedback v1.0.0 -> v1.1.0 (Bhavesh, 2026-11-16, feedback/I0539_Feedback.docx) ---
+# --- Feedback v1.0.0 -> v1.1.0 (Bhavesh, 2026-11-16, I0539 feedback/I0539_Feedback.docx) ---
+# Tested OK on I0539 v1.1.0 (L3, user 2026-11-16); applied to I0541 and I0545 the same way.
 
-# Process_1 layout taken from Bhavesh's CPI download (v1.0.1).
-PD_CHILD_LAYOUT = {
-    "Participant_Process_1": (-601, -598, 388, 137),
-    "StartEvent_2": (-581, -534, 32, 32),
-    "CallActivity_503": (-489, -548, 100, 60),
-    "EndEvent_2": (-329, -534, 32, 32),
-    "Participant_1": (-801, -588, 100, 140),
-    "Participant_99272346": (146, -616, 100, 140),
-}
+ODATA_V4 = "ctype::AdapterVariant/cname::HCIOData/tp::HTTP/mp::OData V4/direction::Receiver/version::1.20.0/attrId::"
 
-HTTP_RCV = "ctype::AdapterVariant/cname::HTTP/tp::HTTP/mp::None/direction::Receiver/version::1.17.0/attrId::"
+
+def pd_child_layout(xml: str) -> dict:
+    """Process_1 (Start -> Main Process -> End) layout, relative to the pool's position.
+    Offsets are Bhavesh's layout in the I0539 CPI download v1.0.1 (L2)."""
+    root = iflow_lib.parse(xml)
+    plane = root.find(".//bpmndi:BPMNPlane", iflow_lib.NS)
+    shape = {s.get("bpmnElement"): s for s in plane.findall("bpmndi:BPMNShape", iflow_lib.NS)}
+    px, py_, _, _ = iflow_lib._bounds(shape["Participant_Process_1"])
+    proc = root.find(".//bpmn2:process[@id='Process_1']", iflow_lib.NS)
+    ca = proc.find("bpmn2:callActivity", iflow_lib.NS).get("id")
+    sender = root.find(".//bpmn2:messageFlow[@targetRef='StartEvent_2']", iflow_lib.NS).get("sourceRef")
+    return {
+        "Participant_Process_1": (px, py_, 388, 137),
+        "StartEvent_2": (px + 20, py_ + 64, 32, 32),
+        ca: (px + 112, py_ + 50, 100, 60),
+        "EndEvent_2": (px + 272, py_ + 64, 32, 32),
+        sender: (px - 200, py_ + 10, 100, 140),
+    }
+
+
+def _has_prop(xml: str, owner: str, key: str, kind: str = "messageFlow") -> bool:
+    root = iflow_lib.parse(xml)
+    try:
+        iflow_lib.get_prop(root, iflow_lib._owner(root, owner, kind), key)
+        return True
+    except KeyError:
+        return False
+
+
+def _prop_value(xml: str, owner: str, key: str, kind: str = "messageFlow") -> str:
+    root = iflow_lib.parse(xml)
+    return iflow_lib.get_prop(root, iflow_lib._owner(root, owner, kind), key).text or ""
+
+
+HTTP_RCV ="ctype::AdapterVariant/cname::HTTP/tp::HTTP/mp::None/direction::Receiver/version::1.17.0/attrId::"
 PD_SND = "ctype::AdapterVariant/cname::ProcessDirect/vendor::SAP/tp::Not Applicable/mp::Not Applicable/direction::Sender/version::1.1.2/attrId::"
 
 # (param, iflw key, current value, propdef reference category); shared by both Medius receivers
@@ -1061,14 +1088,23 @@ MEDIUS_HTTP_PARAMS = [
 MEDIUS_CHANNELS = ["HTTP", "HTTP_UserResponsible"]
 
 
-def _i0539_feedback_v110(files: dict, iflw_path: str) -> None:
+def pd_child_feedback_v110(name: str, body_step: str, monitor_step: str = "Set Monitor Identifiers",
+                           extra_layout: dict | None = None, extra=None):
+    """Returns the post= hook for _build_child_pdtorest (Medius PDToREST children)."""
+    def post(files: dict, iflw_path: str) -> None:
+        _pd_child_post(files, iflw_path, "/" + name, body_step, monitor_step, extra_layout, extra)
+    return post
+
+
+def _pd_child_post(files, iflw_path, pd_address, body_step, monitor_step, extra_layout, extra) -> None:
     xml = files[iflw_path].decode("utf-8")
     pk, dk = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     p = iflow_lib.Params(files[pk].decode("utf-8"), files[dk].decode("utf-8"))
-    pd_address = "/I0539_CostCenter_FSAP_Medius_PDToREST"
 
-    # 1. Diagram: Process_1 connection + orphan shapes of the removed DLQ steps
-    xml, log = iflow_lib.fix_diagram(xml, PD_CHILD_LAYOUT)
+    # 1. Diagram: Process_1 connection + orphan shapes of removed steps
+    layout = pd_child_layout(xml)
+    layout.update(extra_layout or {})
+    xml, log = iflow_lib.fix_diagram(xml, layout)
     for line in log:
         print("   ", line)
 
@@ -1078,15 +1114,20 @@ def _i0539_feedback_v110(files: dict, iflw_path: str) -> None:
     xml = xml.replace("{{AlowedCompanies}}", "{{AllowedCompanies}}")   # typo fix
     p.rename("AlowedCompanies", "AllowedCompanies")
     p.set("AllowedCompanies", "SE78")
-    p.remove("ssabQA")          # unused
-    p.remove("QUEUE_NAME")      # JMS sender gone
-    p.remove("MaxRetries")      # retry gateway gone
+    for unused in ("ssabQA", "QUEUE_NAME", "MaxRetries"):   # unused / JMS sender + retry gateway gone
+        p.remove(unused)
 
-    # 3. Externalize Medius HTTP receiver settings (shared params)
+    # 3. Medius HTTP receivers: shared params (only keys the channel has)
     for param, key, value, cat in MEDIUS_HTTP_PARAMS:
+        used = False
         for ch in MEDIUS_CHANNELS:
-            xml = iflow_lib.externalize(xml, ch, key, "{{%s}}" % param, expect=value)
-        p.add(param, value, ref=(cat, HTTP_RCV + key, ""))
+            if _has_prop(xml, ch, key) and _prop_value(xml, ch, key):
+                xml = iflow_lib.externalize(xml, ch, key, "{{%s}}" % param, expect=value)
+                used = True
+            else:
+                print(f"    note: {ch}.{key} is empty; left as it is (not externalized)")
+        if used:
+            p.add(param, value, ref=(cat, HTTP_RCV + key, ""))
     for ch in MEDIUS_CHANNELS:
         root = iflow_lib.parse(xml)
         v = iflow_lib.get_prop(root, iflow_lib._owner(root, ch, "messageFlow"), "httpAddressWithoutQuery")
@@ -1095,7 +1136,9 @@ def _i0539_feedback_v110(files: dict, iflw_path: str) -> None:
                                     v.text.replace("https://api.medius.com/", "https://{{Medius_Host}}/"))
     p.add("Medius_Host", "api.medius.com", ref=("Medius", HTTP_RCV + "httpAddressWithoutQuery", "Address"))
 
-    # 4. Retrigger HTTPS sender body size (reference pattern: HTTPS_BodySize, category Retrigger)
+    # 4. Retrigger HTTPS sender: urlPath = /<iFlow name> (I0541 still had ..._SOAPToREST),
+    #    body size externalized (reference pattern: HTTPS_BodySize, category Retrigger)
+    xml = iflow_lib.externalize(xml, "HTTPS", "urlPath", pd_address)
     xml = iflow_lib.externalize(xml, "HTTPS", "maximumBodySize", "{{HTTP_MaxBodySize}}", expect="40")
     p.add("HTTP_MaxBodySize", "40", ref=("Retrigger", "/attrId::maximumBodySize", ""))
 
@@ -1106,20 +1149,31 @@ def _i0539_feedback_v110(files: dict, iflw_path: str) -> None:
     # 6. ErpSourceId: property in "Set Monitor Identifiers" (constant {{…}} row, as LogPayloadSize),
     #    Form Payload body reads ${property.ErpSourceId}
     xml = iflow_lib.add_table_row(
-        xml, "Set Monitor Identifiers", "propertyTable",
+        xml, monitor_step, "propertyTable",
         "<row><cell id='Action'>Create</cell><cell id='Type'>constant</cell>"
         "<cell id='Value'>{{Medius_ErpSourceId}}</cell><cell id='Default'></cell>"
         "<cell id='Name'>ErpSourceId</cell><cell id='Datatype'></cell></row>")
     root = iflow_lib.parse(xml)
-    body = iflow_lib.get_prop(root, iflow_lib._owner(root, "Form Payload", "callActivity"), "wrapContent")
+    body = iflow_lib.get_prop(root, iflow_lib._owner(root, body_step, "callActivity"), "wrapContent")
     assert body.text.count('"ErpSourceId": "FSAP"') == 1, body.text
     body.text = body.text.replace('"ErpSourceId": "FSAP"', '"ErpSourceId": "${property.ErpSourceId}"')
     xml = iflow_lib.serialize(root)
     p.add("Medius_ErpSourceId", "FSAP")
 
+    if extra is not None:
+        xml = extra(xml, p)
+
     files[iflw_path] = xml.encode("utf-8")
     files[pk] = p.prop.encode("utf-8")
     files[dk] = p.propdef.encode("utf-8")
+
+
+def _i0545_extra(xml: str, p) -> str:
+    # OData receiver to FSAP: proxy type externalized like the other FSAP_* settings
+    # (reference pattern FSAP_ProxyType on OData V4 1.20.0, L1)
+    xml = iflow_lib.externalize(xml, "OData", "proxyType", "{{FSAP_ProxyType}}", expect="sapcc")
+    p.add("FSAP_ProxyType", "sapcc", ref=("FSAP_WBS", ODATA_V4 + "proxyType", "Proxy Type"))
+    return xml
 
 
 def build_i0539_child():
@@ -1128,7 +1182,17 @@ def build_i0539_child():
         "I0539_CostCenter_FSAP_Medius_PDToREST",
         "1.1.0",
         old_sender_system="FSAP",
-        post=_i0539_feedback_v110,
+        post=pd_child_feedback_v110(
+            "I0539_CostCenter_FSAP_Medius_PDToREST", "Form Payload",
+            # exact layout of Bhavesh's CPI download v1.0.1 (tested, L3)
+            extra_layout={
+                "Participant_Process_1": (-601, -598, 388, 137),
+                "StartEvent_2": (-581, -534, 32, 32),
+                "CallActivity_503": (-489, -548, 100, 60),
+                "EndEvent_2": (-329, -534, 32, 32),
+                "Participant_1": (-801, -588, 100, 140),
+                "Participant_99272346": (146, -616, 100, 140),
+            }),
     )
 
 
@@ -1136,9 +1200,11 @@ def build_i0541_child():
     return _build_child_pdtorest(
         "I0541_InternalOrder_FSAP_Medius_JMSToREST",
         "I0541_InternalOrder_FSAP_Medius_PDToREST",
-        "1.0.0",
+        "1.1.0",
         old_sender_system="FSAP",
         remove_splitter=True,
+        post=pd_child_feedback_v110("I0541_InternalOrder_FSAP_Medius_PDToREST", "Set Payload",
+                                    monitor_step="Set Monitoring Identifiers"),
     )
 
 
@@ -1146,8 +1212,11 @@ def build_i0545_child():
     return _build_child_pdtorest(
         "I0545_WBSElement_FSAP_Medius_JMSToREST",
         "I0545_WBSElement_FSAP_Medius_PDToREST",
-        "1.0.0",
+        "1.1.0",
         old_sender_system="FSAP",
+        post=pd_child_feedback_v110("I0545_WBSElement_FSAP_Medius_PDToREST", "Form Payload",
+                                    monitor_step="Set Monitoring Identifiers",
+                                    extra=_i0545_extra),
     )
 
 
@@ -1179,12 +1248,15 @@ def write_changelog(iflow_name: str, version: str, entry: str) -> None:
 
 ONLY = {
     "I0539_CostCenter_FSAP_Medius_PDToREST": build_i0539_child,
+    "I0541_InternalOrder_FSAP_Medius_PDToREST": build_i0541_child,
+    "I0545_WBSElement_FSAP_Medius_PDToREST": build_i0545_child,
 }
 
 
 def main():
-    if len(sys.argv) == 3 and sys.argv[1] == "--only":
-        print(ONLY[sys.argv[2]]())
+    if len(sys.argv) >= 3 and sys.argv[1] == "--only":
+        for n in sys.argv[2:]:
+            print(ONLY[n]())
         return
     print("=" * 60)
     print("FSAP Dispatcher Migration — iFlow Build")

@@ -98,7 +98,10 @@ def fix_diagram(xml: str, bounds: dict | None = None) -> tuple[str, list[str]]:
     flows = root.findall(".//bpmn2:sequenceFlow", NS) + root.findall(".//bpmn2:messageFlow", NS)
     for f in flows:
         fid, src, tgt = f.get("id"), f.get("sourceRef"), f.get("targetRef")
-        if fid in edges and src not in moved and tgt not in moved:
+        stale = fid in edges and src in shapes and tgt in shapes and (
+            edges[fid].get("sourceElement") != shapes[src].get("id")
+            or edges[fid].get("targetElement") != shapes[tgt].get("id"))
+        if fid in edges and src not in moved and tgt not in moved and not stale:
             continue
         if src not in shapes or tgt not in shapes:
             log.append(f"WARN no shape for {fid} ({src}->{tgt})")
@@ -111,6 +114,8 @@ def fix_diagram(xml: str, bounds: dict | None = None) -> tuple[str, list[str]]:
             e = edges[fid]
             for wp in e.findall("di:waypoint", NS):
                 e.remove(wp)
+            e.set("sourceElement", shapes[src].get("id"))
+            e.set("targetElement", shapes[tgt].get("id"))
             action = "rerouted"
         else:
             e = etree.SubElement(plane, _q("bpmndi:BPMNEdge"))
@@ -244,10 +249,17 @@ def check_iflow(xml: str, prop: str | None = None, propdef: str | None = None) -
         r = el.get("bpmnElement")
         if r and r not in ids:
             errs.append(f"orphan DI element for {r}")
+    shape_of = {s.get("bpmnElement"): s.get("id") for s in plane.findall("bpmndi:BPMNShape", NS)}
+    edge_of = {e.get("bpmnElement"): e for e in plane.findall("bpmndi:BPMNEdge", NS)}
     for kind in ("sequenceFlow", "messageFlow"):
         for f in root.iter(_q("bpmn2:" + kind)):
             if f.get("id") not in di_refs:
                 errs.append(f"{kind} {f.get('id')} has no BPMNEdge")
+                continue
+            e = edge_of[f.get("id")]
+            if (e.get("sourceElement") != shape_of.get(f.get("sourceRef"))
+                    or e.get("targetElement") != shape_of.get(f.get("targetRef"))):
+                errs.append(f"{kind} {f.get('id')}: edge ends do not match its source/target")
     for kind in ("task", "serviceTask", "callActivity", "startEvent", "endEvent",
                  "exclusiveGateway", "participant"):
         for el in root.iter(_q("bpmn2:" + kind)):
