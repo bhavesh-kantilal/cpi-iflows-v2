@@ -61,6 +61,17 @@ def read_from_package(pkg_zip_path: str, bundle_name: str) -> dict[str, bytes]:
     raise FileNotFoundError(f"Bundle '{bundle_name}' not found in {pkg_zip_path}")
 
 
+def read_from_folder_package(pkg_zip_path: str, folder: str) -> dict[str, bytes]:
+    """Read one iFlow from a package export whose iFlows are plain folders
+    (<folder>/META-INF/..., <folder>/src/...), e.g. FSAPControllingMasterData_artifacts.zip."""
+    z = zipfile.ZipFile(pkg_zip_path)
+    pre = folder.rstrip("/") + "/"
+    files = {n[len(pre):]: z.read(n) for n in z.namelist() if n.startswith(pre) and not n.endswith("/")}
+    if not files:
+        raise FileNotFoundError(f"{folder} not found in {pkg_zip_path}")
+    return files
+
+
 def read_standalone_zip(zip_path: str) -> dict[str, bytes]:
     """Read a standalone iFlow ZIP into {path: bytes}."""
     z = zipfile.ZipFile(zip_path)
@@ -741,8 +752,20 @@ def _remove_participant_and_mf(xml: str, participant_name: str) -> str:
 
 def build_i0710_dispatcher():
     """New Medius JMS dispatcher, cloned from I0701."""
-    name = "I0710_P_JMSDispatcher_Medius"
-    version = "1.0.0"
+    return build_dispatcher("I0710_P_JMSDispatcher_Medius", "1.0.0", "I0710_Medius",
+                            "MediusDispatcher", sap_sender="DR1_350")
+
+
+def build_i0711_dispatcher():
+    """New StreamServe JMS dispatcher (user 2026-11-16: next number 711), cloned from I0701
+    the same way as I0710."""
+    return build_dispatcher("I0711_P_JMSDispatcher_StreamServe", "1.0.0", "I0711_StreamServe",
+                            "StreamServeDispatcher", sap_sender="FD1_110")
+
+
+def build_dispatcher(name: str, version: str, queue: str, tag: str, sap_sender: str):
+    """Clone I0701_P_JMSDispatcher_MSAP_PlantMaintenance for a new target system.
+    Queue <queue>, DLQ <queue>_D (I0701 pattern)."""
     print(f"Building {name} v{version}...")
 
     src_zip = os.path.join(REF_IFLOWS, "I0701_P_JMSDispatcher_MSAP_PlantMaintenance.zip")
@@ -756,8 +779,8 @@ def build_i0710_dispatcher():
     # Text replacements throughout iflw
     old_name = "I0701_P_JMSDispatcher_MSAP_PlantMaintenance"
     xml = xml.replace(old_name, name)
-    xml = xml.replace("MSAPPlantMaintenanceDispatcher", "MediusDispatcher")
-    xml = xml.replace("I0701_MSAP_PlantMaintenance", "I0710_Medius")
+    xml = xml.replace("MSAPPlantMaintenanceDispatcher", tag)
+    xml = xml.replace("I0701_MSAP_PlantMaintenance", queue)
 
     files[new_iflw_path] = xml.encode("utf-8")
 
@@ -768,9 +791,9 @@ def build_i0710_dispatcher():
 
     # Update parameters.prop
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
-    prop = set_param(prop, "JMS_QueueName", "I0710_Medius")
+    prop = set_param(prop, "JMS_QueueName", queue)
     # Update SAP_Sender for FSAP source
-    prop = set_param(prop, "SAP_Sender", "DR1_350")
+    prop = set_param(prop, "SAP_Sender", sap_sender)
     files["src/main/resources/parameters.prop"] = prop.encode("utf-8")
 
     # Update metainfo.prop if present
@@ -964,11 +987,12 @@ def parent_externalize_v210(name: str):
 
 def _build_parent(bundle_name: str, new_name: str, new_version: str,
                   recv_det_groovy: str, with_io_splitter: bool = False,
-                  extra_iflw_transforms=None, post=None):
-    """Generic parent builder. extra_iflw_transforms: optional fn(xml)->xml."""
+                  extra_iflw_transforms=None, post=None, src_files=None):
+    """Generic parent builder. extra_iflw_transforms: optional fn(xml)->xml.
+    src_files: source iFlow files (default: bundle_name from FSAP_PKG)."""
     print(f"Building {new_name} v{new_version}...")
 
-    files = read_from_package(FSAP_PKG, bundle_name)
+    files = dict(src_files) if src_files is not None else read_from_package(FSAP_PKG, bundle_name)
 
     # Rename iflw to match the actual iFlow name
     old_iflw = iflow_xml_name(files)
@@ -1103,11 +1127,12 @@ def build_i0545_parent():
 def _build_child_pdtorest(src_bundle: str, new_name: str, new_version: str,
                            old_sender_system: str = "FSAP",
                            remove_splitter: bool = False,
-                           post=None):
-    """Convert a JMSToREST child into a PDToREST child."""
+                           post=None, src_files=None):
+    """Convert a JMSToREST child into a PDToREST child (also used for JMSToJDBC -> PDToJDBC).
+    src_files: source iFlow files (default: src_bundle from FSAP_PKG)."""
     print(f"Building {new_name} v{new_version}...")
 
-    files = read_from_package(FSAP_PKG, src_bundle)
+    files = dict(src_files) if src_files is not None else read_from_package(FSAP_PKG, src_bundle)
 
     # Rename iflw
     old_iflw = iflow_xml_name(files)
@@ -1387,6 +1412,171 @@ def build_i0545_child():
 
 
 # ---------------------------------------------------------------------------
+# 8–11. Business Partner (I0544): Medius via I0710, StreamServe via new I0711 (user 2026-11-16)
+# Source: iflows/FSAPControllingMasterData_artifacts.zip (user's package export, L1)
+# ---------------------------------------------------------------------------
+
+BP_PKG = os.path.join(IFLOWS_OUT, "FSAPControllingMasterData_artifacts.zip")
+BP_PARENT = "I0544_P_BusinessPartner_FSAP_SOAPToJMS"
+BP_MEDIUS = "I0544_BusinessPartner_FSAP_Medius_PDToREST"
+BP_SS = "I0544_BusinessPartner_FSAP_StreamServeDDS_PDToJDBC"
+
+
+def _new_recv_det_i0544() -> str:
+    return """\\
+import com.sap.gateway.ip.core.customdev.util.Message
+
+def Message processData(Message message) {
+    def arr_receiversQueueList = []
+    def arr_receiversIFlowList = []
+    def counter = 0
+
+    // Medius -> I0710 common dispatcher queue
+    arr_receiversQueueList.add("I0710_Medius")
+    arr_receiversIFlowList.add("I0544_BusinessPartner_FSAP_Medius_PDToREST")
+    counter++
+
+    // StreamServe DDS -> I0711 common dispatcher queue
+    arr_receiversQueueList.add("I0711_StreamServe")
+    arr_receiversIFlowList.add("I0544_BusinessPartner_FSAP_StreamServeDDS_PDToJDBC")
+    counter++
+
+    // MSAP -> dedicated queue (dummy: iFlow name = queue name)
+    arr_receiversQueueList.add("I0544_MSAP")
+    arr_receiversIFlowList.add("I0544_MSAP")
+    counter++
+
+    message.setProperty("arr_receiversQueueList", arr_receiversQueueList)
+    message.setProperty("arr_receiversIFlowList", arr_receiversIFlowList)
+    message.setProperty("arr_receiversLastIndex", counter - 1)
+    return message
+}
+"""
+
+
+def _fsap_defaults(files: dict) -> None:
+    """SAP_Sender FD1_110 (user, 2026-11-16: FD1_110 is right; source had FD1-110)."""
+    pk = "src/main/resources/parameters.prop"
+    p = iflow_lib.Params(files[pk].decode("utf-8"), "")
+    p.set("SAP_Sender", "FD1_110")
+    files[pk] = p.prop.encode("utf-8")
+
+
+def build_i0544_parent():
+    def post(files, iflw_path):
+        parent_externalize_v210(BP_PARENT)(files, iflw_path)
+        _fsap_defaults(files)
+    return _build_parent(BP_PARENT, BP_PARENT, "2.0.0", _new_recv_det_i0544(), post=post,
+                         src_files=read_from_folder_package(BP_PKG, BP_PARENT))
+
+
+def _externalize_existing(xml: str, p, channel: str, params: list, ref_prefix: str, cat: str) -> str:
+    """params: (param, key). Externalize each key of <channel> that has a plain, non-empty value;
+    the current value becomes the default."""
+    for param, key in params:
+        if not _has_prop(xml, channel, key):
+            continue
+        val = _prop_value(xml, channel, key)
+        if not val or "{{" in val:
+            continue
+        xml = iflow_lib.externalize(xml, channel, key, "{{%s}}" % param)
+        p.add(param, val, ref=(cat, ref_prefix + key, ""))
+    return xml
+
+
+def _bp_child_common(xml: str, p, name: str) -> str:
+    """Steps shared by both BP children (the I0539 v1.1.0 lessons)."""
+    xml, log = iflow_lib.fix_diagram(xml, pd_child_layout(xml))
+    for line in log:
+        if not line.startswith("removed orphan"):
+            print("   ", line)
+    p.set("HTTP_UserRole", "SSAB_MessagingSend_InternalOperations")
+    p.set("HTTP_CSRFProtected", "0")
+    for unused in ("QUEUE_NAME", "MaxRetries"):     # JMS sender + retry gateway gone
+        p.remove(unused)
+    xml = iflow_lib.externalize(xml, "HTTPS", "urlPath", "/" + name)
+    xml = iflow_lib.externalize(xml, "HTTPS", "maximumBodySize", "{{HTTP_MaxBodySize}}", expect="40")
+    p.add("HTTP_MaxBodySize", "40", ref=("Retrigger", "/attrId::maximumBodySize", ""))
+    xml = iflow_lib.externalize(xml, "ProcessDirect", "address", "{{PD_Address}}", expect="/" + name)
+    p.add("PD_Address", "/" + name, ref=("FSAP", PD_SND + "address", "Address"))
+    # Sender was the JMS queue (participant/system "JMS"); with ProcessDirect it is FSAP, as in I0539
+    xml = iflow_lib.externalize(xml, "ProcessDirect", "system", "FSAP", expect="JMS")
+    root = iflow_lib.parse(xml)
+    part = iflow_lib._owner(root, "JMS", "participant")
+    part.set("name", "FSAP")
+    xml = iflow_lib.serialize(root)
+    return xml
+
+
+def _bp_post(name: str, specific):
+    def post(files: dict, iflw_path: str) -> None:
+        xml = files[iflw_path].decode("utf-8")
+        pk, dk = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
+        p = iflow_lib.Params(files[pk].decode("utf-8"), files[dk].decode("utf-8"))
+        xml = _bp_child_common(xml, p, name)
+        xml = specific(xml, p)
+        files[iflw_path] = xml.encode("utf-8")
+        files[pk] = p.prop.encode("utf-8")
+        files[dk] = p.propdef.encode("utf-8")
+        _fsap_defaults(files)
+    return post
+
+
+def _bp_medius_specific(xml: str, p) -> str:
+    # {{ssabQA}} -> {{tenantName}} like the other Medius children (user, 2026-11-16)
+    xml = xml.replace("{{ssabQA}}", "{{tenantName}}")
+    p.rename("ssabQA", "tenantName")
+    xml = _externalize_existing(xml, p, "HTTP", [(a, b) for a, b, _, _ in MEDIUS_HTTP_PARAMS],
+                                HTTP_RCV, "Medius")
+    v = _prop_value(xml, "HTTP", "httpAddressWithoutQuery")
+    assert v.startswith("https://api.medius.com/"), v
+    xml = iflow_lib.externalize(xml, "HTTP", "httpAddressWithoutQuery",
+                                v.replace("https://api.medius.com/", "https://{{Medius_Host}}/"))
+    p.add("Medius_Host", "api.medius.com", ref=("Medius", HTTP_RCV + "httpAddressWithoutQuery", "Address"))
+    # HTTP_Authentication reference belongs to the Auth category (as tested in I0539 v1.1.0)
+    p.propdef = p.propdef.replace(
+        f'attribute_category="Medius" attribute_id="{HTTP_RCV}authenticationMethod"',
+        f'attribute_category="Medius.Receiver.Auth" attribute_id="{HTTP_RCV}authenticationMethod"')
+    return xml
+
+
+JDBC_RCV = "ctype::AdapterVariant/cname::JDBC/tp::JDBC/mp::Not Applicable/direction::Receiver/version::"
+
+
+def _bp_streamserve_specific(xml: str, p) -> str:
+    # JDBC parameters to the JDBC_* convention; ConnectionTImeout typo fixed (user: no preference
+    # -> recommended option, 2026-11-16)
+    for old, new in (("JDBCAlias", "JDBC_Alias"), ("ConnectionTImeout", "JDBC_ConnectionTimeout"),
+                     ("QueryTimeout", "JDBC_QueryTimeout")):
+        xml = xml.replace("{{%s}}" % old, "{{%s}}" % new)
+        p.rename(old, new)
+    for unused in ("Medius_Credentials", "ssabQA"):   # leftovers of the Medius template, not used
+        p.remove(unused)
+    root = iflow_lib.parse(xml)
+    uri = iflow_lib.get_prop(root, iflow_lib._owner(root, "JDBC", "messageFlow"), "cmdVariantUri").text
+    ver = uri.rsplit("version::", 1)[1]
+    xml = _externalize_existing(xml, p, "JDBC", [("JDBC_PageSize", "pageSize"),
+                                                ("JDBC_BatchMode", "batchMode"),
+                                                ("JDBC_BatchOperation", "batchOperation")],
+                                JDBC_RCV + ver + "/attrId::", "StreamServeDDS")
+    return xml
+
+
+def build_i0544_medius_child():
+    src = "I0544_BusinessPartner_FSAP_Medius_JMSToREST"
+    return _build_child_pdtorest(src, BP_MEDIUS, "1.0.0", old_sender_system="JMS",
+                                 post=_bp_post(BP_MEDIUS, _bp_medius_specific),
+                                 src_files=read_from_folder_package(BP_PKG, src))
+
+
+def build_i0544_streamserve_child():
+    src = "I0544_BusinessPartner_FSAP_StreamServeDDS_JMSToJDBC"
+    return _build_child_pdtorest(src, BP_SS, "1.0.0", old_sender_system="JMS",
+                                 post=_bp_post(BP_SS, _bp_streamserve_specific),
+                                 src_files=read_from_folder_package(BP_PKG, src))
+
+
+# ---------------------------------------------------------------------------
 # CHANGELOG helpers
 # ---------------------------------------------------------------------------
 
@@ -1419,6 +1609,11 @@ ONLY = {
     "I0539_P_CostCenter_FSAP_SOAPToJMS": build_i0539_parent,
     "I0541_P_InternalOrder_FSAP_SOAPToJMS": build_i0541_parent,
     "I0545_P_WBSElement_FSAP_SOAPToJMS": build_i0545_parent,
+    "I0711_P_JMSDispatcher_StreamServe": build_i0711_dispatcher,
+    "I0710_P_JMSDispatcher_Medius": build_i0710_dispatcher,
+    BP_PARENT: build_i0544_parent,
+    BP_MEDIUS: build_i0544_medius_child,
+    BP_SS: build_i0544_streamserve_child,
 }
 
 

@@ -13,6 +13,10 @@ iflows = [
     "I0539_CostCenter_FSAP_Medius_PDToREST",
     "I0541_InternalOrder_FSAP_Medius_PDToREST",
     "I0545_WBSElement_FSAP_Medius_PDToREST",
+    "I0711_P_JMSDispatcher_StreamServe",
+    "I0544_P_BusinessPartner_FSAP_SOAPToJMS",
+    "I0544_BusinessPartner_FSAP_Medius_PDToREST",
+    "I0544_BusinessPartner_FSAP_StreamServeDDS_PDToJDBC",
 ]
 
 all_ok = True
