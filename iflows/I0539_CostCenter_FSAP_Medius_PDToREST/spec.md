@@ -44,7 +44,9 @@ Child iFlow of the FSAP → Medius dispatcher pattern. `I0539_P_CostCenter_FSAP_
 | 2026-11-16 | Unused `ssabQA` parameter | Remove | Removed. `QUEUE_NAME` and `MaxRetries` also removed from propdef (CPI had already dropped them) |
 | 2026-11-16 | spec.md per iFlow folder? | Yes | This file |
 
-### UNVERIFIED (L4), to check on import
-- **propdef `param_references` for the new HTTP receiver parameters.** These follow the reference pattern (`attribute_category` = system name, `attrId::<key>`). The references only show `httpAddressWithoutQuery` and `credentialName` for the HTTP receiver. CPI rewrites propdef on save. The `HTTP_Authentication` reference uses category `Medius.Receiver.Auth`, like `credentialName`.
-- **`{{HTTP_Authentication}}`, `{{HTTP_ProxyType}}`, `{{HTTP_ThrowExceptionOnFailure}}`, `{{HTTP_RetryOnConnectionFailure}}`:** these are combobox and checkbox fields. Their values are typed as `xsd:string`, with the same text as the hard-coded values. Check that Configure shows them correctly.
-- **ErpSourceId:** it is not externalized inside the Content Modifier body, because no reference shows `{{…}}` in a body. Instead it is a constant `{{…}}` property row in "Set Monitor Identifiers", the same pattern as `LogPayloadSize`, and the body reads `${property.ErpSourceId}`.
+| 2026-11-16 | v1.1.0 test result | "Perfect" (user). Apply the same to I0541 and I0545 | Items below are now L3 |
+
+### Verified by the v1.1.0 test (L3, user 2026-11-16; were UNVERIFIED)
+- **propdef `param_references` for the new HTTP receiver parameters** import fine. They follow the reference pattern: `attribute_category` = system name, `attrId::<key>`, and `<System>.Receiver.Auth` for `authenticationMethod`.
+- **Combobox and checkbox fields** externalized as `xsd:string` with the literal value import and configure fine: `HTTP_Authentication`, `HTTP_ProxyType`, `HTTP_ThrowExceptionOnFailure`, `HTTP_RetryOnConnectionFailure`.
+- **ErpSourceId** works as a constant `{{…}}` property row in "Set Monitor Identifiers" (the same pattern as `LogPayloadSize`), with the body reading `${property.ErpSourceId}`. `{{…}}` directly in a body is still not seen in any reference.

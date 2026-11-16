@@ -66,16 +66,19 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 ## A3. Proposals from the I0539 iFlow feedback (2026-11-16, waiting for approval)
 | # | Proposal | Where | Evidence | Status |
 |---|---|---|---|---|
-| F1 | **HTTPS sender role and CSRF: always ask.** SSAB default is `SSAB_MessagingSend_InternalOperations` with CSRF off | CLAUDE.md (iFlow section) + IFLOW_CONVENTIONS | L2 (I0539 feedback doc) | Open |
-| F2 | **Externalize every adapter setting someone may tune** (timeout, proxy, throw exception, retry, authentication, allowed headers, host, body size, PD address). Use the names `HTTP_<Setting>`. When several channels go to the same system, they share one set | IFLOW_CONVENTIONS §naming | L2 (I0539 feedback doc) | Open |
-| F3 | **Diagram rule:** a build that changes process flows must also update BPMNDiagram. Drop orphan shapes and edges, give each flow an edge, and give each step a shape. Enforced by `iflow_lib.check_iflow` in the build and `tools/check_all_iflows.py` | CLAUDE.md checks (iFlows) | L2 (I0539 v1.0.0: "Main Process connection missing") | Open |
-| F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` now reports the same orphan/missing-edge problem in I0539_P, I0541_P, I0545_P, I0541 and I0545 | iflows | `py -I tools/check_all_iflows.py` | Open (after I0539 test) |
-| F5 | Fix the typo `AlowedCompanies` → `AllowedCompanies` in every FSAP iFlow that has it | iflows | L2 (user, 2026-11-16) | Open (I0539 done) |
+| F1 | **HTTPS sender role and CSRF: always ask.** SSAB default is `SSAB_MessagingSend_InternalOperations` with CSRF off | CLAUDE.md (iFlow section) + IFLOW_CONVENTIONS | L2 (I0539 feedback doc) | OK (applied 2026-11-16) |
+| F2 | **Externalize every adapter setting someone may tune** (timeout, proxy, throw exception, retry, authentication, allowed headers, host, body size, PD address). Use the names `HTTP_<Setting>`. When several channels go to the same system, they share one set | IFLOW_CONVENTIONS §1.4, §2.4 + CLAUDE.md | L2 (I0539 feedback doc), L3 (v1.1.0 tested) | OK (applied 2026-11-16) |
+| F3 | **Diagram rule:** a build that changes process flows must also update BPMNDiagram. Drop orphan shapes and edges, give each flow an edge, and give each step a shape. Enforced by `iflow_lib.check_iflow` in the build and `tools/check_all_iflows.py` | CLAUDE.md (iFlow section) | L2 (I0539 v1.0.0: "Main Process connection missing") | OK (applied 2026-11-16) |
+| F4 | Apply I0539 v1.1.0 to the other FSAP iFlows. `check_all_iflows.py` reports the same orphan/missing-edge problem in I0539_P, I0541_P and I0545_P | iflows | `py -I tools/check_all_iflows.py` | Children done (I0541/I0545 v1.1.0); parents open (user will come back) |
+| F5 | Fix the typo `AlowedCompanies` → `AllowedCompanies` in every FSAP iFlow that has it | iflows | L2 (user, 2026-11-16) | Children done (I0539, I0545; I0541 had no typo); parents to check |
+| F6 | Open questions from I0541/I0545: (a) I0541 "Allowed Request Headers" is empty, but `Content-Type` in the others. Set it the same? (b) I0545 `SAP_Sender=FD1-110` vs `FD1_110` elsewhere. Which is right? | iflows | L4 | Open |
 
 ### Toolkit changes (I0539 v1.1.0)
 - New `tools/iflow_lib.py`: `fix_diagram`, `externalize`, `add_table_row`, `Params` (prop + propdef together), `check_iflow`.
 - `tools/iflow_build_fsap_dispatcher.py`: `--only <iFlow>` switch, and a `post=` hook in `_build_child_pdtorest` that runs the checks.
 - `tools/check_all_iflows.py`: now also runs the diagram and wiring checks.
+- I0541/I0545 v1.1.0: `pd_child_feedback_v110(name, body_step, monitor_step, extra_layout, extra)` is the generic version of the I0539 change. The Process_1 layout is placed relative to the pool. `fix_diagram` also redraws edges whose ends no longer match (I0541 splitter removal).
+- Retrigger urlPath bug: v1.0.0 only replaced names ending in `JMSToREST`, so I0541 kept `…_SOAPToREST`. Now it is always set to `/<iFlow name>`.
 
 ## D. Other actions taken
 | # | Action | Status |

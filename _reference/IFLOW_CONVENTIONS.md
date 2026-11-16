@@ -50,6 +50,9 @@ Sender system ──HTTPS──▶ I<nnnn>_P_…_HTTPToJMS ──JMS queue──
 - **"Log Payload"** is a local process with "Log Payload As Attachment". The `LogPayload=True` parameter switches it. [I2052P, I2052, I0115]
 - **"Set Monitoring Identifiers"** is a Content Modifier at the start of the main process. [I2052P, I2052]
 - **Common externalized parameters**: `SAP_Sender`, `SAP_Receiver`, `UserRole` (e.g. `SSAB_MessagingSend_SmarTeam`), `HTTPSessionReuse`, `Timeout`, and `MaxRetries`. [parameters.prop files]
+- **HTTPS sender (Retrigger) role and CSRF: always ask.** SSAB: `HTTP_UserRole=SSAB_MessagingSend_InternalOperations` and `HTTP_CSRFProtected=0` (off). For other customers, ask. [L2: I0539 feedback 2026-11-16]
+- **Externalize every adapter setting someone may tune** ("the more the better"): timeout, proxy type, throw exception on failure, retry settings, authentication, allowed headers, host, max body size, ProcessDirect address. Only non-empty values are externalized. Channels to the same system share one set. Externalize values used in a Content Modifier body as a constant `{{…}}` property row in "Set Monitoring Identifiers", and read them with `${property.X}`. [L2: I0539 feedback; L3: I0539 v1.1.0 tested 2026-11-16]
+- **Medius children** (I0539/I0541/I0545 v1.1.0) share this parameter set: `HTTP_Timeout`, `HTTP_ProxyType`, `HTTP_ThrowExceptionOnFailure`, `HTTP_Authentication`, `HTTP_RetryOnConnectionFailure`, `HTTP_RetryIterations`, `HTTP_RetryInterval`, `HTTP_AllowedRequestHeaders`, `HTTP_AllowedResponseHeaders`, `Medius_Host`, `tenantName`, `Medius_Credentials`, `HTTP_MaxBodySize`, `PD_Address`, `Medius_ErpSourceId`, `AllowedCompanies` (FSAP default `SE78`). [L3: I0539 v1.1.0]
 - The **customer prefix** `SSAB_` is used for custom headers (`SSAB_Dispatcher_ReceiverIFlow`) and roles. `AllowedHeaders=SSAB.*` is set in the dispatcher. [I0701 parameters.prop]
 - Header and property names copied in flows use the `CH_` prefix (`CH_SmarTeamMessageId`, `CH_DocumentInfoRecord`). [I2052P, I2052 .iflw]
 
@@ -83,6 +86,7 @@ Sender system ──HTTPS──▶ I<nnnn>_P_…_HTTPToJMS ──JMS queue──
 ### 2.4 Other names
 - Groovy UDF scripts use lowerCamel or PascalCase function names, and the file name matches the main function (`concatText.groovy`, `GetDeliveryDetails.groovy`). [mapping exports]
 - Externalized parameters are PascalCase or `SAP_`-style (`MSAP_IDocEndpoint`, `SAP_Sender`). JMS parameters use `JMS_*`. [parameters.prop files]
+- **Adapter parameters: `<Prefix>_<Setting>`**. Use `HTTP_*` for HTTP/HTTPS channels (`HTTP_Timeout`, `HTTP_ThrowExceptionOnFailure`) and `<System>_*` for a system's own channel (`FSAP_ProxyType`, `Medius_Host`). Spell names correctly: `AlowedCompanies` was renamed `AllowedCompanies`, and a renamed parameter loses its configured tenant value. [L2: I0539 feedback 2026-11-16]
 
 ## 3. Observed deviations (legacy, do not copy)
 | What | Where | Rule today |
