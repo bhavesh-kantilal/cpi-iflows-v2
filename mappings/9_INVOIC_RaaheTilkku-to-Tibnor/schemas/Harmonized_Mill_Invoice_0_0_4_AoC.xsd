@@ -1,0 +1,1266 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema elementFormDefault="qualified" xmlns:altova="http://www.altova.com/xml-schema-extensions" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Invoice">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Header">
+					<xs:annotation>
+						<xs:documentation>General control data for this invoice.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="DocumentId">
+					<xs:annotation>
+						<xs:documentation>Identification information for this sales invoice.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DocumentLanguage" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="LanguageCode"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="FreeText" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Free text data realting to invoice header level.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Location" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Reference" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: RFF.C506.1154 References for invoice&apos;s header level.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Party" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD-segments Invoice partner information.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Currency" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: CUX.C504.6345 Currency code to be used for invoicing purposes. Always ISO 4217 currency codes.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="TermsOfPayment" minOccurs="0"/>
+				<xs:element ref="ModeOfTransport" minOccurs="0"/>
+				<xs:element ref="TermsOfDelivery" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TOD Terms of delivery data on invoice.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Date" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Percentage" minOccurs="0"/>
+				<xs:element ref="Item" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: LIN Line items for purchase order</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="NumberOfLineItems">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="18"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="AllowanceOrCharge" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Tax" minOccurs="0"/>
+				<xs:element ref="MonetaryAmount" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Header">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SchemaId">
+					<xs:annotation>
+						<xs:documentation>EDI: UNH.S009.0065 Name of the message</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="SchemaVersion">
+					<xs:annotation>
+						<xs:documentation>EDI: UNH S009.0052 + S009.0054 Message version number</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="MessageFunction">
+					<xs:annotation>
+						<xs:documentation><![CDATA[EDI: BGM.1225 Defines if this message is, from the source system point of view, original message or it's change or cancellation: 9 = original, 5 = Message replacing a previous message, 1 = Cancellation. 53 = Test message. 31 = Copy, Indicates that the message is a copy of an original message that has been sent, e.g. for action or information.]]></xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="DocumentType"/>
+				<xs:element name="SourceSystem" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>EDI: UNH.0068 The system originating the invoice : LASKURA LASKUHA METOCS</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="InterchangeSender" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: UNB.S002.0004 Technical identification, which partner has created this message. Usually OVT/EDI identifier.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RecipientIdentification" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: UNB.S003.0004 Receiver&apos;s identification number.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TransformToMedia" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The media format into which the broker must convert this message. Possible values: EDIFACT / NETINVOICE / XML / ELETTER / EMAIL / FAX / CSV</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="eInvoiceKey" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Key value used for electornic invoicing, describing the operator party and final address (e.g. TE003701082343)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="MessageRoutingInbound" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation><![CDATA[This tag contains MQ queue references that are needed to determinate routing queues. Content can be created be the broker. Content will not be used by the receiving ERP system. Temporaty content, tag may be taken away on xslt parsing phases.]]></xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="MessageRoutingOutbound" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation><![CDATA[This tag contains MQ queue references that are needed to determinate routing queues. Content can be created be the broker. Content will not be used by the receiving ERP system. Temporaty content, tag may be taken away on xslt parsing phases.]]></xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DocumentId">
+		<xs:annotation>
+			<xs:documentation>EDI: BGM Identification information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DocumentNo">
+					<xs:annotation>
+						<xs:documentation>EDI: BGM.C106.1004 Suppliers invoice number (e.g. 122-556204)</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Date">
+					<xs:annotation>
+						<xs:documentation>EDI: DTM.C507.2380 Invoice issue date.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Party">
+		<xs:annotation>
+			<xs:documentation>EDI: NAD-segments Invoice partner information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PartyId" nillable="1" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C082.3039 Identification information for party.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="Type" use="required">
+									<xs:annotation>
+										<xs:documentation><![CDATA[EDI: NAD.C082.1131 VAT = VAT-code 91 = Assigned by Seller 92 = Assigned by Buyer 100 = OVT code 220 = Tax Party Code ZPL = Plant number/SAP ZTI = TilkkuID ZR3 = R/3-id/SAP ZZZ = Mutually defined]]></xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PartyName1">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C080.3036 Party Name part1</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PartyName2" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C080.3036 Party Name part2</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PartyName3" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C080.3036 Party Name part3</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PartyName4" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C080.3036 Party Name part4</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PartyName5" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C080.3036 Party Name part5</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AddressLine1">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C059.3042 Street or P.O. Box irformation row1.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AddressLine2" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C059.3042 Street or P.O. Box irformation row2.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AddressLine3" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C059.3042 Street or P.O. Box irformation row3.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AddressLine4" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.C059.3042 Street or P.O. Box irformation row4.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="City" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.3164 Party&apos;s City name</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PostalCode" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.3251 Zip code for party&apos;s address</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="CountryCode"/>
+				<xs:element ref="Contact" minOccurs="0" maxOccurs="5"/>
+				<xs:element ref="BankAccount" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Location" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Role" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: NAD.3035 Partys role for invoice header: BY = Buyer SE = Seller ST = Ship To IV = Invoicee PE = Payee CN = Consignee MF =Manufacturer of goods</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Contact">
+		<xs:annotation>
+			<xs:documentation>EDI: NAD.CTA Party related contact persons</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ContactId" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.CTA.C056.3413 Contact person&apos;s identification code (assigned by buyer) e.g. HR-number, department code</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ContactName" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.CTA.C056.3412 Contact person&apos;s name</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CommId" nillable="1" minOccurs="0" maxOccurs="5">
+					<xs:annotation>
+						<xs:documentation>EDI: NAD.CTA.COM.C076.3148 Contact persons communication information</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="Type">
+									<xs:annotation>
+										<xs:documentation>EDI: NAD.CTA.COM.C076.3155 TE = Telephone FX = Fax EM = email</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type">
+				<xs:annotation>
+					<xs:documentation>EDI: NAD.CTA.3139 SR = Sales representative PD = Purchasing contact AD = Accounting contact</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TermsOfPayment">
+		<xs:annotation>
+			<xs:documentation>EDI: PAT Terms of payment</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="TermsOfPaymentCode" nillable="1" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PAT.C110.4277 Terms of payment in coded format, as code</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="CodeSet" use="required">
+									<xs:annotation>
+										<xs:documentation>EDI: PAT.C110.3055 Code set issuer: 92 = Assigned by buyer 91 = Assigned by seller</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TermsOfPaymentText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PAT.C110.4276 (both lines concatenated) Payment terms text</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Date" minOccurs="0"/>
+				<xs:element ref="Percentage" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: PAT.4279 1 = Basic</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ModeOfTransport">
+		<xs:annotation>
+			<xs:documentation><![CDATA[EDI: TDT To specify information regarding the transport such as mode of transport, means of transport, its conveyance reference number and the identification of the means of transport.]]></xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ModeOfTransportCode" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TDT.C220.8067 Mode of transport code (coded according to UN/ECE Recomm 19) 1 = Maritime 2 = Rail 3 = Road</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ModeOfTransportText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TDT.C220.8066 Mode of delivery as text.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CarrierCode" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TDT.C040.3127 Code for the trasport company.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="CodeSet" use="required">
+							<xs:annotation>
+								<xs:documentation>EDI: IMD.C273.3055 Code set issuer 92 = assigned by buyer 91 = assigned by seller</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string"/>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CarrierName" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TDT.C040.3126 Name of the trasport company.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TransportIdentification" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TDT.C222.8212 Identification of transport means (i.e. ship code, registration number)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: TDT.8051 Transport stage qualifier. 20 = main carriage</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TermsOfDelivery">
+		<xs:annotation>
+			<xs:documentation>EDI: TOD Terms of delivery data for purchase order.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="TermsOfDeliveryCode" nillable="1" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TOD.C100.4053 Terms of delivery code DDP, FCA...</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="CodeSet">
+									<xs:annotation>
+										<xs:documentation>EDI: TOD.C100.1131 Z2K = Incoterms 2000</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TermsOfDeliveryText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TOD.C100.4052 (both fields concatenated) Terms of delivery in text format</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Location" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TOD.LOC Location information for terms of delivery</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DeliverySchedule" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: SCC.4493 Delivery schedule SC = Ship complete order</xs:documentation>
+						<xs:appinfo>
+							<altova:exampleValues>
+								<altova:example value="SC"/>
+							</altova:exampleValues>
+						</xs:appinfo>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type">
+				<xs:annotation>
+					<xs:documentation>EDI: TOD.4055 Terms of delivery function 4 = pick-up 6 = Delivery conditions</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Location">
+		<xs:annotation>
+			<xs:documentation>EDI: LOC Location related information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="LocationCode" nillable="1" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: LOC.C517.3225 Location in coded form</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="CodeSet" use="required">
+									<xs:annotation>
+										<xs:documentation>EDI: LOC.C517.3055 codeset issuer 91 = Assigned by Seller 92 = Assigned by Buyer UN = UN/ECE (United Nations - Economic Commission for Europe)</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="LocationText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TOD.LOC.C517.3224 Location for terms of delivery</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="CountryCode" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: TOD.LOC.3227 1 = Place of terms of delivery 17 = Border crossing place 27 = Country of origin 28 = Country of destination of goods 39 = Country of production 76 = Original port of loading 105 = Place of consumption 181 = Registered office. Identifies the place or location of a registered office.]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Item">
+		<xs:annotation>
+			<xs:documentation>EDI: LIN Line item information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="LineNo"/>
+				<xs:element ref="ArticleNo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: LIN.C212.7140 Line item&apos;s article numder.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="AddArticleNo" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: LIN.PIA Additional identifications for line items article.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="ProductProperty" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Measurement" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Quantity" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: QTY Quantities</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Location" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="DeliveryStatus" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: QVR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FreeText" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Free texts</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Reference" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>EDI: RFF Referecnces</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Price" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Tax" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="MonetaryAmount" maxOccurs="unbounded"/>
+				<xs:element ref="AllowanceOrCharge" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Party" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductProperty">
+		<xs:annotation>
+			<xs:documentation>EDI: IMD Product properties</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PropertyCode" minOccurs="0"/>
+				<xs:element ref="PropertyText" minOccurs="0"/>
+				<xs:element ref="PropertySide" minOccurs="0"/>
+				<xs:element ref="LanguageCode" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: IMD.C272.7081 Product property code 8 = Product code 44 = Further product info 2 = dimensional standards 27 = Material standard 12 = Steel Grade 14 = Surface conditions 17 = Coating 19 = Surface treatment 35 = Colour 1 = Material Certificate 59 = Surface protection 25 = End treatment 105 = Exceptional tolerances 5 = End useage application 54 = cross section 32 = Test conditions 188 = customer / application 126= Pattern (z_pattern) ZPF = Product Family/SAP ZPI = Pickling/SAP ZTY = Product type/SAP ZDF = DeadFlat/SAP ZED = Edge type/SAP ZSI = SpecificationIssuer ZUE = z_ultra_edges ZUS = z_ultra_surface ZP1 = Product Code 1 Lisättävä stampping ja markkinglle omat koodit. Lisätään InspectionAuthority (esim LR..) ZMA = Marking code ZST = Stamping code]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Quantity">
+		<xs:annotation>
+			<xs:documentation>EDI: QTY Quantities</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="QuantityValue"/>
+				<xs:element ref="MeasureUnit">
+					<xs:annotation>
+						<xs:documentation>EDI: QTY.C186.6411 Quantity unit qualifier. KGM = Kilogram MTR = Metre TNE = Tonne MTK = M2</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LowerTolerance" minOccurs="0"/>
+				<xs:element ref="UpperTolerance" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: QTY.C186.6063 Quantity qualifier 47 = Invoiced quantity 21 =Ordered quantity 12 =Despatch quantity</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Price">
+		<xs:annotation>
+			<xs:documentation>EDI: PRI Pricing data</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PriceValue" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PRI.C509.5118 Price value</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="UnitPriceBasisCode" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PRI.C509.5375 Price type, coded PE = Per each PK = Per kilogram PT = Per tonne</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type">
+				<xs:annotation>
+					<xs:documentation>EDI: PRI.C509.5125 Pricing method AAA = Calculation Net (incl. allow/charges) AAB = Calculation gross (w/o allowances/charges INF = Informative</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Reference">
+		<xs:annotation>
+			<xs:documentation>EDI: RFF.C506.1154 References for invoice in header and line item level</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ReferenceIdentification" type="xs:string"/>
+				<xs:element ref="Date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: RFF.C506.1153 Reference types CT = contract Number CR = Customer's reference CV = Container operators reference number ON = Order number of end customer LO = Load planning number PK = Package list PQ = Payment reference TL = Tax lisence AAA = Order acknowledgement document identifier AEP = Project Identifier AAK = Despatch advice number AAL = Drawing number AAM = Waybill number SRN = Shipment reference number (stem) OI = Previous invoice number]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Package">
+		<xs:annotation>
+			<xs:documentation>EDI: PAC Packaging information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PackageTypeCode" minOccurs="0">
+					<xs:annotation>
+						<xs:appinfo>
+							<altova:exampleValues>
+								<altova:example value="402"/>
+								<altova:example value="700"/>
+							</altova:exampleValues>
+						</xs:appinfo>
+						<xs:documentation>EDI: PAC.C202.7065 Package type code</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="CodeSet">
+									<xs:annotation>
+										<xs:documentation>EDI: PAC.C202.3055 Code set issuer 92 = assigned by buyer 91 = assigned by seller</xs:documentation>
+										<xs:appinfo>
+											<altova:exampleValues>
+												<altova:example value="91"/>
+											</altova:exampleValues>
+										</xs:appinfo>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PackageTypeText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PAC.C202.7064 Package type in text format</xs:documentation>
+						<xs:appinfo>
+							<altova:exampleValues>
+								<altova:example value="EURO-lava"/>
+							</altova:exampleValues>
+						</xs:appinfo>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Measurement">
+		<xs:annotation>
+			<xs:documentation>EDI: MEA All measurement will use this tag.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MeasureValue"/>
+				<xs:element ref="MeasureUnit">
+					<xs:annotation>
+						<xs:documentation>EDI: MEA.C174.6411 Measure unit value</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LowerTolerance" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: MEA.C174.6162 Lower tolerance value</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="UpperTolerance" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: MEA.C174.6152 Upper tolerance value</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Role" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: MEA.6311 Measurement purpose: AAE = Product measurement AAY = Package measurement AAC = Retail container size</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: MEA.C502.6313 Measurement dimension code TH = Thickness WD = width HT = Heigth DI = diameter LN = Length ID = Inside diameter OD = Outside diameter]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AllowanceOrCharge">
+		<xs:annotation>
+			<xs:documentation>EDI: ALC Allowances and charges</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AOCText" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: ALC.C214.7160 (both texts concatenated) Allowance or charge description</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="AOCType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: ALC.C214.7161 Allowance ot charge type HD = Handling PC = Packing TO = Tooling</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="MonetaryAmount" minOccurs="0"/>
+				<xs:element ref="Tax" minOccurs="0"/>
+				<xs:element name="AOCRateBasis" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: ALC.RTE</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AOCRate" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>EDI: ALC.RTE.C128.5420 Amount for allowance or charge (e.g. 30 EUR per TN -&gt; this is value 30)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="AOCRateUnitOfMeasure" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>EDI: ALC.RTE.C128.6411 Unit for amount for allowance or charge (e.g. 30 EUR per TN -&gt; this is value PT)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Quantity" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: ALC.5463 Allowance or charge type A = allowance C = charge</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Percentage">
+		<xs:annotation>
+			<xs:documentation>EDI: PCD Percentage value</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PercentageValue">
+					<xs:annotation>
+						<xs:documentation>EDI: PCD.5482 Percentage value</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="PercentageBasis" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: PCD.5249 Basis from which the percentave is calculated 1 = Per Unit 2 = Per tonnage 4 = Per unit price</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: PCD.5245 Percentage type code 1 = Allowance 2 = Charge 15 = Penalty percentage</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AddArticleNo">
+		<xs:annotation>
+			<xs:documentation>EDI: LIN.PIA Additional identifications for line items article.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="Type" use="required">
+						<xs:annotation>
+							<xs:documentation><![CDATA[EDI: LIN.PIA.C212.7143 Type codes for article's additional identifications HS = Custom's art code IN = Buyer's art code MF = Manufacturer's art code SA = Supplier's art code HS = Harmonized System, custom's CN code BH = Part Number]]></xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string"/>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ArticleNo">
+		<xs:annotation>
+			<xs:documentation>EDI: LIN.C212.7140 Line item&apos;s article numder (SAP article is with type code IN)</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="Type" use="required">
+						<xs:annotation>
+							<xs:documentation>EDI: LIN.C212.7143 Article code issuer IN = Buyer&apos;s article code MF = Manufacturer&apos;s article code</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string"/>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Currency">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="CurrencyCode" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>EDI: CUX.C504.6345 Currency code to be used for ipricing purposes. Always ISO 4217 currency codes.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ExchangeRate" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: CUX.5402</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: CUX.C504.6347 1 = Charge payment currency 5 = Calculation base currency</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Date">
+		<xs:annotation>
+			<xs:documentation>EDI: DTM Date information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: DTM.C507.2005 Date function 11 = Despatch date 149 = Invoice date 140 = Payment due date 171 = Reference date 243 = Transmission date/time of document 451 = Date source document data is entered into a business application. (saap.pvm) 449 = Date for the last update]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Format" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: DTM.C507.2379 Date&apos;s format 102 = YYYYMMDD 204 = CCYYMMDDHHMMSS</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FreeText">
+		<xs:annotation>
+			<xs:documentation>EDI: FTX Free texts</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Text1" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FTX.C108.4440</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Text2" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FTX.C108.4440</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Text3" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FTX.C108.4440</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Text4" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FTX.C108.4440</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Text5" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FTX.C108.4440</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="LanguageCode" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: FTX.4451 Text function AFX = Banking arrangements AAW = Letter of credit information AAK = Price conditions DEL = Delivery notes INF = Insurance information PRF = Price calculation info PMT = Payment info TXD = Tax declaration TRA = Transportation information DCL = Exporter's declaration ACD = Crediting reason AAI = General information PRD = Product information LIN = Item line information]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LineNo">
+		<xs:annotation>
+			<xs:documentation>EDI: LIN.1082 Line item number</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LowerTolerance">
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Marks">
+		<xs:annotation>
+			<xs:documentation>EDI: PCI Product and packing marking instructions</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="MarkingText" minOccurs="0" maxOccurs="10">
+					<xs:annotation>
+						<xs:documentation>EDI: PCI.C210.7102 Marking texts</xs:documentation>
+						<xs:appinfo>
+							<altova:exampleValues>
+								<altova:example value="MARK1"/>
+							</altova:exampleValues>
+						</xs:appinfo>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type" type="xs:string">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: PCI.4233 Type of marking, coded 20 = Industry instructions (color marks) 21 = Marks on product 23 = marks on lables 24 = Marks on packages 1 = do not mark suppliers name on products]]></xs:documentation>
+					<xs:appinfo>
+						<altova:exampleValues>
+							<altova:example value="21"/>
+							<altova:example value="24"/>
+						</altova:exampleValues>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MeasurementSignificance">
+		<xs:annotation>
+			<xs:appinfo>
+				<altova:exampleValues>
+					<altova:example value="1"/>
+					<altova:example value="2"/>
+					<altova:example value="3"/>
+				</altova:exampleValues>
+			</xs:appinfo>
+			<xs:documentation>EDI: MEA.C174.6432 Number of digits</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MeasureUnit">
+		<xs:annotation>
+			<xs:documentation>EDI: PRI.C509.6411 Measure unit qualifier KGM = Kilogram MTK = Square meter MTR = Meter PCE = Piece</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MeasureValue">
+		<xs:annotation>
+			<xs:documentation>EDI: MEA.C174.6314 Measurement value</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PropertyCode">
+		<xs:annotation>
+			<xs:documentation>EDI: IMD.C273 Property code</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:attribute name="CodeSet" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: IMD.C273.3055 Code set issuer 92 = assigned by buyer 91 = assigned by seller 58 = EUROFER</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PropertySide">
+		<xs:annotation>
+			<xs:documentation>EDI: IMD.C273.7383 Property layer/surface indicator BS = both sides BT = Bottom IN = Inside TP = Top</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PropertyText">
+		<xs:annotation>
+			<xs:documentation>EDI: IMD.C273.7008 (both fields concatenated) Testual description for property</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="QuantityValue">
+		<xs:annotation>
+			<xs:documentation>EDI: QTY.C186.6060 Quantity value</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TermsOfDeliveryText">
+		<xs:annotation>
+			<xs:documentation>EDI: TOD.C100.4052 (both fields concatenated) Terms of delivery in text format</xs:documentation>
+			<xs:appinfo>
+				<altova:exampleValues>
+					<altova:example value="Unloading on customer&apos;s account"/>
+					<altova:example value="Perilletoimitettuna"/>
+				</altova:exampleValues>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TypeOfShipment">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UpperTolerance">
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LanguageCode">
+		<xs:annotation>
+			<xs:documentation>EDI: FTX.3453 Language code as code, according to standard ISO 639</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="BankAccount">
+		<xs:annotation>
+			<xs:documentation>EDI: FII Pay-to&apos;s financial institution</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="BankAccountNumber" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>EDI: FII.C078.3194 Bank account number (i.e: SE6250000000058151014539)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="AccountHolderName" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FII.C078.3192 (i.e: OKOYFIHH)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="InstitutionName" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FII.C088.3432 Name of the bank where the account is opened (i.e: POHJOLA PANKKI OY).</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="InstitutionBranchLocation" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: FII.C088.3436 Institution branch location name</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Role" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: NAD.FII.3035 Bank Account role: BF = Beneficiary&apos;s bank (primary account) B1 = Contact bank 1 B2 = Contact bank 2</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CountryCode" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>EDI: 3207 Country code. Always ISO3166 coded format.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeliveryStatus">
+		<xs:annotation>
+			<xs:documentation>EDI: QVR</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DeliveryStatusCode" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: QVR.4221 CC = Shipment complete LS = Last shipment BP = Partial shipment</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DeliveryStatusText" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MonetaryAmount">
+		<xs:annotation>
+			<xs:documentation>EDI: MOA Monetary amounts</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="MonetaryValue">
+					<xs:annotation>
+						<xs:documentation>EDI: MOA.C516.5004 Value of amount in currency units.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Currency"/>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation><![CDATA[EDI: MOA.C516.5025 Monetary amount type 38 = The line item amount is the total related to this line item (price * quantity). It excludes rebates, additions and VAT 79 = Total line items amount 176 = Message total tax amount 124 = Tax amount (line level) 165 = Adjustment amount total 125 = Taxable amount total 8 = Allowance or charge amount 39 = Invoice total amount (is the sum of: line item amounts (Qualifier 79) plus total invoice additional amount (136) plus total duty/tax/fee amount (176) plus or less adjustment amount (165))]]></xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tax">
+		<xs:annotation>
+			<xs:documentation>EDI: TAX</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="TaxRate">
+					<xs:annotation>
+						<xs:documentation>EDI: TAX.C243.5278 Rate (percentage) of the specified tax</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="MonetaryAmount"/>
+				<xs:element name="TaxCategory" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>EDI: TAX.5305 Tax category code (G/S....)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Type" use="required">
+				<xs:annotation>
+					<xs:documentation>EDI: TAX Tax type VAT = Value Added Tax</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DocumentType">
+		<xs:annotation>
+			<xs:documentation>EDI: BGM.C002.1001 Document type code: 380 = Commercial invoice 381 = Credit Note 325 = Proforma Invoice</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

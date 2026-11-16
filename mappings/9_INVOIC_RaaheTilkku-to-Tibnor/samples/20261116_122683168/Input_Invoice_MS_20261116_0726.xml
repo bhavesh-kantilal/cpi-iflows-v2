@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Harmonized_Mill_Invoice_0_0_4.xsd">
+<Header>
+<SchemaId>Harmonized_Mill_Invoice_0_0_6.xsd</SchemaId>
+<SchemaVersion>0.0.6</SchemaVersion>
+<MessageFunction>9</MessageFunction>
+<DocumentType>380</DocumentType>
+<SourceSystem>LASKURA</SourceSystem>
+<InterchangeSender>00372389445741</InterchangeSender>
+<RecipientIdentification>003723894430</RecipientIdentification>
+<TransformToMedia>XML</TransformToMedia>
+<eInvoiceKey>BW00372389443014#BAWCFI22#</eInvoiceKey>
+</Header>
+<DocumentId>
+<DocumentNo>122683168</DocumentNo>
+<Date Type="149" Format="102">20261115</Date>
+</DocumentId>
+<DocumentLanguage>
+<LanguageCode>EN</LanguageCode>
+</DocumentLanguage>
+<FreeText Type="AAW">
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="AAZ">
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="TXD">
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="ZGW">
+<Text1>INVOICING WEIGHT: THEORETICAL</Text1>
+<Text2>TOTAL GROSS WEIGHT:     21772 KG</Text2>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<FreeText Type="ZTX">
+<Text1>VALUE ADDED TAX                                           5546.31</Text1>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<Location Type="27">
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Location Type="28">
+<LocationText>FINLAND</LocationText>
+<CountryCode>FI</CountryCode>
+</Location>
+<Reference Type="AAA">
+<ReferenceIdentification>95581A</ReferenceIdentification>
+<Date Type="451" Format="102">20261021</Date>
+</Reference>
+<Reference Type="AAP">
+<ReferenceIdentification>REST DELIVERY</ReferenceIdentification>
+</Reference>
+<Reference Type="ACE">
+<ReferenceIdentification>INVOIC_122683168_20261115_1008.PDF</ReferenceIdentification>
+</Reference>
+<Reference Type="BV">
+<ReferenceIdentification>EXTERNAL</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>46538408</ReferenceIdentification>
+</Reference>
+<Reference Type="CT">
+<ReferenceIdentification>88888</ReferenceIdentification>
+<Date Type="11" Format="102">20261115</Date>
+</Reference>
+<Reference Type="IA">
+<ReferenceIdentification>FI10</ReferenceIdentification>
+</Reference>
+<Reference Type="ON">
+<ReferenceIdentification>46538408</ReferenceIdentification>
+</Reference>
+<Reference Type="PE">
+<ReferenceIdentification>RHE</ReferenceIdentification>
+</Reference>
+<Reference Type="PK">
+<ReferenceIdentification>95581A02</ReferenceIdentification>
+<Date Type="11" Format="102">20261115</Date>
+</Reference>
+<Reference Type="PQ">
+<ReferenceIdentification>838 79205 12268 31689</ReferenceIdentification>
+</Reference>
+<Reference Type="ZAC">
+<ReferenceIdentification>T20020P</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZID">
+<ReferenceIdentification>001597621</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPG">
+<ReferenceIdentification>T20A11U</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>WD</ReferenceIdentification>
+</Reference>
+<Party Role="BY">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="CN">
+<PartyId Type="ZTI">8387930</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>TUOTTAJANTIE 49</AddressLine1>
+<AddressLine3>60100 SEINÄJOKI FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>SEINÄJOKI</City>
+<PostalCode>60100</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="II">
+<PartyId Type="ZTI">0006000</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>HARVIALANTIE 420</AddressLine1>
+<AddressLine3>13300 HÄMEENLINNA FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>HÄMEENLINNA</City>
+<PostalCode>13300</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="IV">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="MF">
+<PartyId Type="ZTI">0003000</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>RAUTARUUKINTIE 155</AddressLine1>
+<AddressLine3>92100 RAAHE FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>RAAHE</City>
+<PostalCode>92100</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="PE">
+<PartyId Type="ZTI">0003094</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>RAUTARUUKINTIE 155</AddressLine1>
+<AddressLine3>92100 RAAHE FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>RAAHE</City>
+<PostalCode>92100</PostalCode>
+<CountryCode>FI</CountryCode>
+<BankAccount Role="BF">
+<BankAccountNumber>FI6933010001100445</BankAccountNumber>
+<AccountHolderName>ESSEFIHX</AccountHolderName>
+<InstitutionName>SEB HELSINKI</InstitutionName>
+<InstitutionBranchLocation>HELSINKI</InstitutionBranchLocation>
+</BankAccount>
+</Party>
+<Party Role="PR">
+<PartyId Type="ZTI">8387920</PartyId>
+<PartyId Type="VAT">FI23894430</PartyId>
+<PartyName1>TIBNOR OY</PartyName1>
+<AddressLine1>NIINISTÖNKATU 7</AddressLine1>
+<AddressLine3>05800 HYVINKÄÄ FINLAND</AddressLine3>
+<AddressLine4>FINLAND</AddressLine4>
+<City>HYVINKÄÄ</City>
+<PostalCode>05800</PostalCode>
+<CountryCode>FI</CountryCode>
+</Party>
+<Party Role="SE">
+<PartyId Type="ZTI">0003094</PartyId>
+<PartyId Type="VAT">FI23894457</PartyId>
+<PartyName1>SSAB EUROPE OY</PartyName1>
+<AddressLine1>RAUTARUUKINTIE 155</AddressLine1>
+<AddressLine3>92100 RAAHE FINLAND</AddressLine3>
+<AddressLine4>SUOMI</AddressLine4>
+<City>RAAHE</City>
+<PostalCode>92100</PostalCode>
+<CountryCode>FI</CountryCode>
+<Contact Type="SR">
+<ContactName>M. LAMPELA    /MAL SALES</ContactName>
+</Contact>
+</Party> <Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+<TermsOfPayment Type="1">
+<TermsOfPaymentCode CodeSet="91">03</TermsOfPaymentCode>
+<TermsOfPaymentText>AT OUR DISPOSAL 16.12.2026 PENALTY INTEREST 14.0 %</TermsOfPaymentText>
+<Date Type="140" Format="102">20261216</Date>
+<Percentage Type="15">
+<PercentageValue>14.00</PercentageValue>
+</Percentage>
+</TermsOfPayment>
+<ModeOfTransport Type="20">
+<ModeOfTransportCode>3</ModeOfTransportCode>
+<ModeOfTransportText>TRUCK</ModeOfTransportText>
+<CarrierName>LOGISTIIKKAOPERAATTORIT</CarrierName>
+<TransportIdentification>LBS-660</TransportIdentification>
+</ModeOfTransport>
+<TermsOfDelivery Type="6">
+<TermsOfDeliveryCode CodeSet="Z2K">CIP</TermsOfDeliveryCode>
+<TermsOfDeliveryText>CIP  (INCOTERMS 2020) SEINÄJOKI</TermsOfDeliveryText>
+</TermsOfDelivery>
+<Item>
+<LineNo>010</LineNo>
+<ArticleNo Type="IN">386943</ArticleNo>
+<AddArticleNo Type="HS">72085120</AddArticleNo>
+<ProductProperty Type="ZZP">
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<ProductProperty Type="12">
+<PropertyText>S235J2+N EN 10025-2:2019</PropertyText>
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<ProductProperty Type="124">
+<PropertyCode CodeSet="91">120</PropertyCode>
+<PropertyText>STEEL FOR GENERAL STRUCTURAL PURPOSES</PropertyText>
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<ProductProperty Type="44">
+<PropertyText>S235J2+N EN 10025-2:2019</PropertyText>
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<ProductProperty Type="8">
+<PropertyCode CodeSet="91">120</PropertyCode>
+<PropertyText>NORMALIZED STEEL PLATES</PropertyText>
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<ProductProperty Type="8">
+<PropertyCode CodeSet="91">120</PropertyCode>
+<PropertyText>SURFACE TREATED</PropertyText>
+<LanguageCode>EN</LanguageCode>
+</ProductProperty>
+<Measurement Type="LN" Role="AAE">
+<MeasureValue>10080.00</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Measurement Type="TH" Role="AAE">
+<MeasureValue>25.00</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Measurement Type="WD" Role="AAE">
+<MeasureValue>2700.00</MeasureValue>
+<MeasureUnit>MMT</MeasureUnit>
+</Measurement>
+<Quantity Type="12">
+<QuantityValue>21772.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="12">
+<QuantityValue>4.000</QuantityValue>
+<MeasureUnit>PCE</MeasureUnit>
+</Quantity>
+<Quantity Type="21">
+<QuantityValue>21772.000</QuantityValue>
+<MeasureUnit>KGM</MeasureUnit>
+</Quantity>
+<Quantity Type="47">
+<QuantityValue>21.772</QuantityValue>
+<MeasureUnit>TNE</MeasureUnit>
+</Quantity>
+<FreeText Type="PRD">
+<Text1>NORMALIZED STEEL PLATES</Text1>
+<Text2>SURFACE TREATED</Text2>
+<Text3>STEEL FOR GENERAL STRUCTURAL PURPOSES</Text3>
+<LanguageCode>EN</LanguageCode>
+</FreeText>
+<Reference Type="AOU">
+<ReferenceIdentification>0000301110</ReferenceIdentification>
+</Reference>
+<Reference Type="CR">
+<ReferenceIdentification>46538408 386943</ReferenceIdentification>
+</Reference>
+<Reference Type="ZCA">
+<ReferenceIdentification>1000</ReferenceIdentification>
+</Reference>
+<Reference Type="ZPC">
+<ReferenceIdentification>0000010175</ReferenceIdentification>
+</Reference>
+<Reference Type="ZTC">
+<ReferenceIdentification>WD</ReferenceIdentification>
+</Reference>
+<Price Type="AAB">
+<PriceValue>999.00</PriceValue>
+<UnitPriceBasisCode>PT</UnitPriceBasisCode>
+</Price>
+<MonetaryAmount Type="38">
+<MonetaryValue>21750.23</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>21750.23</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+</Item> <NumberOfLineItems>001</NumberOfLineItems>
+<Tax Type="VAT">
+<TaxRate>25.50</TaxRate>
+<MonetaryAmount Type="176">
+<MonetaryValue>5546.31</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<TaxCategory>S</TaxCategory>
+</Tax>
+<MonetaryAmount Type="125">
+<MonetaryValue>21750.23</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="165">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="260">
+<MonetaryValue>0.00</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="39">
+<MonetaryValue>27296.54</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+<MonetaryAmount Type="79">
+<MonetaryValue>21750.23</MonetaryValue>
+<Currency Type="1">
+<CurrencyCode>EUR</CurrencyCode>
+</Currency>
+</MonetaryAmount>
+</Invoice>
