@@ -800,6 +800,17 @@ FSAP_PKG = os.path.join(REF_IFLOWS, "FSAP_Controlling_MasterData.zip")
 
 
 def _new_recv_det_i0539() -> str:
+    # 2.1.0: Bhavesh's version from CPI 2.0.3 (adds the MSAP receiver I0540_MSAP), taken over
+    # unchanged from the committed feedback download (L2, 2026-11-16).
+    fb = os.path.join(IFLOWS_OUT, "I0539_P_CostCenter_FSAP_SOAPToJMS", "feedback",
+                      "I0539_P_CostCenter_FSAP_SOAPToJMS", "src", "main", "resources", "script",
+                      "ReceiverDetermination.groovy")
+    with open(fb, encoding="utf-8", newline="") as f:
+        return f.read()
+
+
+def _new_recv_det_i0539_v200() -> str:
+    """2.0.0 version (Medius + Oracle), kept for history."""
     return """\
 import com.sap.gateway.ip.core.customdev.util.Message
 
@@ -903,13 +914,17 @@ def parent_externalize_v210(name: str):
                                "propertyTable")
         new, k = re.subn(r"<row>(?:(?!</row>).)*<cell id='Name'>IO_QUEUES</cell>(?:(?!</row>).)*</row>",
                          "", v.text)
-        assert k == 1, "IO_QUEUES row not found"
+        assert k <= 1
         v.text = new
         xml = iflow_lib.serialize(root)
-        for junk in re.findall(r"<name>([^<]*,[^<]*)</name>", p.propdef) + ["IO_QUEUES"]:
+        for junk in re.findall(r"<name>([^<]*,[^<]*)</name>", p.propdef) + ["IO_QUEUES", "P_IO_QUEUES"]:
             p.remove(junk)
 
-        # Retrigger HTTPS sender (same names/values as the children, L3)
+        # Retrigger HTTPS sender (same names/values as the children, L3).
+        # I0539_P source already had {{SendingUserRole}}: renamed to HTTP_UserRole (user, 2026-11-16)
+        if "{{SendingUserRole}}" in xml:
+            xml = xml.replace("{{SendingUserRole}}", "ESBMessaging.send")
+            p.remove("SendingUserRole")
         for param, key, value, combo, type_ in [
             ("HTTP_UserRole", "userRole", "ESBMessaging.send", None, "xsd:string"),
             ("HTTP_CSRFProtected", "xsrfProtection", "0", False, "xsd:boolean"),
@@ -1041,9 +1056,22 @@ def build_i0539_parent():
     return _build_parent(
         "I0539_P_CostCenter_FSAP_SOAPToJMS",
         "I0539_P_CostCenter_FSAP_SOAPToJMS",
-        "2.0.1",
+        "2.1.0",
         _new_recv_det_i0539(),
+        post=_i0539_parent_post,
     )
+
+
+def _i0539_parent_post(files: dict, iflw_path: str) -> None:
+    parent_externalize_v210("I0539_P_CostCenter_FSAP_SOAPToJMS")(files, iflw_path)
+    # Defaults copied from the source were another interface's (SAP_Sender=DR1_350,
+    # SAP_MessageType=BusinessPartnerSUITEBulkReplicateRequest). Values from Bhavesh's CPI 2.0.3;
+    # SAP_Sender FD1_110 per the user's answer of 2026-11-16 (CPI still had FD1-110).
+    pk = "src/main/resources/parameters.prop"
+    p = iflow_lib.Params(files[pk].decode("utf-8"), "")
+    p.set("SAP_MessageType", "CostCentreReplicationBulkRequest")
+    p.set("SAP_Sender", "FD1_110")
+    files[pk] = p.prop.encode("utf-8")
 
 
 def build_i0541_parent():
