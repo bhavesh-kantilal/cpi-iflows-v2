@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?><DeliveryBatch xmlns="http://www.ruukki.com/schemas/eai/rucomef/otc" xmlns:envelope="http://www.ruukki.com/schemas/eai/envelope" xmlns:payload="http://www.ruukki.com/schemas/eai/rucomef/otc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ruukki.com/schemas/eai/rucomef/otc DeliveryBatch_0_8_4.xsd">
+<Header>
+<SchemaId>DespatchAdvice</SchemaId>
+<SchemaVersion>0.8.4</SchemaVersion>
+<InterchangeSender>00372389445751</InterchangeSender>
+<InterchangeRecipient>003723894430</InterchangeRecipient>
+</Header>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <DeliveryBatchId>44779J-01</DeliveryBatchId>
+<SourceSystem>LAJA</SourceSystem>
+<MessageFunctionCode>NEW</MessageFunctionCode>
+<LanguageCodeIso>FI</LanguageCodeIso>
+<TransmissionTime>2026-11-10T17:00:16</TransmissionTime>
+<DespatchDate>2026-11-10</DespatchDate>
+<OrderDate>2026-10-14</OrderDate>
+<PurchaseOrder>44779J</PurchaseOrder>
+<ShipmentLotId>01</ShipmentLotId>     <DespatchDocument>
+<DocumentName>DespatchAdvice</DocumentName>
+<DocumentType>N787</DocumentType>
+<DocumentId>44779J-01</DocumentId>
+<DocumentDate>2026-11-10</DocumentDate>
+</DespatchDocument>     <Reference>
+<ReferenceType>ACE</ReferenceType>
+<ReferenceId>DESPAT_44779J01_20261014_20261110163836.PDF</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>BuyersOrderId</ReferenceType>
+<ReferenceId>46537748</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>CargoId</ReferenceType>
+<ReferenceId>13067</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>CustomerReference</ReferenceType>
+<ReferenceId>46537748</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>LoadId</ReferenceType>
+<ReferenceId>13067</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>PurchaseOrder</ReferenceType>
+<ReferenceId>44779J</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>ShipmentLotId</ReferenceType>
+<ReferenceId>01</ReferenceId>
+</Reference>     <Reference>
+<ReferenceType>VehicleId</ReferenceType>
+<ReferenceId>LTH-472</ReferenceId>
+</Reference>     <ConsignorParty>
+<Identifier>
+<IdentifierCode>0003003</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo>HÄMEENLINNAN TEHDAS</NameTwo>
+<AddressOne>HARVIALANTIE 420</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>13300 HÄMEENLINNA FINLAND</AddressThree>
+<PostCode>13300</PostCode>
+<City>HÄMEENLINNA</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</ConsignorParty>
+<BuyerParty>
+<Identifier>
+<IdentifierCode>8387920</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>TIBNOR OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>NIINISTÖNKATU 7</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>05800 HYVINKÄÄ FINLAND</AddressThree>
+<PostCode>05800</PostCode>
+<City>HYVINKÄÄ</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</BuyerParty>
+<ConsigneeParty>
+<Identifier>
+<IdentifierCode>8284209</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>TIBNOR OY 1022 RM</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>ASPONKATU 2</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>04400 JÄRVENPÄÄ FINLAND</AddressThree>
+<PostCode>04400</PostCode>
+<City>JÄRVENPÄÄ</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</ConsigneeParty>
+<CarrierParty>
+<Identifier>
+<IdentifierCode>8431838</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>KULJETTAVA OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>TEHONTIE 3</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>45200 KOUVOLA FINLAND</AddressThree>
+<PostCode>45200</PostCode>
+<City>KOUVOLA</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</CarrierParty>
+<DeliveryTerms>
+<DeliveryTermsCode>CIP</DeliveryTermsCode>
+<DeliTermsCodeSetAgency>INCOTERMS</DeliTermsCodeSetAgency>
+<Destination>JäRVENPää</Destination>
+<DeliveryTermsText>CIP CARRIAGE AND INSURANCE PAI</DeliveryTermsText>
+<DeliveryTermsCountry>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</DeliveryTermsCountry>
+</DeliveryTerms>
+<ModeOfTransport>
+<Code>3</Code>
+<CodeSetAgency> </CodeSetAgency>
+<Text>AUTO</Text>
+</ModeOfTransport>
+<CountryOfDestination>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</CountryOfDestination>
+<DeliveryBatchLine>
+<DeliveryBatchLineId>020</DeliveryBatchLineId>
+<CustomersArticleId>382539</CustomersArticleId>
+<CustomsTariffCode>
+<CustomsTariffPlanned>72091690</CustomsTariffPlanned>
+<CustomsTariffActual>72091690</CustomsTariffActual>
+</CustomsTariffCode>
+<ProductGroup>
+<Code>322</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text> </Text>
+</ProductGroup>
+<ProductCode>
+<Code>32250</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>KYLMÄVALSSATTUA TERÄSTÄ KELOIN</Text>
+</ProductCode>
+<GradeActual>
+<Code>5120</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>VETOLAATU</Text>
+</GradeActual>
+<Certificate>
+<Code>24</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>SFS-EN 10 204/2.2</Text>
+</Certificate>
+<Protection>
+<Code>4</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text>KEVYESTI öLJYTTY</Text>
+</Protection>
+<Dimension>
+<ValueName>Thickness</ValueName>
+<Value>00002.50</Value>
+<ValueUnit>MM</ValueUnit>
+</Dimension>
+<Dimension>
+<ValueName>Width</ValueName>
+<Value>01250.0</Value>
+<ValueUnit>MM</ValueUnit>
+</Dimension>
+<Dimension>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0022020.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</Dimension>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>00000022020.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Bundles</ValueName>
+<Value>000000002</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>000000002</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<CustomerMark>46537748 382539</CustomerMark>
+<PartialDelivery>
+<Code>1</Code>
+<CodeSetAgency>TILKKU</CodeSetAgency>
+<Text> </Text>
+</PartialDelivery>
+<SinglePart>
+<SinglePartId>BJ506001</SinglePartId>
+<SinglePartType>BUNDLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType> </ReferenceType>
+<ReferenceId> </ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0011145.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0011120.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00001.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0011145.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>NetWeight</ValueName>
+<Value>0011120.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>NetWeightPrima</ValueName>
+<Value>0011120.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Packages</ValueName>
+<Value>00001.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>SquareMeters</ValueName>
+<Value>00000561.79</Value>
+<ValueUnit>MTK</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>SquareMetersPrima</ValueName>
+<Value>00000561.79</Value>
+<ValueUnit>MTK</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Meters</ValueName>
+<Value>00000448.00</Value>
+<ValueUnit>MTR</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>MetersPrima</ValueName>
+<Value>00000448.00</Value>
+<ValueUnit>MTR</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0011120.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25472</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+<Quantity>
+<ValueName>HeatWeight</ValueName>
+<Value>0023500.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</Quantity>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+<SinglePart>
+<SinglePartId>BJ506002</SinglePartId>
+<SinglePartType>BUNDLE</SinglePartType>
+<SinglePartLevel>1</SinglePartLevel>
+<Reference>
+<ReferenceType> </ReferenceType>
+<ReferenceId> </ReferenceId>
+</Reference>
+<DespatchedQuantity>
+<ValueName>WeighedWeight</ValueName>
+<Value>0010925.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Weight</ValueName>
+<Value>0010900.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Pieces</ValueName>
+<Value>00001.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>BruttoWeight</ValueName>
+<Value>0010925.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>NetWeight</ValueName>
+<Value>0010900.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>NetWeightPrima</ValueName>
+<Value>0010900.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Packages</ValueName>
+<Value>00001.00</Value>
+<ValueUnit>PCE</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>SquareMeters</ValueName>
+<Value>00000550.51</Value>
+<ValueUnit>MTK</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>SquareMetersPrima</ValueName>
+<Value>00000550.51</Value>
+<ValueUnit>MTK</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>Meters</ValueName>
+<Value>00000439.00</Value>
+<ValueUnit>MTR</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>MetersPrima</ValueName>
+<Value>00000439.00</Value>
+<ValueUnit>MTR</ValueUnit>
+</DespatchedQuantity>
+<DespatchedQuantity>
+<ValueName>AmountOrderedUom</ValueName>
+<Value>0010900.000</Value>
+<ValueUnit>KGM</ValueUnit>
+</DespatchedQuantity>
+<MaterialBatch>
+<MaterialBatchId>25472</MaterialBatchId>
+<MaterialBatchType>HEAT</MaterialBatchType>
+<Quantity>
+<ValueName>HeatWeight</ValueName>
+<Value>0023500.00</Value>
+<ValueUnit>KGM</ValueUnit>
+</Quantity>
+</MaterialBatch>
+<SlabManufacturerParty>
+<Identifier>
+<IdentifierCode>0003000</IdentifierCode>
+<IdentifierCodeAgency>TILKKU</IdentifierCodeAgency>
+</Identifier>
+<NameOne>SSAB EUROPE OY</NameOne>
+<NameTwo> </NameTwo>
+<AddressOne>RAUTARUUKINTIE 155</AddressOne>
+<AddressTwo> </AddressTwo>
+<AddressThree>92100 RAAHE FINLAND</AddressThree>
+<PostCode>92100</PostCode>
+<City>RAAHE</City>
+<Country>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>SUOMI</CountryName>
+</Country>
+</SlabManufacturerParty>
+<CountryOfOrigin>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfOrigin>
+<CountryOfMeltAndPour>
+<CountryCodeIso>FI</CountryCodeIso>
+<CountryName>FINLAND</CountryName>
+</CountryOfMeltAndPour>
+</SinglePart>
+</DeliveryBatchLine>
+</DeliveryBatch>

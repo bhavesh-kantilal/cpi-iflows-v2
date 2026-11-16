@@ -1,0 +1,26 @@
+Message mapping : FIN_DeliveryBatch_to_DESADV93A_TIBNOR
+Namespace       : http://ssab.com/fin/common/distribution/sap_pi_finland
+SWCV            : SAP_PI_FINLAND 1.0 of ssab.com
+Function        : getBuyerOrderId (local user-defined function, single values)
+Description     : Substring buyer order id
+Argument        : orderId (String)
+Source          : screenshot from PO ESR, 16 Nov 2026
+
+public String getBuyerOrderId(String orderId, Container container) throws StreamTransformationException{
+    String returnValue = orderId;
+    int pos = 0;
+
+    if(orderId.contains("-")) {
+        pos = orderId.indexOf("-");
+        returnValue = orderId.substring(0, pos);
+    }
+
+    return returnValue;
+}
+
+In plain words: keep the part of the buyer order id before the first '-'.
+If there is no '-', keep the whole value. Example: '46536694-90' -> '46536694'.
+In the mapping the result is then cut to 12 characters (substringText 0..12) for CPS D_7164.
+
+Other local functions in this mapping (code not exported): AddEmptyValues,
+deleteEmptyValues, substringText - standard helper functions, behaviour implied by name.
