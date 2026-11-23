@@ -1,5 +1,8 @@
 # CHANGELOG — I2018_P_Material_MSAP_SOAPToJMS
 
+## 1.0.21 — 2026-11-23 11:23 CET
+- Retrigger role `HTTP_UserRole`: `ESBMessaging.send` → `SSAB_MessagingSend_InternalOperations` (the flow's main entry is SOAP; the HTTPS sender is only the retrigger). Set the tenant value again if it was configured.
+
 ## 1.0.20 — 2026-11-23 11:07 CET
 - Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; keep it equal to what its callers use).
 - Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
