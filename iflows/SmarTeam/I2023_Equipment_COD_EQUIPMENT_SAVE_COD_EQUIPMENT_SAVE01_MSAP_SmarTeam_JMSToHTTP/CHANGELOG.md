@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.1.6 — 2026-11-23 11:30 CET
+- OData lookup parameters renamed to the `MSAP_<Setting>` pattern: `CC_Location` → `MSAP_LocationID`, `MSAPHost` → `MSAP_Host`, `MSAPCredentials` → `MSAP_Credentials`, `sap-client` → `MSAP_Client`. Defaults unchanged; **set tenant values again** under the new names.
+
 ## 1.1.5 — 2026-11-23 11:29 CET
 - SmarTeam HTTP receiver: Location ID → `{{SmarTeam_LocationID}}` (default empty), always together with Proxy Type.
 
