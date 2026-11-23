@@ -16,6 +16,7 @@ Parent (package MSAPPlantMaintenanceMasterData): Event Mesh (AMQP) → BOM looku
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | iflw file `I0040_P_EDI_DESADV_B30_AMQPToJMS.iflw` → `I2049_P_MaterialBOM_MSAP_AMQPToJMS.iflw` |
 | 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.5: renamed from 'Log Headers'. The build names every such step this way and fails on any other name |
 | 2026-11-23 | Name of the JMS send step (L2, user: all parents) | "Send To JMS" | 1.0.6: was "Send 1". Build rule `name_jms_send_step` |
+| 2026-11-23 | Remaining fixed adapter settings (L2, user: "all of them") | Externalize; defaults = old values | 1.0.7: OData lookup: `S4_RetryIterations` (1) and `S4_RetryInterval` (5). Build check `fixed_adapter_values` |
 
 ## Open points (not changed)
 - `metainfo.prop` still has `source=B30`; Bhavesh set `source=MSAP` in I2050_P 1.0.5. Set it the same?
