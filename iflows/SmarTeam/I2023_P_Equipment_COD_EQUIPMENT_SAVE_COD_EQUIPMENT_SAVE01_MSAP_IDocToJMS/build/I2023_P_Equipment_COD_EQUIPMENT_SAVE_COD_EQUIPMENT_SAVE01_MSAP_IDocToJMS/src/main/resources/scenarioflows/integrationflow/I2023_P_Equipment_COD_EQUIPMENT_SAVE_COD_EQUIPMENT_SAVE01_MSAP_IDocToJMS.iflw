@@ -74,7 +74,7 @@
                 </ifl:property>
             </bpmn2:extensionElements>
         </bpmn2:participant>
-        <bpmn2:participant id="Participant_16" ifl:type="EndpointSender" name="CI">
+        <bpmn2:participant id="Participant_16" ifl:type="EndpointSender" name="MSAP">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>enableBasicAuthentication</key>
@@ -321,7 +321,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
-                    <value>CI</value>
+                    <value>MSAP</value>
                 </ifl:property>
                 <ifl:property>
                     <key>TransportProtocol</key>

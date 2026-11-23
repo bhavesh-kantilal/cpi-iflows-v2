@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
 
+## 1.0.14 — 2026-11-23 12:12 CET
+- ProcessDirect sender `CI` (1.0.13, clashed with the JMS receiver `CI`) → `MSAP`, as Bhavesh fixed it in CPI; HTTPS sender stays `Retrigger`. Build only keeps the repo in line, no re-import needed.
+
 ## 1.0.13 — 2026-11-23 12:04 CET
 - Participant names: HTTPS retrigger sender `MSAP` → `Retrigger`, ProcessDirect sender `CI_PD` → `CI` (participant, propdef categories).
 
