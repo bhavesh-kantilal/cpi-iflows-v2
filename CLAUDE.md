@@ -99,6 +99,7 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 
 ## Building an iFlow (user rules, 2026-11-16, I0539 feedback)
 - iFlows are built by scripts in `tools/` (e.g. `tools/iflow_build_fsap_dispatcher.py --only <IFlowName>`), which use `tools/iflow_lib.py`. The script is the single source of truth. Feedback is taken over into the script, as with mappings.
+- **No overlapping pools or steps on the iFlow canvas** (user, 2026-11-23, I2024): when a step is inserted and a pool gets wider, move every pool to its right (same height) with its steps. Build check `layout_errors`: pools don't overlap, every step lies inside its own pool.
 - **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. Close gaps left by removed steps. `iflow_lib.fix_diagram` (with `shift=`) and `iflow_lib.sync_flow_refs` do this. (I0539 v1.0.0: "Main Process connection missing"; I0539_P 2.0.0: gap and no arrows, L2.)
 - For a quick visual check without CPI, `py -I tools/iflow_render.py <zip> <out.svg>` draws the diagram.
 - **XPath in Content Modifiers and routers: no `local-name()`** unless the user asks for it or a source needs it for a logical reason (user, 2026-11-23). Write plain paths that match the real message, checked against a sample or the mapping source XSD/WSDL. When only the root element is namespaced (SAP ESR messages, unqualified children), use `/*/child/…`.

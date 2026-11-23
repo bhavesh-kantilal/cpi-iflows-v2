@@ -217,7 +217,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str], pa
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
     errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
             + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml)
-            + monitor_header_errors(xml, parent) + participant_name_errors(xml))
+            + monitor_header_errors(xml, parent) + participant_name_errors(xml) + layout_errors(xml))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -285,6 +285,18 @@ def add_workid_header(xml: str, prefix: str, send_id: str) -> str:
     shift_ids = [i for i in node_ids if i in shapes and iflow_lib._bounds(shapes[i])[0] > cx]
     pool = root.find(f".//bpmn2:participant[@processRef='{proc.get('id')}']", NS).get("id")
     px, py, pw, ph = iflow_lib._bounds(shapes[pool])
+    # The wider pool must not run into a pool on its right (I2024 v1.0.14: "Log Payload" overlapped,
+    # Bhavesh fixed it in 1.0.15). Move every pool that starts right of this one, at the same height,
+    # together with its steps.
+    for part in root.iter(_q("bpmn2:participant")):
+        other = part.get("id")
+        if other == pool or other not in shapes or part.get("{http:///com.sap.ifl.model/Ifl.xsd}type") != "IntegrationProcess":
+            continue
+        ox, oy, ow, oh = iflow_lib._bounds(shapes[other])
+        if ox >= px + pw - 1 and oy < py + ph and py < oy + oh:
+            oproc = root.find(f".//bpmn2:process[@id='{part.get('processRef')}']", NS)
+            shift_ids += [other] + [e.get("id") for e in oproc if e.get("id") in shapes]
+            print(f"  pool {part.get('name')!r} moves right with the wider pool")
 
     new_id = f"{prefix}_CA_LogCustomHeaders"
     xml = add_property_row(xml, cm_id, ROW_WORKID)
@@ -499,6 +511,35 @@ def rename_participant(xml: str, p, old: str, new: str) -> str:
         f'attribute_category="{old}.', f'attribute_category="{new}.')
     print(f"  participant {old} -> {new}")
     return xml
+
+
+def layout_errors(xml: str) -> list[str]:
+    """Build check (user, 2026-11-23, I2024 overlap): pools do not overlap, and every step lies inside
+    its own pool and in no other pool."""
+    root = iflow_lib.parse(xml)
+    plane = root.find(".//bpmndi:BPMNPlane", NS)
+    sh = {s.get("bpmnElement"): iflow_lib._bounds(s) for s in plane.findall("bpmndi:BPMNShape", NS)}
+    def hit(a, b):
+        return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
+    pools = [(pt.get("id"), pt.get("name"), pt.get("processRef")) for pt in root.iter(_q("bpmn2:participant"))
+             if pt.get("{http:///com.sap.ifl.model/Ifl.xsd}type") == "IntegrationProcess" and pt.get("id") in sh]
+    errs = []
+    for i, (a, an, _) in enumerate(pools):
+        for b, bn, _ in pools[i + 1:]:
+            if hit(sh[a], sh[b]):
+                errs.append(f"pools overlap: {an} / {bn}")
+    for pid, pn, proc in pools:
+        P = sh[pid]
+        for e in root.find(f".//bpmn2:process[@id='{proc}']", NS):
+            if e.get("id") not in sh:
+                continue
+            s = sh[e.get("id")]
+            if not (s[0] >= P[0] and s[1] >= P[1] and s[0] + s[2] <= P[0] + P[2] and s[1] + s[3] <= P[1] + P[3]):
+                errs.append(f"step {e.get('name')!r} sticks out of pool {pn}")
+            for qid, qn, _ in pools:
+                if qid != pid and hit(s, sh[qid]):
+                    errs.append(f"step {e.get('name')!r} ({pn}) overlaps pool {qn}")
+    return errs
 
 
 LOCATION_KEY = {"HTTP": "locationID", "HCIOData": "scc_location_id"}
@@ -774,7 +815,10 @@ CHILDREN = {
     I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.7", prefix="I2023", send="ServiceTask_734125", participant=("MSAP_Lookup", "MSAP"),
                 renames=[("CC_Location", "MSAP_LocationID")] + MSAP_RENAMES,
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.14", prefix="I2024", send="ServiceTask_734137", participant=("Receiver1", "MSAP"),
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.16", prefix="I2024", send="ServiceTask_734137", participant=("Receiver1", "MSAP"),
+                # Bhavesh's layout in his CPI version 1.0.15: Log Payload pool moved to a free area
+                layout={"Participant_Process_12": (914, 355, 334, 148), "StartEvent_13": (940, 424, 32, 32),
+                        "CallActivity_19": (1032, 410, 100, 60), "EndEvent_14": (1192, 424, 32, 32)},
                 renames=MSAP_RENAMES + [("SAP_Message_name", "SAP_MessageType")],
                 location=("OData", "MSAP_LocationID", "scc_location_id", "Receiver1"),
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
@@ -797,6 +841,9 @@ def build_child(name: str) -> str:
         xml = error_end_to_message_end(xml, c["error_end"])
     xml = replace_counted(xml, c.get("edits", []))
     xml = add_workid_header(xml, c["prefix"], c["send"])
+    if c.get("layout"):
+        xml, _ = iflow_lib.fix_diagram(xml, bounds=c["layout"])
+        print(f"  layout taken over for {', '.join(c['layout'])}")
     xml = set_xpaths(xml, c.get("xpaths", []))
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
@@ -848,15 +895,17 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.11", jms_step_name=True,
-                  monitor_step="Initial Properties", message_type="MaintenanceBOM", participant=("MSAP_PO", "MSAP_BOM"),
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.12", jms_step_name=True,
+                  monitor_step="Initial Properties", message_type="MaintenanceBOM",
+                  participants=[("MSAP_PO", "MSAP_BOM"), ("Trigger", "Retrigger")],
                   externalize=[ODATA_S4_RETRY],
                   renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.8", jms_step_name=True,
-                  monitor_step="Initial Properties", message_type="MaterialBOM", participant=("MSAP_PO", "MSAP_BOM"),
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.9", jms_step_name=True,
+                  monitor_step="Initial Properties", message_type="MaterialBOM",
+                  participants=[("MSAP_PO", "MSAP_BOM"), ("Trigger", "Retrigger")],
                   externalize=[ODATA_S4_RETRY],
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
@@ -867,7 +916,8 @@ PARENTS = {
     I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.23", jms_step_name=True, retrigger_role=True,
                   renames=[("SAP_MESSAGETYPE", "SAP_MessageType")],   # always SAP_MessageType (user, 2026-11-23)
                   externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.12", jms_step_name=True, retrigger_role=True,
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.13", jms_step_name=True, retrigger_role=True,
+                  participants=[("MSAP", "Retrigger"), ("CI_PD", "CI")],
                   monitor_step="Set Monitoring Identifiers", message_type="COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01",
                   externalize=[HTTPS_BODY]),
     I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.13", jms_step_name=True, retrigger_role=True,
@@ -919,8 +969,8 @@ def build_parent(name: str) -> str:
     else:
         # Never change the role of a parent whose main entry is HTTPS (user, 2026-11-23)
         assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
-    if c.get("participant"):
-        xml = rename_participant(xml, p, *c["participant"])
+    for old, new in c.get("participants", []):
+        xml = rename_participant(xml, p, old, new)
     return finish(name, files, xml, p, c["version"],
                   ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn", "MSAP_PO"], rename=False)
 
