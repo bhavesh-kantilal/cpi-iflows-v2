@@ -1,0 +1,18 @@
+#Fri Nov 20 11:13:56 UTC 2026
+AllowedHeaders=SSAB.*|SAP.*
+CC_Location=
+HTTPS_Authorization=RoleBased
+HTTPS_BodySize=40
+HTTPS_CSRFProtected=0
+HTTPS_UserRole=SSAB_MessagingSend_InternalOperations
+HTTP_Session_Reuse=onIntegrationFlow
+LogPayload=true
+LogPayloadSize=512
+MSAPCredentials=AD1_User_Dev
+MSAPHost=ad1.sap.ssab.com\:44300
+SAP_MessageType=COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01
+SAP_Receiver=SmarTeam
+SAP_Sender=AD1_110
+sap-client=110
+MSAP_DeleteIdleConnection=true
+MSAP_IdleTimeout=300
