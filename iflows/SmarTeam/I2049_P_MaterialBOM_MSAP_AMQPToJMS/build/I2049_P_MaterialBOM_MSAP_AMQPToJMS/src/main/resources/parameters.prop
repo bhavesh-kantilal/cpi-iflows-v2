@@ -39,6 +39,8 @@ S4_ReuseConnection=true
 S4_CustomQuery=sap-client\=110
 Timeout=1
 S4_ProxyType=sapcc
+SAP_Sender=AD1_110
+SAP_MessageType=MaterialBOM
 S4_RetryIterations=1
 S4_RetryInterval=5
 LogPayloadSize=512
