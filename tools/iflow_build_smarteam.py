@@ -215,7 +215,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
     xml = files[iflw[0]].decode("utf-8")
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
-    errs = iflow_lib.check_iflow(xml, prop, propdef)
+    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml)
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -401,6 +401,36 @@ XPATH_I2018_P = [(SMI, "CH_Material", PROD + "ProductInternalID"),
                  (SMI, "CH_MessageID", "/*/MessageHeader/ID")]
 
 
+def set_constant_rows(xml: str, fixes) -> str:
+    """Set the Value of constant rows (by row Name) in Content Modifiers named `step`.
+    Used for LogPayloadSize, which I2049_P/I2050_P create with an empty value (2026-11-23)."""
+    root = iflow_lib.parse(xml)
+    for step, name, new in fixes:
+        hits = 0
+        for owner in [e for e in root.iter(_q("bpmn2:callActivity")) if e.get("name") == step]:
+            v = iflow_lib.get_prop(root, owner, "propertyTable")
+            for row in re.findall(r"<row>.*?</row>", v.text or ""):
+                if f"<cell id='Name'>{name}</cell>" in row and "<cell id='Type'>constant</cell>" in row:
+                    v.text = v.text.replace(row, re.sub(r"<cell id='Value'>.*?</cell>",
+                                                        lambda m: f"<cell id='Value'>{new}</cell>", row))
+                    hits += 1
+        assert hits == 1, f"{step}/{name}: {hits} constant rows"
+        print(f"  constant {name} = {new}")
+    return iflow_lib.serialize(root)
+
+
+def empty_logpayload_rows(xml: str) -> list[str]:
+    """Build check: a LogPayload / LogPayloadSize property row must not be empty."""
+    errs = []
+    for m in re.finditer(r'callActivity id="[^"]+" name="([^"]+)"(.*?)</bpmn2:callActivity>', xml, re.S):
+        for row in re.findall(r"&lt;row&gt;(.*?)&lt;/row&gt;", m.group(2)):
+            name = re.search(r"cell id='Name'&gt;(.*?)&lt;", row)
+            value = re.search(r"cell id='Value'&gt;(.*?)&lt;", row)
+            if name and name.group(1) in ("LogPayload", "LogPayloadSize") and value and not value.group(1):
+                errs.append(f"{m.group(1)}: property {name.group(1)} has an empty value")
+    return errs
+
+
 def set_xpaths(xml: str, fixes) -> str:
     """Replace the Value of xpath rows (by row Name) in a Content Modifier's property/header table."""
     root = iflow_lib.parse(xml)
@@ -493,8 +523,11 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.6",
-                  renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")]),
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.7",
+                  renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
+                  # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
+                  constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
+                  new_params=[("LogPayloadSize", "512")]),
     I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.4",
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
@@ -519,10 +552,14 @@ def build_parent(name: str) -> str:
     xml = [b for n, b in files.items() if n.endswith(".iflw")][0].decode("utf-8")
     xml = replace_counted(xml, c.get("edits", []))
     xml = set_xpaths(xml, c.get("xpaths", []))
+    xml = set_constant_rows(xml, c.get("constants", []))
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     remove_unused(xml, p)
     xml = rename_params(xml, p, c.get("renames", []))
+    for k, v in c.get("new_params", []):     # same definition as in the children (xsd:string)
+        assert k not in p.keys(), k
+        p.add(k, v)
     for k, v in c.get("props", {}).items():
         assert k in p.keys(), k
         p.set(k, v)
