@@ -12,6 +12,7 @@ SAP_Receiver=SmarTeam
 SAP_Sender=MSAP
 SmarTeam_Address=http\://smarteam-test.ssab.com\:443/SmarTeam.InboundService/inbound
 SmarTeam_ProxyType=sapcc
+SmarTeam_LocationID=
 SmarTeam_Authentication=None
 SmarTeam_Timeout=60000
 SmarTeam_ThrowExceptionOnFailure=true

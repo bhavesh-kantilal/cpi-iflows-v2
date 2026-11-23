@@ -1,5 +1,8 @@
 # CHANGELOG — I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.8 — 2026-11-23 11:29 CET
+- SmarTeam HTTP receiver: Location ID → `{{SmarTeam_LocationID}}` (default empty), always together with Proxy Type.
+
 ## 1.0.7 — 2026-11-23 11:07 CET
 - Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; **must stay equal to the iFlow name**: the dispatcher calls it).
 - Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).

@@ -262,7 +262,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>locationID</key>
-                    <value/>
+                    <value>{{SmarTeam_LocationID}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>retryInterval</key>
