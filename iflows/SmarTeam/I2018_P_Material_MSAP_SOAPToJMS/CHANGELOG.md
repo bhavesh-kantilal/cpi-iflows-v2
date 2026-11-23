@@ -1,5 +1,10 @@
 # CHANGELOG — I2018_P_Material_MSAP_SOAPToJMS
 
+## 1.0.20 — 2026-11-23 11:07 CET
+- Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; keep it equal to what its callers use).
+- Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
+- New build check: no fixed adapter value left (except the shared mail utility's ProcessDirect address).
+
 ## 1.0.19 — 2026-11-23 10:44 CET
 - JMS send step "Send" → "Send To JMS".
 

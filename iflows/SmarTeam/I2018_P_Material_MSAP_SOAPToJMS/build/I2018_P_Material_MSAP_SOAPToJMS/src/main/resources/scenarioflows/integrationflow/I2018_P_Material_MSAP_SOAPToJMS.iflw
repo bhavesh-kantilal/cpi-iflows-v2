@@ -133,7 +133,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>urlPath</key>
-                    <value>/I2018_P_Material_MSAP_SOAPToJMS</value>
+                    <value>{{HTTPS_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -293,7 +293,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>address</key>
-                    <value>/I2018_P_Material_MSAP_SOAPToJMS</value>
+                    <value>{{PD_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>
