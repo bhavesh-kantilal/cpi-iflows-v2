@@ -1,0 +1,20 @@
+#Fri Nov 20 11:19:13 UTC 2026
+Environment=DEV
+HTTPS_Address=/IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS
+HTTPS_Authorization=RoleBased
+HTTPS_CSRF_Protected=0
+HTTPS_Userrole=SSAB_MessagingSend_InternalOperations
+HTTPSessionReuse=onIntegrationFlow
+JMS_AccessType=Non-Exclusive
+JMS_CompressStoredMessage=1
+JMS_Encryptstoredmessage=1
+JMS_Expirationperiod=30
+JMS_Queuename=${property.QueueName}
+JMS_RetentionThreshold=2
+JMS_TransferExchangeProperties=0
+LogPayload=True
+LogPayloadSize=512
+ProcessDirect_Address=/IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS
+SAP_Sender=TibnorS4
+SAP_MessageType=ORDERS.ORDERS02
+HTTPS_BodySize=40

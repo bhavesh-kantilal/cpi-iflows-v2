@@ -27,6 +27,8 @@ iflows = [
     "SmarTeam/I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS",
     "SmarTeam/I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP",
     "SmarTeam/I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS",
+    "Tibnor_SSAB_EDIMigration/IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS",
+    "Tibnor_SSAB_EDIMigration/IXXXX_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_FinMessageHub_HameenlinnaMetocs_JMSToMQ",
 ]
 
 all_ok = True

@@ -75,6 +75,7 @@ The output contains only these Party fields:
 - **2026-11-13 Q3 Environment suffix.** The user will settle the property later. For now it's the placeholder exchange property `HubEnvironment` (constant `ENV_PROPERTY` in `build_mapping.py`).
   - `MessageRoutingInbound` = `concat("SSCO.M.EDI", getProperty("HubEnvironment"))`.
   - The iFlow must set the property, or set it in the mapping simulator when testing.
+  - **2026-11-23, resolved (L2, user).** The child iFlow `IXXXX_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_FinMessageHub_HameenlinnaMetocs_JMSToMQ` (`iflows/Tibnor_SSAB_EDIMigration/`) sets `HubEnvironment` = `{{HubEnvironment}}`, default `TST`. The mapping is unchanged.
 - **2026-11-13 Q4 ZTI.** Inline FixValues tables with the known GLN→ZTI pairs from the "Value Mappings" sheet.
   - BY and CN: no hit → element left out.
   - SE: fallback `0003092`, as row 24 says.
