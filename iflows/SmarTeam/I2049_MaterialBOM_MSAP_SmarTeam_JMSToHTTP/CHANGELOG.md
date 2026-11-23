@@ -1,5 +1,9 @@
 # CHANGELOG — I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.5 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Set Custom Header' (2 steps)).
+- `AllowedHeaders` = `SSAB.*|SAP.*` (was `SSAB.*`; rule for all children).
+
 ## 1.0.4 — 2026-11-23 10:25 CET
 Built from I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP.jar (1.0.3).
 - Renamed from `I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP` (new `_JMSToHTTP` naming). PD address and HTTPS retrigger path are now `/I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP`. CPI imports it as a new artifact

@@ -1,5 +1,5 @@
 #Mon Nov 23 06:16:28 UTC 2026
-AllowedHeaders=SSAB.*
+AllowedHeaders=SSAB.*|SAP.*
 HTTPS_Authorization=RoleBased
 HTTPS_BodySize=40
 HTTPS_CSRFProtected=0
