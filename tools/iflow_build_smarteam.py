@@ -209,14 +209,15 @@ def unused_params(xml: str, prop: str) -> list[str]:
 # Checks + packing
 # ---------------------------------------------------------------------------
 
-def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) -> None:
+def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str], parent: bool = False) -> None:
     iflw = [n for n in files if n.endswith(".iflw")]
     assert iflw == [IFLW_DIR + name + ".iflw"], f"iflw file name: {iflw}"
     xml = files[iflw[0]].decode("utf-8")
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
     errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
-            + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml))
+            + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml)
+            + monitor_header_errors(xml, parent))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -402,6 +403,57 @@ def fixed_adapter_values(xml: str) -> list[str]:
 
 
 MONITOR_HEADERS = ("SAP_Sender", "SAP_Receiver", "SAP_MessageType")
+SENDER_DEFAULT = "AD1_110"   # SAP_Sender in every SmarTeam flow (user, 2026-11-23)
+
+
+def set_monitor_headers(xml: str, p, step: str, headers: dict) -> str:
+    """Header rows {{name}} in Content Modifier `step` (blog: first Content Modifier). An existing row of
+    that name gets the value; a missing one is added as a copy of the step's first header row."""
+    root = iflow_lib.parse(xml)
+    owners = [e for e in root.iter(_q("bpmn2:callActivity")) if e.get("name") == step]
+    if len(owners) > 1:   # I2023_P has two steps of this name: take the one with the monitoring headers
+        owners = [e for e in owners if "SAP_Sender" in (iflow_lib.get_prop(root, e, "headerTable").text or "")]
+    assert len(owners) == 1, f"{step}: {len(owners)} candidates"
+    v = iflow_lib.get_prop(root, owners[0], "headerTable")
+    for name, default in headers.items():
+        rows = re.findall(r"<row>.*?</row>", v.text or "")
+        hit = [r for r in rows if f"<cell id='Name'>{name}</cell>" in r]
+        new_val = "{{%s}}" % name
+        if hit:
+            new = re.sub(r"<cell id='Type'>.*?</cell>", "<cell id='Type'>constant</cell>", hit[0])
+            new = re.sub(r"<cell id='Value'>.*?</cell>", lambda m: f"<cell id='Value'>{new_val}</cell>", new)
+            v.text = v.text.replace(hit[0], new)
+        else:
+            new = re.sub(r"<cell id='Name'>.*?</cell>", f"<cell id='Name'>{name}</cell>", rows[0])
+            new = re.sub(r"<cell id='Type'>.*?</cell>", "<cell id='Type'>constant</cell>", new)
+            new = re.sub(r"<cell id='Value'>.*?</cell>", lambda m: f"<cell id='Value'>{new_val}</cell>", new)
+            new = re.sub(r"<cell id='Datatype'>.*?</cell>", "<cell id='Datatype'></cell>", new)
+            v.text = v.text + new
+        if name in p.keys():
+            p.set(name, default)
+        else:
+            p.add(name, default)
+        print(f"  {step}: header {name} = {new_val} (default {default})")
+    return iflow_lib.serialize(root)
+
+
+def monitor_header_errors(xml: str, parent: bool) -> list[str]:
+    """Blog rules: SAP_Sender and SAP_MessageType are {{same name}}; SAP_Receiver too in a child,
+    never in a parent (receiver determination with several receivers, user 2026-11-23)."""
+    found = {}
+    for row in re.findall(r"&lt;row&gt;(.*?)&lt;/row&gt;", xml):
+        name = re.search(r"cell id='Name'&gt;(.*?)&lt;", row)
+        value = re.search(r"cell id='Value'&gt;(.*?)&lt;", row)
+        if name and value and name.group(1) in MONITOR_HEADERS:
+            found[name.group(1)] = value.group(1)
+    errs = []
+    need = ("SAP_Sender", "SAP_MessageType") if parent else MONITOR_HEADERS
+    for h in need:
+        if found.get(h) != "{{%s}}" % h:
+            errs.append(f"monitoring header {h} = {found.get(h)!r}, expected {{{{{h}}}}}")
+    if parent and "SAP_Receiver" in found:
+        errs.append("parent iFlow sets SAP_Receiver (not allowed: receiver determination)")
+    return errs
 
 
 def monitor_param_names(xml: str) -> list[str]:
@@ -525,6 +577,7 @@ def sender_role(xml: str, p) -> str:
 
 
 def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[str], rename: bool) -> str:
+    """rename=True for children (renamed bundle), False for parents."""
     pp, pd = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     for n in [n for n in files if n.endswith(".iflw")]:
         files.pop(n)
@@ -540,7 +593,7 @@ def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[st
     files["META-INF/MANIFEST.MF"] = mf_set(files["META-INF/MANIFEST.MF"], vals)
     order = [IFLW_DIR + name + ".iflw", pp, pd]
     files = {k: files[k] for k in order + sorted(k for k in files if k not in order)}
-    check_and_write(name, files, forbidden=forbidden)
+    check_and_write(name, files, forbidden=forbidden, parent=not rename)
     return name
 
 
@@ -683,7 +736,7 @@ CHILDREN = {
     I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.10", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
-    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.8", prefix="I2049",
+    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.9", prefix="I2049",
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
     I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.5", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
@@ -723,6 +776,7 @@ def build_child(name: str) -> str:
     assert re.search(r"<key>allowedHeaderList</key>\s*<value>\{\{AllowedHeaders\}\}</value>", xml), \
         "Allowed Headers is not {{AllowedHeaders}}"
     p.set("AllowedHeaders", CHILD_ALLOWED_HEADERS)
+    p.set("SAP_Sender", SENDER_DEFAULT)
     # Child retrigger role is always the SSAB role (user, 2026-11-23)
     assert re.search(r"<key>userRole</key>\s*<value>\{\{HTTPS_UserRole\}\}</value>", xml), "child role not {{HTTPS_UserRole}}"
     p.set("HTTPS_UserRole", CHILD_ROLE)
@@ -761,13 +815,15 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.10", jms_step_name=True,
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.11", jms_step_name=True,
+                  monitor_step="Initial Properties", message_type="MaintenanceBOM", participant=("MSAP_PO", "MSAP_BOM"),
                   externalize=[ODATA_S4_RETRY],
                   renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.7", jms_step_name=True,
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.8", jms_step_name=True,
+                  monitor_step="Initial Properties", message_type="MaterialBOM", participant=("MSAP_PO", "MSAP_BOM"),
                   externalize=[ODATA_S4_RETRY],
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
@@ -775,12 +831,13 @@ PARENTS = {
                   # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.22", jms_step_name=True, retrigger_role=True,
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.23", jms_step_name=True, retrigger_role=True,
                   renames=[("SAP_MESSAGETYPE", "SAP_MessageType")],   # always SAP_MessageType (user, 2026-11-23)
                   externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.11", jms_step_name=True, retrigger_role=True,
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.12", jms_step_name=True, retrigger_role=True,
+                  monitor_step="Set Monitoring Identifiers", message_type="COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01",
                   externalize=[HTTPS_BODY]),
-    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.12", jms_step_name=True, retrigger_role=True,
+    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.13", jms_step_name=True, retrigger_role=True,
                   externalize=[PD_SENDER, I2024_P_HTTPS, I2024_P_JMS], props={"SAP_MessageType": FLOC_MT}),
 }
 
@@ -804,6 +861,11 @@ def build_parent(name: str) -> str:
         xml = name_jms_send_step(xml)
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
+    if c.get("monitor_step"):
+        xml = set_monitor_headers(xml, p, c["monitor_step"], {"SAP_Sender": SENDER_DEFAULT,
+                                                             "SAP_MessageType": c["message_type"]})
+    elif "SAP_Sender" in p.keys():
+        p.set("SAP_Sender", SENDER_DEFAULT)
     role_before = sender_role(xml, p)
     xml = externalize_fixed(xml, p, c.get("externalize", []))
     remove_unused(xml, p)
@@ -824,8 +886,15 @@ def build_parent(name: str) -> str:
     else:
         # Never change the role of a parent whose main entry is HTTPS (user, 2026-11-23)
         assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
+    if c.get("participant"):
+        old, new = c["participant"]
+        xml = replace_counted(xml, [(f'name="{old}"', f'name="{new}"', 1),            # participant
+                                    (f"<value>{old}</value>", f"<value>{new}</value>", 1)])  # channel "system"
+        p.propdef = p.propdef.replace(f'attribute_category="{old}"', f'attribute_category="{new}"').replace(
+            f'attribute_category="{old}.', f'attribute_category="{new}.')
+        print(f"  participant {old} -> {new}")
     return finish(name, files, xml, p, c["version"],
-                  ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn"], rename=False)
+                  ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn", "MSAP_PO"], rename=False)
 
 
 ONLY = {**{n: (lambda n=n: build_child(n)) for n in CHILDREN},

@@ -107,6 +107,9 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - For IDoc senders `SAP_MessageType` may come from XPath `concat(//MESTYP, '.',//IDOCTYP,if (//CIMTYP) then concat('.', //CIMTYP) else ())`.
   - `SAP_ApplicationID` = XPath to the business key (payload search), e.g. `//DOCNUM` for IDocs.
   - Allowed-value lists for SAP_Sender / SAP_Receiver / SAP_MessageType: ask the user, don't invent values.
+  - SmarTeam flows: `SAP_Sender` default `AD1_110` everywhere (user, 2026-11-23).
+  - **Parent iFlows (receiver determination, several receivers) never set `SAP_Receiver`**; only point-to-point flows and children do (user, 2026-11-23). Build check `monitor_header_errors`.
+- **Receiver/participant names: keep them simple**, the receiver system name (e.g. `MSAP`, `MSAP_BOM`), not leftovers like `MSAP_PO` (user, 2026-11-23). When the plain name is taken by another participant in the same iFlow, add a short suffix.
   - Custom headers only via the reusable Groovy script (`UTIL_LogCustomHeaders`, `CH_` properties); searchable in the monitor with "Use More Fields", `Name=Value`.
 - **Step name `LogCustomHeaders`** for every Script step that runs `logCustomHeaders.groovy` (`UTIL_LogCustomHeaders`), in parents and children (user, 2026-11-23, screenshot). Not "Set Custom Header", "Log Custom Header(s)" or "Log Headers". `iflow_build_smarteam.py` renames them and fails on any other name.
 - **Step name "Send To JMS"** for the step that sends to the JMS receiver in parent iFlows (user, 2026-11-23). `name_jms_send_step` in `iflow_build_smarteam.py`.
