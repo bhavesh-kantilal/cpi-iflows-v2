@@ -22,3 +22,5 @@ SmarTeam_RetryOnException=false
 SmarTeam_AllowedRequestHeaders=traceparent
 SmarTeam_AllowedResponseHeaders=*
 SmarTeam_IdleTimeout=300000
+PD_Address=/I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
+HTTPS_Address=/I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
