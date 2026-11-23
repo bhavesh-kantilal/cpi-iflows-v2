@@ -209,7 +209,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>maximumBodySize</key>
-                    <value>40</value>
+                    <value>{{HTTPS_BodySize}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>

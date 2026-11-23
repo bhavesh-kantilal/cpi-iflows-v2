@@ -16,3 +16,4 @@ LogPayload=True
 LogPayloadSize=512
 ProcessDirect_Address=/I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
 SAP_Sender=MSAP
+HTTPS_BodySize=40
