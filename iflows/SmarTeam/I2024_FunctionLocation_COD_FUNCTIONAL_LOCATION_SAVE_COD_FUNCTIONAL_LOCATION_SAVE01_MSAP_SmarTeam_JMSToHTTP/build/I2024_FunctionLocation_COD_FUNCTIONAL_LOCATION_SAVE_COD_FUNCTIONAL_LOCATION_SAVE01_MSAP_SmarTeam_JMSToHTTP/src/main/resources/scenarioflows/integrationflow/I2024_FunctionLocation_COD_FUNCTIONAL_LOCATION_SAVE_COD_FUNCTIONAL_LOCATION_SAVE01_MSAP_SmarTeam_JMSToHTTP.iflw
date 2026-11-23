@@ -301,7 +301,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>scc_location_id</key>
-                    <value/>
+                    <value>{{MSAP_LocationID}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>metadataAllowedHeaders</key>
@@ -589,7 +589,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>locationID</key>
-                    <value/>
+                    <value>{{SmarTeam_LocationID}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>retryInterval</key>

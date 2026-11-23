@@ -1,5 +1,9 @@
 # CHANGELOG — I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.11 — 2026-11-23 11:29 CET
+- SmarTeam HTTP receiver: Location ID → `{{SmarTeam_LocationID}}` (default empty), always together with Proxy Type.
+- OData lookup: Location ID → `{{MSAP_LocationID}}` (default empty; proxy is sapcc, I2023 has `CC_Location`).
+
 ## 1.0.10 — 2026-11-23 11:07 CET
 - Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; **must stay equal to the iFlow name**: the dispatcher calls it).
 - Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
