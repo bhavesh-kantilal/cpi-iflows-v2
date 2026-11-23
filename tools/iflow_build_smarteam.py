@@ -217,7 +217,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str], pa
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
     errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
             + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml)
-            + monitor_header_errors(xml, parent))
+            + monitor_header_errors(xml, parent) + participant_name_errors(xml))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -468,6 +468,37 @@ def monitor_param_names(xml: str) -> list[str]:
             if m and m.group(1) != name.group(1):
                 errs.append(f"header {name.group(1)} uses {{{{{m.group(1)}}}}}, expected {{{{{name.group(1)}}}}}")
     return errs
+
+
+# Participant (sender/receiver) names: the plain system name (user, 2026-11-23). Generic names fail the
+# build; names outside KNOWN_PARTICIPANTS are printed so they get flagged to the user.
+GENERIC_PARTICIPANT = re.compile(r"^(Receiver|Sender|Participant|EndpointRecevier|EndpointSender)\s*\d*$", re.I)
+KNOWN_PARTICIPANTS = {"MSAP", "MSAP_BOM", "SmarTeam", "CI", "CI_MAIL", "Retrigger"}
+
+
+def participant_name_errors(xml: str) -> list[str]:
+    root = iflow_lib.parse(xml)
+    errs = []
+    for part in root.iter(_q("bpmn2:participant")):
+        if part.get("{http:///com.sap.ifl.model/Ifl.xsd}type") == "IntegrationProcess":
+            continue
+        name = part.get("name") or ""
+        if GENERIC_PARTICIPANT.match(name):
+            errs.append(f"participant {name!r} is a generic name: use the system name (e.g. MSAP)")
+        elif name not in KNOWN_PARTICIPANTS:
+            print(f"  FLAG: participant {name!r} is not a known system name ({', '.join(sorted(KNOWN_PARTICIPANTS))})")
+    return errs
+
+
+def rename_participant(xml: str, p, old: str, new: str) -> str:
+    """Participant name, the channel's `system` value and the propdef reference categories."""
+    xml = replace_counted(xml, [(f'name="{old}"', f'name="{new}"', 1)])
+    xml, n = re.subn(r"(<key>system</key>\s*<value>)" + re.escape(old) + r"(</value>)", r"\g<1>" + new + r"\g<2>", xml)
+    assert n <= 1, f"system {old}: {n}"
+    p.propdef = p.propdef.replace(f'attribute_category="{old}"', f'attribute_category="{new}"').replace(
+        f'attribute_category="{old}.', f'attribute_category="{new}.')
+    print(f"  participant {old} -> {new}")
+    return xml
 
 
 LOCATION_KEY = {"HTTP": "locationID", "HCIOData": "scc_location_id"}
@@ -740,10 +771,10 @@ CHILDREN = {
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
     I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.5", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.6", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.7", prefix="I2023", send="ServiceTask_734125", participant=("MSAP_Lookup", "MSAP"),
                 renames=[("CC_Location", "MSAP_LocationID")] + MSAP_RENAMES,
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.13", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.14", prefix="I2024", send="ServiceTask_734137", participant=("Receiver1", "MSAP"),
                 renames=MSAP_RENAMES + [("SAP_Message_name", "SAP_MessageType")],
                 location=("OData", "MSAP_LocationID", "scc_location_id", "Receiver1"),
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
@@ -787,6 +818,8 @@ def build_child(name: str) -> str:
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
     remove_unused(xml, p)
+    if c.get("participant"):
+        xml = rename_participant(xml, p, *c["participant"])
     return finish(name, files, xml, p, c["version"], ["Maintanance", "PDToHTTP"], rename=True)
 
 
@@ -887,12 +920,7 @@ def build_parent(name: str) -> str:
         # Never change the role of a parent whose main entry is HTTPS (user, 2026-11-23)
         assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
     if c.get("participant"):
-        old, new = c["participant"]
-        xml = replace_counted(xml, [(f'name="{old}"', f'name="{new}"', 1),            # participant
-                                    (f"<value>{old}</value>", f"<value>{new}</value>", 1)])  # channel "system"
-        p.propdef = p.propdef.replace(f'attribute_category="{old}"', f'attribute_category="{new}"').replace(
-            f'attribute_category="{old}.', f'attribute_category="{new}.')
-        print(f"  participant {old} -> {new}")
+        xml = rename_participant(xml, p, *c["participant"])
     return finish(name, files, xml, p, c["version"],
                   ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn", "MSAP_PO"], rename=False)
 

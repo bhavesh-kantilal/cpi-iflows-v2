@@ -109,6 +109,7 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - Allowed-value lists for SAP_Sender / SAP_Receiver / SAP_MessageType: ask the user, don't invent values.
   - SmarTeam flows: `SAP_Sender` default `AD1_110` everywhere (user, 2026-11-23).
   - **Parent iFlows (receiver determination, several receivers) never set `SAP_Receiver`**; only point-to-point flows and children do (user, 2026-11-23). Build check `monitor_header_errors`.
+- **Always flag participant names that are not the system name** (`Receiver1`, `MSAP_Lookup`, `MSAP_PO`…) to the user (user, 2026-11-23). Generic names fail the build (`participant_name_errors`); other unknown names are printed as FLAG.
 - **Receiver/participant names: keep them simple**, the receiver system name (e.g. `MSAP`, `MSAP_BOM`), not leftovers like `MSAP_PO` (user, 2026-11-23). When the plain name is taken by another participant in the same iFlow, add a short suffix.
   - Custom headers only via the reusable Groovy script (`UTIL_LogCustomHeaders`, `CH_` properties); searchable in the monitor with "Use More Fields", `Name=Value`.
 - **Step name `LogCustomHeaders`** for every Script step that runs `logCustomHeaders.groovy` (`UTIL_LogCustomHeaders`), in parents and children (user, 2026-11-23, screenshot). Not "Set Custom Header", "Log Custom Header(s)" or "Log Headers". `iflow_build_smarteam.py` renames them and fails on any other name.
