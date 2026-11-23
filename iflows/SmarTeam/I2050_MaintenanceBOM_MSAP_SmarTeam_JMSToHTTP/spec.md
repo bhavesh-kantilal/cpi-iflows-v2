@@ -23,7 +23,7 @@ SmarTeam response (L2, user 2026-11-23):
 ## Parameters (v1.0.4)
 | Parameter | Used in | Value |
 |---|---|---|
-| AllowedHeaders | runtime allowed headers | SSAB.* |
+| AllowedHeaders | runtime allowed headers | SSAB.*|SAP.* (since 1.0.6) |
 | HTTPS_Authorization / HTTPS_UserRole / HTTPS_CSRFProtected / HTTPS_BodySize | Manual Retrigger HTTPS sender | RoleBased / SSAB_MessagingSend_InternalOperations / 0 / 40 |
 | HTTP_Session_Reuse | HTTP session | onIntegrationFlow |
 | LogPayload / LogPayloadSize | Log Payload | true / 512 |
@@ -41,6 +41,8 @@ SmarTeam response (L2, user 2026-11-23):
 | 2026-11-23 | Input is a runtime `.jar`, not a design-time zip | Convert it in the build | The build keeps `src/main/resources/**`, writes a design-time MANIFEST, and adds `.project` + `metainfo.prop`. The rule comes from the I2049 jar/zip pair of the same version (L2). `--selftest` proves it byte for byte |
 
 | 2026-11-23 | Set Monitoring Identifiers XPaths wrong (L2, user, with sample `BOMHeader/MaintBOMHeader_Type`) | Fix them; **no `local-name()`** unless asked or logically needed (the source has no namespace) | v1.0.5: `/BOMHeader/MaintBOMHeader_Type/<field>` for CH_BillOfMaterial, CH_BillOfMaterialCategory, CH_BillOfMaterialVariant (now really BillOfMaterialVariant), CH_Plant, CH_TechnicalObject, SAP_ApplicationID. Checked against `MaintBOMInput.xsd`. WorkId: `/InboundResponse/WorkId` |
+
+| 2026-11-23 | Allowed Headers (L2, user: for this and all child iFlows) | Externalized `AllowedHeaders` = `SSAB.*\|SAP.*` | 1.0.6: default changed from `SSAB.*`. The build script sets it for every child and fails if Allowed Headers is not `{{AllowedHeaders}}` |
 
 ## Open points (not changed)
 - The SmarTeam HTTP receiver address (`smarteam-test.ssab.com`) and its settings are not externalized yet (CLAUDE.md: externalize every adapter setting someone may tune).

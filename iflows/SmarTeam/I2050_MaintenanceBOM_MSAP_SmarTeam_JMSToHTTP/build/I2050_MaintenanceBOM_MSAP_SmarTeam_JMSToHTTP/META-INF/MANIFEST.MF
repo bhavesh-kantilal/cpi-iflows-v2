@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 Bundle-SymbolicName: I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
-Bundle-Version: 1.0.5
+Bundle-Version: 1.0.6
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

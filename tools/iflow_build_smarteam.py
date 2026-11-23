@@ -455,9 +455,11 @@ def set_xpaths(xml: str, fixes) -> str:
     return xml
 
 
+CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023/I2024 already had it)
+
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.5", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.6", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
     I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.4", prefix="I2049",
@@ -492,6 +494,10 @@ def build_child(name: str) -> str:
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     for k, v in c.get("props", {}).items():
         p.set(k, v)
+    # Every child: runtime Allowed Headers externalized as AllowedHeaders = SSAB.*|SAP.* (user, 2026-11-23)
+    assert re.search(r"<key>allowedHeaderList</key>\s*<value>\{\{AllowedHeaders\}\}</value>", xml), \
+        "Allowed Headers is not {{AllowedHeaders}}"
+    p.set("AllowedHeaders", CHILD_ALLOWED_HEADERS)
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
     remove_unused(xml, p)

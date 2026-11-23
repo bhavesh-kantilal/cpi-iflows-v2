@@ -1,5 +1,8 @@
 # CHANGELOG — I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.6 — 2026-11-23 10:55 CET
+- Allowed Headers (`{{AllowedHeaders}}`) now defaults to `SSAB.*|SAP.*` (was `SSAB.*`). Set the tenant value again if it was configured.
+
 ## 1.0.5 — 2026-11-23 10:25 CET
 - Set Monitoring Identifiers XPaths fixed: they pointed to `A_MaintBillOfMaterial`, which is not in the message. Now `/BOMHeader/MaintBOMHeader_Type/BillOfMaterial`, `…/BillOfMaterialCategory`, `…/BillOfMaterialVariant`, `…/Plant`, `…/TechnicalObject` (also SAP_ApplicationID). CH_BillOfMaterialVariant read `BillOfMaterialCategory` before; it now reads `BillOfMaterialVariant`.
 - No `local-name()` anymore. The WorkId XPath is `/InboundResponse/WorkId`.
