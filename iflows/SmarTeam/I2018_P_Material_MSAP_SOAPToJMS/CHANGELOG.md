@@ -1,5 +1,8 @@
 # CHANGELOG — I2018_P_Material_MSAP_SOAPToJMS
 
+## 1.0.22 — 2026-11-23 11:36 CET
+- Parameter renamed: `SAP_MESSAGETYPE` → `SAP_MessageType` (header SAP_MessageType = `{{SAP_MessageType}}`). Set the tenant value again if configured.
+
 ## 1.0.21 — 2026-11-23 11:23 CET
 - Retrigger role `HTTP_UserRole`: `ESBMessaging.send` → `SSAB_MessagingSend_InternalOperations` (the flow's main entry is SOAP; the HTTPS sender is only the retrigger). Set the tenant value again if it was configured.
 

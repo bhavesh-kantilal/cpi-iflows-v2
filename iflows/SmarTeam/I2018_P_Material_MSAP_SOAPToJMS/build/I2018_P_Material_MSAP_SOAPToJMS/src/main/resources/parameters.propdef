@@ -8,7 +8,7 @@
     <additionalMetadata/>
   </parameter><parameter>
     <key/>
-    <name>SAP_MESSAGETYPE</name>
+    <name>SAP_MessageType</name>
     <type>xsd:string</type>
     <isRequired>false</isRequired>
     <constraint/>

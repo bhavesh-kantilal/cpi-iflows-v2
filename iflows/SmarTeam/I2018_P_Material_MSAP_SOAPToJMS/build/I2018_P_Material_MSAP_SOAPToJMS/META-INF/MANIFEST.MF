@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: I2018_P_Material_MSAP_SOAPToJMS
 Bundle-SymbolicName: I2018_P_Material_MSAP_SOAPToJMS
-Bundle-Version: 1.0.21
+Bundle-Version: 1.0.22
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
