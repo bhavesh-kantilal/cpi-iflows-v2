@@ -1,0 +1,18 @@
+#Fri Nov 20 11:19:13 UTC 2026
+Enviroinment=DEV
+HTTPS_Address=/I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
+HTTPS_Authorization=RoleBased
+HTTPS_CSRF_Protected=0
+HTTPS_Userrole=ESBMessaging.send
+HTTPSessionReuse=onIntegrationFlow
+JMS_AccessType=Non-Exclusive
+JMS_CompressStoredMessage=1
+JMS_Encryptstoredmessage=1
+JMS_Expirationperiod=30
+JMS_Queuename=${property.QueueName}
+JMS_RetentionThreshold=2
+JMS_TransferExchangeProperties=0
+LogPayload=True
+LogPayloadSize=512
+ProcessDirect_Address=/I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
+SAP_Sender=MSAP
