@@ -1,5 +1,8 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
+## 1.0.13 — 2026-11-23 12:12 CET
+- Local process `Retrigger` → `Manual Retrigger` (clashed with the HTTPS sender `Retrigger`), as in the other flows.
+
 ## 1.0.12 — 2026-11-23 12:04 CET
 - HTTPS retrigger sender `Trigger` → `Retrigger` (as in every other flow).
 
