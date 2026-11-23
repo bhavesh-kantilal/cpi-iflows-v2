@@ -4,7 +4,7 @@ Bundle-Name: I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSA
  P_SmarTeam_JMSToHTTP
 Bundle-SymbolicName: I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SA
  VE01_MSAP_SmarTeam_JMSToHTTP
-Bundle-Version: 1.1.6
+Bundle-Version: 1.1.7
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

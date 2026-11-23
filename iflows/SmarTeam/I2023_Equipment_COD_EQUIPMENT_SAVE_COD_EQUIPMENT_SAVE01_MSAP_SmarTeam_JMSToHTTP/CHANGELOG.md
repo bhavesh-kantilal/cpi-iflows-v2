@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.1.7 — 2026-11-23 11:59 CET
+- OData lookup receiver `MSAP_Lookup` → `MSAP` (participant, channel system, propdef categories). The ProcessDirect sender is also named `MSAP` (sender and receiver are on separate Configure tabs; UNVERIFIED until the CPI import).
+
 ## 1.1.6 — 2026-11-23 11:30 CET
 - OData lookup parameters renamed to the `MSAP_<Setting>` pattern: `CC_Location` → `MSAP_LocationID`, `MSAPHost` → `MSAP_Host`, `MSAPCredentials` → `MSAP_Credentials`, `sap-client` → `MSAP_Client`. Defaults unchanged; **set tenant values again** under the new names.
 
