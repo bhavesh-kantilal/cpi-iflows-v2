@@ -1,5 +1,10 @@
 # CHANGELOG — I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.9 — 2026-11-23 11:07 CET
+- Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; **must stay equal to the iFlow name**: the dispatcher calls it).
+- Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
+- New build check: no fixed adapter value left (except the shared mail utility's ProcessDirect address).
+
 ## 1.0.8 — 2026-11-23 11:03 CET
 - SmarTeam HTTP receiver externalized (12 settings, shared `SmarTeam_*` set): `SmarTeam_Address`, `SmarTeam_ProxyType`, `SmarTeam_Authentication`, `SmarTeam_Timeout`, `SmarTeam_ThrowExceptionOnFailure`, `SmarTeam_RetryOnConnectionFailure`, `SmarTeam_RetryIterations`, `SmarTeam_RetryInterval`, `SmarTeam_RetryOnException`, `SmarTeam_AllowedRequestHeaders`, `SmarTeam_AllowedResponseHeaders`, `SmarTeam_IdleTimeout`. Defaults = the previous fixed values.
 

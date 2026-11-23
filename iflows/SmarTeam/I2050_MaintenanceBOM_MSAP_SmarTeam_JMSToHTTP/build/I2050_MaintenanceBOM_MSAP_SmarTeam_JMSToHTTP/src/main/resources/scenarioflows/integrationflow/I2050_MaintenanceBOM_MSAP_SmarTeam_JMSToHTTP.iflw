@@ -130,7 +130,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>urlPath</key>
-                    <value>/I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP</value>
+                    <value>{{HTTPS_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -202,7 +202,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>address</key>
-                    <value>/I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP</value>
+                    <value>{{PD_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>
