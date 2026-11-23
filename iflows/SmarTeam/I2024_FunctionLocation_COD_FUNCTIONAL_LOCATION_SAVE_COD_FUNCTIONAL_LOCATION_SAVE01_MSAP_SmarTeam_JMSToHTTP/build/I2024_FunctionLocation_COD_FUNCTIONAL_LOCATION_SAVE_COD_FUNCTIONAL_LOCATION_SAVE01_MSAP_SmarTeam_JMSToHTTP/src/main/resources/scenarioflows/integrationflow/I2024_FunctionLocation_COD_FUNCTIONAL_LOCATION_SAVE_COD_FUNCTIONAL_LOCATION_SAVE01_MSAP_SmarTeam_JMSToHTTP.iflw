@@ -129,7 +129,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>customQueryOptions</key>
-                    <value>sap-client={{sap-client}}</value>
+                    <value>sap-client={{MSAP_Client}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>metadataAllowedURIParams</key>
@@ -281,7 +281,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>alias</key>
-                    <value>{{MSAPCredentials}}</value>
+                    <value>{{MSAP_Credentials}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>maxRetryIterations</key>
@@ -313,7 +313,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>address</key>
-                    <value>http://{{MSAPHost}}/sap/opu/odata/sap/API_FUNCTIONALLOCATION</value>
+                    <value>http://{{MSAP_Host}}/sap/opu/odata/sap/API_FUNCTIONALLOCATION</value>
                 </ifl:property>
                 <ifl:property>
                     <key>isCSRFEnabled</key>
