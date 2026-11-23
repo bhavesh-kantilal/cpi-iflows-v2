@@ -1,9 +1,12 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
-## 1.0.7 — 2026-11-23 10:45 CET
+## 1.0.8 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Headers').
+
+## 1.0.7 — 2026-11-23 10:29 CET
 - `LogPayloadSize` was never externalized: "Set Monitoring Identifiers" created it as an empty constant (already so in Bhavesh's 1.0.3 and 1.0.5). It is now `{{LogPayloadSize}}`, with the new parameter `LogPayloadSize=512` (same definition as in the children).
 
-## 1.0.6 — 2026-11-23 10:45 CET
+## 1.0.6 — 2026-11-23 10:20 CET
 Built from Bhavesh's CPI version 1.0.5 (`source/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS.zip`).
 - The misspelt parameter `S4_DeleteIdleConnnectopn` is renamed to `S4_DeleteIdleConnection` (iflw, prop, propdef). Set its value on the tenant again (default true).
 

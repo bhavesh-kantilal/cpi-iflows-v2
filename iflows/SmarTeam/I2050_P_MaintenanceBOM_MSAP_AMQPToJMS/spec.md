@@ -24,6 +24,7 @@ Parent iFlow of the SSAB Simplified Pipeline (CPI package MSAPPlantMaintenanceMa
 | 2026-11-23 | `S4_DeleteIdleConnnectopn` is misspelt | Fixed in 1.0.6 (CLAUDE.md: fix misspelt parameter names) | `S4_DeleteIdleConnection`. **Set its tenant value again** |
 
 | 2026-11-23 | LogPayloadSize missing? (L2, user: "always defaulted to 512 for 512 kb, externalized") | It was never externalized (empty constant in 1.0.3 and 1.0.5), not dropped by a build | 1.0.7: property row = `{{LogPayloadSize}}`, parameter `LogPayloadSize=512`. New build check: no empty LogPayload / LogPayloadSize row. I2049_P has the same gap (its own round) |
+| 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.8: renamed from 'Log Headers'. The build names every such step this way and fails on any other name |
 
 ## Build input
 From 1.0.6 on, the build starts from Bhavesh's CPI version 1.0.5 (`source/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS.zip`). The 1.0.4 changes are already in it.

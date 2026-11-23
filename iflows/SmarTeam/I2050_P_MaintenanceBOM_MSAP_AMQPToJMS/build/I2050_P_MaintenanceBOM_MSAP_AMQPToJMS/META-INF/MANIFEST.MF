@@ -44,7 +44,7 @@ Require-Capability: scriptcollection.UTIL_GetAlertMailReceivers;resoluti
 Origin-Bundle-Name: I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 SAP-RuntimeProfile: iflmap
 Bundle-Name: I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
-Bundle-Version: 1.0.7
+Bundle-Version: 1.0.8
 SAP-NodeType: IFLMAP
 SAP-BundleType: IntegrationFlow
 Import-Service: com.sap.esb.webservice.audit.log.AuditLogger,com.sap.esb
