@@ -1,5 +1,12 @@
 # CHANGELOG — I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
 
+## 1.0.11 — 2026-11-23 11:07 CET
+- Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; keep it equal to what its callers use).
+- Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
+- Externalized `HTTPS_BodySize` (40), `HTTPS_CSRF_Protected` (0).
+- Externalized JMS receiver: `JMS_CompressStoredMessage` (1), `JMS_Encryptstoredmessage` (1), `JMS_TransferExchangeProperties` (0), names as in I2023_P.
+- New build check: no fixed adapter value left (except the shared mail utility's ProcessDirect address).
+
 ## 1.0.10 — 2026-11-23 10:44 CET
 - JMS send step "Send TO CI" → "Send To JMS".
 

@@ -129,7 +129,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>UseMessageCompression</key>
-                    <value>1</value>
+                    <value>{{JMS_CompressStoredMessage}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -153,7 +153,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>EncryptMessage</key>
-                    <value>1</value>
+                    <value>{{JMS_Encryptstoredmessage}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>RetentionThresholdAlerting</key>
@@ -173,7 +173,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>TransferExchangeProperties</key>
-                    <value>0</value>
+                    <value>{{JMS_TransferExchangeProperties}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>MessageProtocol</key>
@@ -209,7 +209,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>maximumBodySize</key>
-                    <value>40</value>
+                    <value>{{HTTPS_BodySize}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>
@@ -221,7 +221,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>urlPath</key>
-                    <value>/I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS</value>
+                    <value>{{HTTPS_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -241,7 +241,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>xsrfProtection</key>
-                    <value>0</value>
+                    <value>{{HTTPS_CSRF_Protected}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>TransportProtocol</key>
@@ -293,7 +293,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>address</key>
-                    <value>/I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS</value>
+                    <value>{{PD_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>
