@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.17 — 2026-11-23 12:12 CET
+- OData lookup receiver `MSAP` (1.0.16, clashed with the ProcessDirect sender `MSAP`) → `MSAP_FLOC`.
+
 ## 1.0.16 — 2026-11-23 12:04 CET
 - Layout from Bhavesh's CPI version 1.0.15 (`source/…_cpi.zip`): the Log Payload pool overlapped the wider Main Process (1.0.14) and is now at (914, 355). Nothing else differed.
 - Build fix: a pool that widens now moves the pools to its right; new build check `layout_errors` (no overlapping pools, steps inside their own pool).
