@@ -44,7 +44,7 @@ SmarTeam response (L2, user 2026-11-23):
 
 | 2026-11-23 | Allowed Headers (L2, user: for this and all child iFlows) | Externalized `AllowedHeaders` = `SSAB.*\|SAP.*` | 1.0.6: default changed from `SSAB.*`. The build script sets it for every child and fails if Allowed Headers is not `{{AllowedHeaders}}` |
 | 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.7: renamed from 'Set Custom Header' (2 steps). The build names every such step this way and fails on any other name |
+| 2026-11-23 | SmarTeam adapter not externalized (L2, user: "we always externalize adapters"; rule already in CLAUDE.md, missed in the first round) | Externalize every setting of the SmarTeam HTTP receiver | 1.0.8: 12 `SmarTeam_*` parameters, defaults = old fixed values, propdef references like the I0539 Medius receiver (L3). `SmarTeam_RetryOnException` and `SmarTeam_IdleTimeout` (pooledConnectionIdleTimeout, ms) are not in the I0539 set: UNVERIFIED until the CPI test |
 
 ## Open points (not changed)
-- The SmarTeam HTTP receiver address (`smarteam-test.ssab.com`) and its settings are not externalized yet (CLAUDE.md: externalize every adapter setting someone may tune).
 - Step names in the parent still contain `MaintananceBOMXML` / `MaintananceBOM_Event`. These are handled in the parent round.
