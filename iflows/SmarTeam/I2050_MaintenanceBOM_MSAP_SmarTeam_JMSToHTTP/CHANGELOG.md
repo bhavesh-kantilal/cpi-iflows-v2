@@ -1,5 +1,9 @@
 # CHANGELOG — I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.10 — 2026-11-23 11:41 CET
+- SmarTeam HTTP receiver: Location ID → `{{SmarTeam_LocationID}}` (default empty), always together with Proxy Type.
+- `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
+
 ## 1.0.9 — 2026-11-23 11:07 CET
 - Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; **must stay equal to the iFlow name**: the dispatcher calls it).
 - Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
