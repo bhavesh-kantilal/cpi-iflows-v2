@@ -1,5 +1,8 @@
 # CHANGELOG — I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.6 — 2026-11-23 11:03 CET
+- SmarTeam HTTP receiver externalized (12 settings, shared `SmarTeam_*` set): `SmarTeam_Address`, `SmarTeam_ProxyType`, `SmarTeam_Authentication`, `SmarTeam_Timeout`, `SmarTeam_ThrowExceptionOnFailure`, `SmarTeam_RetryOnConnectionFailure`, `SmarTeam_RetryIterations`, `SmarTeam_RetryInterval`, `SmarTeam_RetryOnException`, `SmarTeam_AllowedRequestHeaders`, `SmarTeam_AllowedResponseHeaders`, `SmarTeam_IdleTimeout`. Defaults = the previous fixed values.
+
 ## 1.0.5 — 2026-11-23 10:39 CET
 - Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Set Custom Header' (2 steps)).
 - `AllowedHeaders` = `SSAB.*|SAP.*` (was `SSAB.*`; rule for all children).
