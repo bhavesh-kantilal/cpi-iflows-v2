@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.1.8 — 2026-11-23 12:12 CET
+- OData lookup receiver `MSAP` (1.1.7, clashed with the ProcessDirect sender `MSAP`) → `MSAP_FLOC`.
+
 ## 1.1.7 — 2026-11-23 11:59 CET
 - OData lookup receiver `MSAP_Lookup` → `MSAP` (participant, channel system, propdef categories). The ProcessDirect sender is also named `MSAP` (sender and receiver are on separate Configure tabs; UNVERIFIED until the CPI import).
 
