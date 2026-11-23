@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="MaterialBOM">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" name="MaterialBOMType">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="to_BillOfMaterialItem">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minOccurs="0" maxOccurs="unbounded" name="MaterialBOMItemType">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element nillable="false" maxOccurs="1" name="BillOfMaterial">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="8"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialCategory">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialVariant">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialVersion">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialItemNodeNumber">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="8"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="HeaderChangeDocument">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="Material">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="false" maxOccurs="1" name="Plant">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="ConvertItem_ac" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="DeleteBOMItemWithECN_ac" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="UpdateBOMItemWithECN_ac" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="Delete_mc" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="Update_mc" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="to_BOMItmObjDependencyAssignment_oc" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="to_BOMSubItems_oc" xmlns=""/>
+                                                    <xs:element type="xs:string" nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialItemUUID" xmlns=""/>
+                                                    <xs:element type="xs:string" nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialHeaderUUID" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemInternalChangeCount">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="8"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="ValidityStartDate" xmlns=""/>
+                                                    <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="ValidityEndDate" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="EngineeringChangeDocForEdit">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="EngineeringChangeDocument">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ChgToEngineeringChgDocument">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="InheritedNodeNumberForBOMItem">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="8"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemRecordCreationDate" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemCreatedByUser">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemLastChangeDate" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemLastChangedByUser">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="12"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialComponent">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialItemCategory">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialItemNumber">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialItemUnit">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialItemQuantity" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="IsAssembly">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsSubItem" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemSorter">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="10"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="FixedQuantity" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemHasFixedQuantity" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="PurchasingGroup">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="Currency">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="5"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="MaterialComponentPrice" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="IdentifierBOMItem">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="8"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="MaterialPriceUnitQty" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="ComponentScrapInPercent" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="OperationScrapInPercent" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsNetScrap" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="NumberOfVariableSizeItem" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="QuantityVariableSizeItem" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="FormulaKey">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ComponentDescription">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemDescription">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemText2">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="MaterialGroup">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="9"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DocumentType">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DocNumber">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="25"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DocumentVersion">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DocumentPart">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ClassNumber">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="18"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ClassType">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ResultingItemCategory">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DependencyObjectNumber">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="18"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ObjectType">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsClassificationRelevant" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsBulkMaterial" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemIsSparePart">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemIsSalesRelevant">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsProductionRelevant" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemIsPlantMaintRelevant" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMItemIsCostingRelevant">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsEngineeringRelevant" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="SpecialProcurementType">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsBOMRecursiveAllowed" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="OperationLeadTimeOffset" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="OpsLeadTimeOffsetUnit">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="IsMaterialProvision">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="BOMIsRecursive" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="DocumentIsCreatedByCAD" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DistrKeyCompConsumption">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="DeliveryDurationInDays" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="Creditor">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="10"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="CostElement">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="10"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="Size1" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="Size2" xmlns=""/>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="Size3" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="UnitOfMeasureForSize1To3">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="3"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="GoodsReceiptDuration" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="PurchasingOrganization">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="RequiredComponent" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="MultipleSelectionAllowed" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ProdOrderIssueLocation">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="4"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="MaterialIsCoProduct" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ExplosionType">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="AlternativeItemGroup">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="AlternativeItemPriority">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="AlternativeItemStrategy">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="UsageProbabilityPercent" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="FollowUpGroup">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="DiscontinuationGroup">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="2"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="IsConfigurableBOM">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="1"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ReferencePoint">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="20"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="LeadTimeOffset" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ProductionSupplyArea">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="10"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsDeleted" xmlns=""/>
+                                                    <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsALE" xmlns=""/>
+                                                    <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="LastChangeDateTime" xmlns=""/>
+                                                    <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="PreliminaryComponent">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string" xmlns="">
+                                                                <xs:maxLength value="40"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="BillOfMaterial">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="8"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialCategory">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialVariant">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="2"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="BillOfMaterialVersion">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="4"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="EngineeringChangeDocument">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="12"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="Material">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="40"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="false" maxOccurs="1" name="Plant">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="4"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="DeleteBOMHeaderWithECN_ac" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="ReleaseVersionBOM_ac" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="Delete_mc" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="Update_mc" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="to_BillOfMaterialItem_oc" xmlns=""/>
+                            <xs:element type="xs:string" nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialHeaderUUID" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialVariantUsage">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="EngineeringChangeDocForEdit">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="12"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsMultipleBOMAlt" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMHeaderInternalChangeCount">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="8"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMUsagePriority">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="2"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialAuthsnGrp">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="4"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMVersionStatus">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="2"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsVersionBillOfMaterial" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsLatestBOMVersion" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsConfiguredMaterial" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMTechnicalType">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMGroup">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="18"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMHeaderText">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="40"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMAlternativeText">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="40"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialStatus">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="2"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="HeaderValidityStartDate" xmlns=""/>
+                            <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="HeaderValidityEndDate" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ChgToEngineeringChgDocument">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="12"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsMarkedForDeletion" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="BOMIsArchivedForDeletion" xmlns=""/>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="IsALE" xmlns=""/>
+                            <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="MatFromLotSizeQuantity" xmlns=""/>
+                            <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="MaterialToLotSizeQuantity" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMHeaderBaseUnit">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="3"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:decimal" nillable="true" minOccurs="0" maxOccurs="1" name="BOMHeaderQuantityInBaseUnit" xmlns=""/>
+                            <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="RecordCreationDate" xmlns=""/>
+                            <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="LastChangeDate" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="CreatedByUser">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="12"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="LastChangedByUser">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="12"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BOMIsToBeDeleted">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="1" name="DocumentIsCreatedByCAD" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="LaboratoryOrDesignOffice">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="3"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:dateTime" nillable="true" minOccurs="0" maxOccurs="1" name="LastChangeDateTime" xmlns=""/>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="ProductDescription">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="40"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="PlantName">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="30"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialHdrDetailsText">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="255"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="BillOfMaterialVariantUsageDesc">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="30"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element nillable="true" minOccurs="0" maxOccurs="1" name="SelectedBillOfMaterialVersion">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string" xmlns="">
+                                        <xs:maxLength value="4"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
