@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.14 — 2026-11-23 11:59 CET
+- OData lookup receiver `Receiver1` → `MSAP` (participant, channel system, propdef categories). The ProcessDirect sender is also named `MSAP` (sender and receiver are on separate Configure tabs; UNVERIFIED until the CPI import).
+
 ## 1.0.13 — 2026-11-23 11:36 CET
 - Parameter renamed: `SAP_Message_name` → `SAP_MessageType` (header SAP_MessageType = `{{SAP_MessageType}}`, value `COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01`). Set the tenant value again if configured.
 

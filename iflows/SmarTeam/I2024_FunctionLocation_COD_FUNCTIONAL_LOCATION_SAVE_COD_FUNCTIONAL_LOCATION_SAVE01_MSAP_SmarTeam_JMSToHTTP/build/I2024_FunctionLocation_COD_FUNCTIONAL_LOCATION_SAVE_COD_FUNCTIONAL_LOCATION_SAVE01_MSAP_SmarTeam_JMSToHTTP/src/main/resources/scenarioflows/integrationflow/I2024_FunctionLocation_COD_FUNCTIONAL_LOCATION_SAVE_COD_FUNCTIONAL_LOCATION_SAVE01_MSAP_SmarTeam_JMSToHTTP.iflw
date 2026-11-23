@@ -86,7 +86,7 @@
                 </ifl:property>
             </bpmn2:extensionElements>
         </bpmn2:participant>
-        <bpmn2:participant id="Participant_734128" ifl:type="EndpointRecevier" name="Receiver1">
+        <bpmn2:participant id="Participant_734128" ifl:type="EndpointRecevier" name="MSAP">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>ifl:type</key>
@@ -201,7 +201,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
-                    <value>Receiver1</value>
+                    <value>MSAP</value>
                 </ifl:property>
                 <ifl:property>
                     <key>authenticationMethod</key>
