@@ -1,5 +1,8 @@
 # CHANGELOG — I2049_P_MaterialBOM_MSAP_AMQPToJMS
 
+## 1.0.6 — 2026-11-23 10:44 CET
+- JMS send step "Send 1" → "Send To JMS".
+
 ## 1.0.5 — 2026-11-23 10:39 CET
 - Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Headers').
 - `LogPayloadSize` was an empty constant in Set Monitoring Identifiers (same gap as I2050_P): now `{{LogPayloadSize}}`, new parameter `LogPayloadSize=512`.
