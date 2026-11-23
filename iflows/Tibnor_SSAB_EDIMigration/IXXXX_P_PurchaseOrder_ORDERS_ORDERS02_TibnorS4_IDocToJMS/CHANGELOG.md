@@ -1,5 +1,10 @@
 # CHANGELOG — IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS
 
+## 1.0.1 — 2026-11-23 18:05 CET
+- `ReceiverDetermination.groovy` streams the body into XmlSlurper with `parse(message.getBody(java.io.Reader))`. Before, it used `parseText(getBody(String))`, which the CPI script editor flags as High.
+- RCVPRN: leading zeros are removed only when the value is all digits. A logical system or other alphanumeric value (e.g. `TS4CLNT100`) is compared as is.
+- New build check `script_parse_errors`: fails on Groovy that parses XML without streaming.
+
 ## 1.0.0 — 2026-11-23 17:45 CET
 - First build, cloned from our I2023_P_…_IDocToJMS 1.0.14.
 - Receiver determination:

@@ -217,7 +217,8 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str], pa
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
     errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
             + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml)
-            + monitor_header_errors(xml, parent) + participant_name_errors(xml) + layout_errors(xml))
+            + monitor_header_errors(xml, parent) + participant_name_errors(xml) + layout_errors(xml)
+            + iflow_lib.script_parse_errors(files))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):

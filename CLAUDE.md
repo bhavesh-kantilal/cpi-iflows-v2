@@ -102,6 +102,11 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 - **No overlapping pools or steps on the iFlow canvas** (user, 2026-11-23, I2024): when a step is inserted and a pool gets wider, move every pool to its right (same height) with its steps. Build check `layout_errors`: pools don't overlap, every step lies inside its own pool.
 - **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. Close gaps left by removed steps. `iflow_lib.fix_diagram` (with `shift=`) and `iflow_lib.sync_flow_refs` do this. (I0539 v1.0.0: "Main Process connection missing"; I0539_P 2.0.0: gap and no arrows, L2.)
 - For a quick visual check without CPI, `py -I tools/iflow_render.py <zip> <out.svg>` draws the diagram.
+- **Groovy XML parsing streams the body** (user, 2026-11-23, CPI script editor "High" warning on IXXXX_P ReceiverDetermination):
+  - write `new XmlSlurper().parse(message.getBody(java.io.Reader))` (same for `XmlParser`)
+  - never `parseText(message.getBody(String))` or any other body String
+  - build check `iflow_lib.script_parse_errors`: fails our builds, FLAG in `check_all_iflows.py`
+- **Partner / logical system values** (RCVPRN, SNDPRN…) can be numbers with leading zeros or alphanumeric logical system names: strip leading zeros only when the value is all digits, and compare other values as they are (user, 2026-11-23).
 - **XPath in Content Modifiers and routers: no `local-name()`** unless the user asks for it or a source needs it for a logical reason (user, 2026-11-23). Write plain paths that match the real message, checked against a sample or the mapping source XSD/WSDL. When only the root element is namespaced (SAP ESR messages, unqualified children), use `/*/child/…`.
 - **Message monitoring** (user's blog "SAP CPI Message Monitoring: standard out-of-the-box features", sprintegrate.com, 2023; L2, 2026-11-23):
   - Standard headers are mandatory, set in the **first Content Modifier** ("Set Monitoring Identifiers") as **headers**: `SAP_Sender` = `{{SAP_Sender}}`, `SAP_Receiver` = `{{SAP_Receiver}}`, `SAP_MessageType` = `{{SAP_MessageType}}` (parameter name = header name, always this casing; build check `monitor_param_names`).

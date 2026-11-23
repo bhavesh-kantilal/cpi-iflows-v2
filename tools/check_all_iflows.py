@@ -42,6 +42,8 @@ for entry in iflows:
         xml_bytes = z.read(iflw_path)
         prop_path = "src/main/resources/parameters.prop"
         prop_text = z.read(prop_path).decode("utf-8") if prop_path in entries else None
+        # XML parsed from the body without streaming (user rule 2026-11-23): reported as FLAG
+        parse_flags = iflow_lib.script_parse_errors({e: z.read(e) for e in entries if e.endswith(".groovy")})
         # Check no AI strings
         bad = []
         for e in entries:
@@ -88,6 +90,8 @@ for entry in iflows:
     if xml_ok:
         for f in iflow_lib.best_practice_flags(xml_bytes.decode("utf-8"), prop_text):
             print(f"     FLAG: {f}")
+    for f in parse_flags:
+        print(f"     FLAG: {f}")
     if mf_name != name:
         print(f"     MANIFEST: '{mf_name}'")
 

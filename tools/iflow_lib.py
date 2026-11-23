@@ -337,6 +337,27 @@ class Params:
 # Checks
 # ---------------------------------------------------------------------------
 
+# Groovy scripts must stream the body into XML parsers (user, 2026-11-23, CPI script editor warning
+# "parse the message body using XmlSlurper without streaming"): parse(message.getBody(java.io.Reader)),
+# never parseText(message.getBody(String)) or a body String.
+_PARSE_NO_STREAM = re.compile(
+    r"(XmlSlurper|XmlParser)\s*\([^)]*\)\s*\.\s*parseText\s*\("
+    r"|\.parse\s*\(\s*message\.getBody\s*\(\s*(java\.lang\.)?String\b"
+    r"|DocumentBuilder[\w.]*\.parse\s*\(\s*new\s+InputSource\s*\(\s*new\s+StringReader")
+
+
+def script_parse_errors(files: dict[str, bytes]) -> list[str]:
+    """Groovy files that parse XML from the body without streaming."""
+    errs = []
+    for n, b in files.items():
+        if n.endswith(".groovy"):
+            for i, line in enumerate(b.decode("utf-8", errors="replace").splitlines(), 1):
+                if _PARSE_NO_STREAM.search(line) and not line.lstrip().startswith(("//", "*")):
+                    errs.append(f"{n}:{i}: XML parsed without streaming; use "
+                                f"parse(message.getBody(java.io.Reader))")
+    return errs
+
+
 def check_iflow(xml: str, prop: str | None = None, propdef: str | None = None) -> list[str]:
     """Return a list of problems (empty = OK)."""
     errs = []

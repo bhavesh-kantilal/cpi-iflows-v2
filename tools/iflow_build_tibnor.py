@@ -50,7 +50,7 @@ RECEIVER = "FinMessageHub_HameenlinnaMetocs"   # SAP_Receiver, child only (user,
 MQ_SYSTEM = "FinMessageHub"              # receiver participant: plain system name
 MESSAGE_TYPE = "ORDERS.ORDERS02"
 MAPPING = "Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02"
-VERSION = {PARENT: "1.0.0", CHILD: "1.0.0"}
+VERSION = {PARENT: "1.0.1", CHILD: "1.0.0"}
 
 I2023_P = "I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS"
 I2018 = "I2018_Material_MSAP_SmarTeam_JMSToHTTP"
@@ -111,7 +111,10 @@ RD_GROOVY = f"""import com.sap.gateway.ip.core.customdev.util.Message
 
 /*
  * Receiver determination for {PARENT}
- * Reads EDI_DC40/RCVPRN of the ORDERS02 IDoc. Leading zeros are ignored (0000025200 = 25200).
+ * Reads EDI_DC40/RCVPRN of the ORDERS02 IDoc.
+ * RCVPRN can be a partner number (0000025200) or a logical system / alphanumeric name
+ * (e.g. TS4CLNT100): leading zeros are removed only when the value is all digits
+ * (0000025200 = 25200); any other value is compared as it is (trimmed).
  * No receiver found: the lists stay empty, arr_receiversLastIndex = -1 and the
  * "Receivers Exist?" router sends the message to the Error End.
  */
@@ -120,8 +123,12 @@ def Message processData(Message message) {{
     def arr_receiversQueueList = []
     def arr_receiversIFlowList = []
 
-    def idoc = new XmlSlurper().parseText(message.getBody(String) as String)
-    def rcvprn = idoc.IDOC.EDI_DC40.RCVPRN.text().trim().replaceFirst(/^0+(?!$)/, '')
+    // Stream the body into the parser (no copy of the payload as a String)
+    def idoc = new XmlSlurper().parse(message.getBody(java.io.Reader))
+    def rcvprn = idoc.IDOC.EDI_DC40.RCVPRN.text().trim()
+    if (rcvprn ==~ /\\d+/) {{
+        rcvprn = rcvprn.replaceFirst(/^0+(?!$)/, '')
+    }}
 
     if (rcvprn == "{RCVPRN}") {{
         arr_receiversQueueList.add("{QUEUE}")
