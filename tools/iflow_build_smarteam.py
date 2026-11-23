@@ -579,16 +579,16 @@ PARENTS = {
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.5",
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.6", jms_step_name=True,
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
                   renames=S4_RENAMES, props={"S4_CSRFProtected": "false"}, odata=("OData", "S4", "MSAP_PO"),
                   # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.18", xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.8"),
-    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.9", props={"SAP_MessageType": FLOC_MT}),
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.19", jms_step_name=True, xpaths=XPATH_I2018_P),
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.9", jms_step_name=True),
+    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.10", jms_step_name=True, props={"SAP_MessageType": FLOC_MT}),
 }
 
 
