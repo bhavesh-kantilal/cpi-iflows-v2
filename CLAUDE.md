@@ -23,11 +23,14 @@ mappings/<Folder>/          one folder = one mapping
   feedback/                 user's CPI download of a build (zip + extracted folder)
   build/                    <MappingName>.zip + extracted <MappingName>/
   CHANGELOG.md
-iflows/<IFlowName>/         one folder = one iFlow we build
-  spec.md                   purpose, parameters, "Decisions" section
-  feedback/                 user's CPI download + feedback doc (zip + extracted folder)
-  build/<IFlowName>.zip
-  CHANGELOG.md
+iflowdevelopment/           the user's single drop folder for iFlow exports (any package); Claude copies from here
+iflows/<Package>/           one folder = one CPI package (e.g. SmarTeam)
+  source/                   copies of the user's exports and CPI downloads (zip / jar / package zip), unchanged
+  <IFlowName>/              one folder = one iFlow we build
+    spec.md                 purpose, parameters, "Decisions" section
+    build/<IFlowName>.zip + extracted <IFlowName>/
+    CHANGELOG.md
+iflows/<IFlowName>/         older flat layout (FSAP flows), moves into iflows/<Package>/ later
 ```
 - Each mapping lives in its own folder under `mappings/`. Every folder there is a new mapping. Subfolders may appear later; the user will say in chat where to look.
 - **The mapping name is given by the user in chat.** It can differ from the folder name. It sets the `.mmap` name and the zip name. Default pattern: `Map_<Src>_<Tgt>_<Object>_<MsgType>` (see IFLOW_CONVENTIONS §2.2). If no name was given, or the name breaks the pattern, ask.

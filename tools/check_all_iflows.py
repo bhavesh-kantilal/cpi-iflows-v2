@@ -1,4 +1,4 @@
-"""Validate all 7 built iFlow ZIPs: well-formed XML + no AI strings + manifest match."""
+"""Validate all built iFlow ZIPs: well-formed XML + no AI strings + manifest match."""
 import sys, zipfile
 sys.stdout.reconfigure(encoding="utf-8")
 from lxml import etree
@@ -17,11 +17,14 @@ iflows = [
     "I0544_P_BusinessPartner_FSAP_SOAPToJMS",
     "I0544_BusinessPartner_FSAP_Medius_PDToREST",
     "I0544_BusinessPartner_FSAP_StreamServeDDS_PDToJDBC",
+    "SmarTeam/I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP",
+    "SmarTeam/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS",
 ]
 
 all_ok = True
-for name in iflows:
-    zip_path = f"iflows/{name}/build/{name}.zip"
+for entry in iflows:
+    name = entry.split("/")[-1]   # "<Package>/<IFlowName>" or "<IFlowName>"
+    zip_path = f"iflows/{entry}/build/{name}.zip"
     with zipfile.ZipFile(zip_path) as z:
         entries = z.namelist()
         iflw_path = next(n for n in entries if n.endswith(".iflw"))

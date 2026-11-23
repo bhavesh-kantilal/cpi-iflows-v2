@@ -87,6 +87,27 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
   - new `tools/iflow_render.py` (SVG preview)
   - The I0541_P duplicate flow `SequenceFlow_IOSplit_in` is removed.
 
+## A4. Proposals from the SmarTeam round (2026-11-23, waiting for approval)
+| # | Proposal | Where | Evidence | Status |
+|---|---|---|---|---|
+| S1 | **Custom header logging:** calling `logCustomHeaders.groovy` again later in the flow is safe. CPI does not duplicate a CH_ value that is already logged; a changed value is added as a new line, and the old one stays. So log a new CH_ property right where its value becomes known (e.g. the response WorkId), without deleting the earlier CH_ properties | `_reference/IFLOW_CONVENTIONS.md` (logging) | L2 (user, 2026-11-23) | Open |
+| S2 | **Child naming in the Simplified Pipeline:** children are named `I<id>_<Object>_<Src>_<Receiver>_JMSToHTTP` even though they start with ProcessDirect. The PD address and the HTTPS retrigger path = `/<child name>`. Update `docs/explained/jms_dispatcher_architecture.md`, which still says `_PDToHTTP` | IFLOW_CONVENTIONS §2 + docs | L2 (user, 2026-11-23) + L1 (I2018/I2023/I2024 exports) | Open |
+| S3 | **iflw file name = iFlow name.** Copy leftovers such as `I0579_CostCentre…JMSToSOAP.iflw` are renamed in every build | IFLOW_CONVENTIONS | L2 (user, 2026-11-23) | Open |
+| S5 | **OData GET receivers:** CSRF off (a GET needs no token), and externalize Delete Idle Connection (`<System>_DeleteIdleConnection`, default true) and Idle Timeout (`<System>_IdleTimeout`, default 300) | IFLOW_CONVENTIONS §1.4 | L2 (Bhavesh's I2050_P 1.0.5, 2026-11-23) | Open (applied to I2049_P, I2023, I2024) |
+| S4 | **Runtime `.jar` as input:** the build turns it into a design-time zip (keep `src/main/resources/**`, design MANIFEST, add `.project` + `metainfo.prop`). The rule is proven byte for byte on the I2049 jar/zip pair (`iflow_build_smarteam.py --selftest`). Import of a converted build in CPI is UNVERIFIED until the I2050 1.0.4 test | IFLOW_CONVENTIONS / tools/README | L2 (I2049 pair), L4 until tested | Open |
+
+### Toolkit changes (SmarTeam, 2026-11-23)
+- New `tools/iflow_build_smarteam.py`:
+  - jar → design-time conversion with `--selftest`
+  - MANIFEST parse/write with 72-byte wrapping
+  - `error_end_to_message_end`
+  - `insert_step_after` (copies a step and rewires the flows)
+  - removal of unused parameters
+  - typo check (`Maintanance`, `PDToHTTP` forbidden in the output)
+- `tools/check_all_iflows.py` accepts `<Package>/<IFlowName>` entries and now also checks the I2050 child and parent.
+- `iflow_lib.Params.keys()` now undoes java.util.Properties escapes (`Body\ Size` → `Body Size`), and `remove()` matches escaped keys. Before, parameters with spaces were reported as unused although `{{Body Size}}` used them (I2050_P). The FSAP checks still pass.
+- Folder layout per CPI package (`iflows/<Package>/source/` + `iflows/<Package>/<IFlowName>/`), with `iflowdevelopment/` as the single drop folder. CLAUDE.md is updated (user choice, 2026-11-23).
+
 ## D. Other actions taken
 | # | Action | Status |
 |---|---|---|

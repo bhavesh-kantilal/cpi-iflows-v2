@@ -287,7 +287,15 @@ class Params:
             self.prop = self.prop.rstrip("\n") + "\n" + line + "\n"
 
     def keys(self) -> list[str]:
-        return re.findall(r"^([^#=\s][^=]*)=", self.prop, re.M)
+        """Parameter names as used in {{…}}: java.util.Properties escapes (`Body\\ Size`) undone.
+        (I2050_P, 2026-11-23: names with spaces were reported as unused.)"""
+        raw = re.findall(r"^([^#!\s](?:\\.|[^=:\\])*)[=:]", self.prop, re.M)
+        return [re.sub(r"\\(.)", r"\1", k) for k in raw]
+
+    @staticmethod
+    def _key_re(name: str) -> str:
+        """Regex for a key as written in parameters.prop (spaces, ':' and '=' escaped)."""
+        return "".join("\\\\" + re.escape(c) if c in " :=" else re.escape(c) for c in name)
 
     def names(self) -> list[str]:
         return re.findall(r"<name>([^<]*)</name>", self.propdef)
@@ -314,13 +322,13 @@ class Params:
                 self.propdef = self.propdef.replace("</param_references>", r + "</param_references>", 1)
 
     def remove(self, name: str):
-        self.prop = re.sub(r"^" + re.escape(name) + r"=.*\n?", "", self.prop, flags=re.M)
+        self.prop = re.sub(r"^" + self._key_re(name) + r"=.*\n?", "", self.prop, flags=re.M)
         self.propdef = re.sub(r"<parameter>\s*<key/>\s*<name>" + re.escape(name) +
                               r"</name>.*?</parameter>", "", self.propdef, flags=re.S)
         self.propdef = re.sub(r'<reference [^>]*param_key="' + re.escape(name) + r'"/>', "", self.propdef)
 
     def rename(self, old: str, new: str):
-        self.prop = re.sub(r"^" + re.escape(old) + "=", new + "=", self.prop, flags=re.M)
+        self.prop = re.sub(r"^" + self._key_re(old) + "=", lambda m: new + "=", self.prop, flags=re.M)
         self.propdef = self.propdef.replace(f"<name>{old}</name>", f"<name>{new}</name>")
         self.propdef = self.propdef.replace(f'param_key="{old}"', f'param_key="{new}"')
 

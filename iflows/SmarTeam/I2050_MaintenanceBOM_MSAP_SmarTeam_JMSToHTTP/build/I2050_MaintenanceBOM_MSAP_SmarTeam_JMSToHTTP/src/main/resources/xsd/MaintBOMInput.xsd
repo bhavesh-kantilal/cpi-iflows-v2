@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="BOMHeader">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="MaintBOMHeader_Type">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element minOccurs="0" name="CreatedByUser" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMHeaderText" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsALE" type="xs:string"/>
+							<xs:element minOccurs="0" name="to_MaintBillOfMaterialItem">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element maxOccurs="unbounded" minOccurs="0" name="BOMItemType">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="BillOfMaterialItemNumber" type="xs:string"/>
+													<xs:element name="BillOfMaterialComponent" type="xs:string"/>
+													<xs:element name="BillOfMaterialItemQuantity" type="xs:string"/>
+													<xs:element name="BillOfMaterialItemUnit" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemDescription" type="xs:string"/>
+													<xs:element minOccurs="0" name="ComponentDescription" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialItemCategory" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemIsSalesRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="RequiredComponent" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialVariantUsage" type="xs:string"/>
+													<xs:element minOccurs="0" name="DependencyObjectNumber" type="xs:string"/>
+													<xs:element minOccurs="0" name="PurchasingOrganization" type="xs:string"/>
+													<xs:element minOccurs="0" name="ReferencePoint" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsAssembly" type="xs:string"/>
+													<xs:element minOccurs="0" name="Currency" type="xs:string"/>
+													<xs:element minOccurs="0" name="DocNumber" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemIsCostingRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="ChgToEngineeringChgDocument" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsProductionRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="PurchasingGroup" type="xs:string"/>
+													<xs:element minOccurs="0" name="OpsLeadTimeOffsetUnit" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemIsSparePart" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsDeleted" type="xs:string"/>
+													<xs:element minOccurs="0" name="OperationScrapInPercent" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialHeaderUUID" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialVersion" type="xs:string"/>
+													<xs:element minOccurs="0" name="MaterialComponentPrice" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemLastChangeDate" type="xs:string"/>
+													<xs:element minOccurs="0" name="GoodsReceiptDuration" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialItemNodeNumber" type="xs:string"/>
+													<xs:element minOccurs="0" name="DeliveryDurationInDays" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemText2" type="xs:string"/>
+													<xs:element minOccurs="0" name="MaterialGroup" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsSubItem" type="xs:string"/>
+													<xs:element minOccurs="0" name="DocumentPart" type="xs:string"/>
+													<xs:element minOccurs="0" name="UnitOfMeasureForSize1To3" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsEngineeringRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsConfigurableBOM" type="xs:string"/>
+													<xs:element minOccurs="0" name="Creditor" type="xs:string"/>
+													<xs:element minOccurs="0" name="EngineeringChangeDocument" type="xs:string"/>
+													<xs:element minOccurs="0" name="ValidityStartDate" type="xs:string"/>
+													<xs:element minOccurs="0" name="ResultingItemCategory" type="xs:string"/>
+													<xs:element minOccurs="0" name="MaterialIsCoProduct" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsBOMRecursiveAllowed" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMIsRecursive" type="xs:string"/>
+													<xs:element minOccurs="0" name="FollowUpGroup" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsNetScrap" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemIsPlantMaintRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="ExplosionType" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterial" type="xs:string"/>
+													<xs:element minOccurs="0" name="ObjectType" type="xs:string"/>
+													<xs:element minOccurs="0" name="Plant" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemCreatedByUser" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsMaterialProvision" type="xs:string"/>
+													<xs:element minOccurs="0" name="TechnicalObject" type="xs:string"/>
+													<xs:element minOccurs="0" name="DiscontinuationGroup" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemSorter" type="xs:string"/>
+													<xs:element minOccurs="0" name="ProductionSupplyArea" type="xs:string"/>
+													<xs:element minOccurs="0" name="ClassNumber" type="xs:string"/>
+													<xs:element minOccurs="0" name="ValidityEndDate" type="xs:string"/>
+													<xs:element minOccurs="0" name="DocumentVersion" type="xs:string"/>
+													<xs:element minOccurs="0" name="CostElement" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialVariant" type="xs:string"/>
+													<xs:element minOccurs="0" name="ComponentScrapInPercent" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsClassificationRelevant" type="xs:string"/>
+													<xs:element minOccurs="0" name="QuantityVariableSizeItem" type="xs:string"/>
+													<xs:element minOccurs="0" name="AlternativeItemGroup" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemInternalChangeCount" type="xs:string"/>
+													<xs:element minOccurs="0" name="InheritedNodeNumberForBOMItem" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialItemQuantity2" type="xs:string"/>
+													<xs:element minOccurs="0" name="DocumentType" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemRecordCreationDate" type="xs:string"/>
+													<xs:element minOccurs="0" name="BOMItemLastChangedByUser" type="xs:string"/>
+													<xs:element minOccurs="0" name="ClassType" type="xs:string"/>
+													<xs:element minOccurs="0" name="ProdOrderIssueLocation" type="xs:string"/>
+													<xs:element minOccurs="0" name="FormulaKey" type="xs:string"/>
+													<xs:element minOccurs="0" name="DocumentIsCreatedByCAD" type="xs:string"/>
+													<xs:element minOccurs="0" name="Size3" type="xs:string"/>
+													<xs:element minOccurs="0" name="Size2" type="xs:string"/>
+													<xs:element minOccurs="0" name="MultipleSelectionAllowed" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsBulkMaterial" type="xs:string"/>
+													<xs:element minOccurs="0" name="Size1" type="xs:string"/>
+													<xs:element minOccurs="0" name="SpecialProcurementType" type="xs:string"/>
+													<xs:element minOccurs="0" name="LeadTimeOffset" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialItemUUID" type="xs:string"/>
+													<xs:element minOccurs="0" name="IdentifierBOMItem" type="xs:string"/>
+													<xs:element minOccurs="0" name="MaterialPriceUnitQty" type="xs:string"/>
+													<xs:element minOccurs="0" name="BillOfMaterialCategory" type="xs:string"/>
+													<xs:element minOccurs="0" name="OperationLeadTimeOffset" type="xs:string"/>
+													<xs:element minOccurs="0" name="DistrKeyCompConsumption" type="xs:string"/>
+													<xs:element minOccurs="0" name="IsALE" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FunctionalLocation" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsMarkedForDeletion" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMUsagePriority" type="xs:string"/>
+							<xs:element minOccurs="0" name="SelectedBillOfMaterialVersion" type="xs:string"/>
+							<xs:element name="BillOfMaterialVariantUsage" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsVersionBillOfMaterial" type="xs:string"/>
+							<xs:element name="BillOfMaterial" type="xs:string"/>
+							<xs:element name="Plant" type="xs:string"/>
+							<xs:element name="TechnicalObject" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMHeaderBaseUnit" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsConfiguredMaterial" type="xs:string"/>
+							<xs:element minOccurs="0" name="BillOfMaterialAuthsnGrp" type="xs:string"/>
+							<xs:element minOccurs="0" name="ChgToEngineeringChgDocument" type="xs:string"/>
+							<xs:element minOccurs="0" name="BillOfMaterialVariant" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMVersionStatus" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMIsToBeDeleted" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMGroup" type="xs:string"/>
+							<xs:element minOccurs="0" name="HeaderValidityStartDate" type="xs:string"/>
+							<xs:element name="BillOfMaterialHeaderUUID" type="xs:string"/>
+							<xs:element minOccurs="0" name="BillOfMaterialVersion" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsLatestBOMVersion" type="xs:string"/>
+							<xs:element minOccurs="0" name="LaboratoryOrDesignOffice" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastChangedByUser" type="xs:string"/>
+							<xs:element minOccurs="0" name="DocumentIsCreatedByCAD" type="xs:string"/>
+							<xs:element name="Equipment" type="xs:string"/>
+							<xs:element minOccurs="0" name="IsMultipleBOMAlt" type="xs:string"/>
+							<xs:element minOccurs="0" name="BillOfMaterialStatus" type="xs:string"/>
+							<xs:element name="RecordCreationDate" type="xs:string"/>
+							<xs:element minOccurs="0" name="LastChangeDate" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMTechnicalType" type="xs:string"/>
+							<xs:element minOccurs="0" name="HeaderValidityEndDate" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMHeaderQuantityInBaseUnit" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMHeaderInternalChangeCount" type="xs:string"/>
+							<xs:element minOccurs="0" name="BOMAlternativeText" type="xs:string"/>
+							<xs:element name="BillOfMaterialCategory" type="xs:string"/>
+							<xs:element minOccurs="0" name="EngineeringChangeDocument" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
