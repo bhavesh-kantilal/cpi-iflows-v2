@@ -38,6 +38,8 @@ for entry in iflows:
         entries = z.namelist()
         iflw_path = next(n for n in entries if n.endswith(".iflw"))
         xml_bytes = z.read(iflw_path)
+        prop_path = "src/main/resources/parameters.prop"
+        prop_text = z.read(prop_path).decode("utf-8") if prop_path in entries else None
         # Check no AI strings
         bad = []
         for e in entries:
@@ -80,6 +82,10 @@ for entry in iflows:
         print(f"     AI strings in: {bad}")
     for d in diag:
         print(f"     DIAGRAM: {d}")
+    # SSAB best practices (PDF v1.9): reported, not a failure
+    if xml_ok:
+        for f in iflow_lib.best_practice_flags(xml_bytes.decode("utf-8"), prop_text):
+            print(f"     FLAG: {f}")
     if mf_name != name:
         print(f"     MANIFEST: '{mf_name}'")
 

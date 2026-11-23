@@ -57,6 +57,20 @@ Sender system ──HTTPS──▶ I<nnnn>_P_…_HTTPToJMS ──JMS queue──
 - The **customer prefix** `SSAB_` is used for custom headers (`SSAB_Dispatcher_ReceiverIFlow`) and roles. `AllowedHeaders=SSAB.*` is set in the dispatcher. [I0701 parameters.prop]
 - Header and property names copied in flows use the `CH_` prefix (`CH_SmarTeamMessageId`, `CH_DocumentInfoRecord`). [I2052P, I2052 .iflw]
 
+### 1.5 Shared helper flows (call over ProcessDirect, never build an own channel)
+One flow per system/client and protocol, so a server move is changed in one place. [L2: Best Practises guide v1.9 §4.4–4.5]
+| Flow | Use |
+|---|---|
+| `I0076_P_IDocReceiver_StripSAP_PDToIDoc` / `I0077_P_XIReceiver_StripSAP_PDToXI` | IDoc / XI to StripSAP. The IDoc flow sets default control headers (header `DefaultControlHeaders=No` switches it off). |
+| `I0078_P_IDocReceiver_GSAP_PDToIDoc` / `I0079_P_XIReceiver_GSAP_PDToXI` | IDoc / XI to GSAP |
+| `I0081_P_IDocReceiver_SAPHR_Payroll_PDToIDoc`, `I0082_P_IDocReceiver_SAPHR_MasterData_PDToIDoc` | IDoc to SAP HR |
+| `I2004_P_IDocReceiver_MSAP_PDToIdoc` | IDoc to MSAP |
+| `I0525_P_IDocReceiver_FSAP_PDToIDoc` | IDoc to FSAP |
+| `I0096_P_MasterData_MDMLookup_PDToHTTP` | MDM (Informatica) partner-id conversion. Headers in: `partnerId`, `sourceSystemId`, `targetSystemId`, `schema`. Out: header `TargetPartnerId`, or an error text in the body. |
+
+- **XI receivers:** the calling flow sends "Communication Component", "Service Interface" and "Service Interface Namespace" as headers, and the receiver flow allows them. [L2: guide §4.4.2]
+- **IDoc receivers:** set `SapMessageId` = `SAP_MessageProcessingLogID`, so WE02 and the CPI monitor show the same ID. [L2: guide §4.4.1]
+
 ## 2. Naming conventions
 
 ### 2.1 iFlows
@@ -83,6 +97,19 @@ Sender system ──HTTPS──▶ I<nnnn>_P_…_HTTPToJMS ──JMS queue──
 ### 2.3 JMS queues
 - Dispatcher queue = `<DispatcherNo>_<TgtSys>_<Area>`, e.g. `I0701_MSAP_PlantMaintenance`. Its DLQ adds the suffix `_D`. [I0701, I2052P]
 - Other queue example: `I0151_SendEmail`, which feeds `I0151_P_UTIL_SendEmailWithAttachments_JMSToMail`. [I0115 .iflw]
+- **Dispatcher number range: I07XX and I08XX** (SSAB Simplified Pipeline), created only by the Central Integration team. Not every receiver gets a queue. Small receivers ask the Central Integration team (common queue or a new one). [L2: guide v1.9 §3.10.5.7–8]
+- **Core ERP queues**, one queue + dispatcher per process stream. [L2: guide §3.10.5.9]
+  | MSAP | FSAP |
+  |---|---|
+  | `I0701_MSAP_PlantMaintenance` | `I0716_FSAP_CashBanking` |
+  | `I0702_MSAP_Sales` | `I0717_FSAP_Treasury` |
+  | `I0703_MSAP_Procurement` | `I0718_FSAP_Accounting` |
+  | `I0704_MSAP_Finance` | `I0719_FSAP_MasterData` |
+  | `I0705_MSAP_Logistics` | `I0720_FSAP_AP_AR` |
+  | `I0706_MSAP_MasterData` | |
+
+  The dispatcher is `I07nn_P_JMSDispatcher_<Queue without number>`, e.g. `I0716_P_JMSDispatcher_FSAP_CashBanking`. GSAP and StripSAP are not defined yet. Other example: `I0700_SmarTeam` (`I0700_P_JMSDispatcher_SmarTeam`).
+- **Child of a dispatcher:** its sender part is `JMS` even though the adapter is ProcessDirect, to show it hangs off a JMS dispatcher (SmarTeam `…_JMSToHTTP`). [L2: guide §3.10.5.5] The FSAP Medius children keep `…_PDToREST` (user, 2026-11-23: names as built stay).
 
 ### 2.4 Other names
 - Groovy UDF scripts use lowerCamel or PascalCase function names, and the file name matches the main function (`concatText.groovy`, `GetDeliveryDetails.groovy`). [mapping exports]

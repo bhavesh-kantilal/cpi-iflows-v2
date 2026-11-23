@@ -133,6 +133,35 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - every `{{param}}` is in parameters.prop and propdef, and no unused parameters
   - no `claude`/`anthropic` strings
   - MANIFEST name equals the iFlow name
+- **Best-practice FLAGs** (`iflow_lib.best_practice_flags`, `tools/check_best_practices.py`, also printed by `check_all_iflows.py`). They are reported, not failed: fix them in the flow you touch, or confirm with the user.
+
+### SSAB Best Practises (user's guide "SSAB_IntegrationSuite_Best Practises" v1.9, L2, read 2026-11-23)
+The guide lives on SharePoint (SSE IT - SAP Integration Suite › 20. Development). Section numbers below are the guide's. Summary: `docs/explained/ssab_best_practices_guide.md`.
+- **Where the guide differs, what we built is correct** (user, 2026-11-23; the guide gets updated later):
+  - ProcessDirect sender and HTTPS sender addresses **are** externalized (`PD_Address`, `HTTPS_Address`), against guide §3.5.
+  - Child names stay as built: SmarTeam children `…_JMSToHTTP` (guide §3.10.5.5), FSAP Medius children `…_PDToREST`.
+  - `JMS_RetentionThresholdAlerting = 2` on the FSAP parents stays (guide §3.10.1.1 says 1).
+  - The retrigger role is `SSAB_MessagingSend_InternalOperations` (guide §3.3.2 says `SSAB_Internal_Operations`).
+- **Structure:** all logic sits in a local process **"Main Process"**, called from each entry point. At most **15 steps per local process**; lookups, backend checks and exception handling get their own local process (§3.1–3.2). Lay out left to right (§3.4).
+- **Two entry points:** the source process and a **"Manual Retrigger"** HTTPS process (§3.3). Retrigger needs a payload attachment named **`IncomingPayload`** (§1.2.1, §3.3.2).
+- **Payload logging** only with `UTIL_LogPayloadAsAttachment`, never an own script (§1.5). Properties `LogPayload` (default false) and `LogPayloadSize` (KB) are set in "Set Monitoring Identifiers". `AttachmentName` is never externalized (§1.2.1).
+- **Mandatory externalized:** `SAP_Sender`, `SAP_MessageType`, `MaxRetries` (JMS), `LogPayload`, `LogPayloadSize`, and every Content Modifier value (§3.6). `SAP_Receiver` only where the flow has one receiver; with dynamic receiver determination it is not set (user, 2026-11-23).
+- **Headers:** never `*` in a sender's Allowed Headers or a receiver's request headers; list the expected ones (§3.7.1.1–2). Delete properties that hold a payload as soon as they are no longer needed, and never put a payload in a header (§3.7.1.3–4).
+- **Transaction handling:** "Not Required" by default. With more than one JMS write (several JMS receivers, or the parent's receiver loop) use **"Required for JMS", timeout 1 min**; with several JDBC receivers "Required for JDBC". Never JMS and JDBC in one iFlow (§3.8, §4.1.2.1).
+- **HTTP session handling:** "On Integration Flow" (one user per host), externalized; "None" only with different users for the same host (§3.9).
+- **JMS sender** (old-style children and dispatchers), all externalized: concurrency 1, retry interval 1 min, exponential backoff only for unstable targets, Dead-Letter Queue on (§3.10.1.2). JMS receiver: Retention Threshold and Expiration externalized (§3.10.1.1).
+- **Max retries:** dispatcher `MaxRetries` = 2 with `SAPJMSRetries > MaxRetries` (3 retries), then the DLQ `<Queue>_D` and an Escalation End (§3.10.5.1, §3.10.5.4).
+- **Exceptions:** use an exception subprocess for expected errors. In a JMS-fed flow, including every dispatcher child, it **ends with an Error End** so JMS retries. Log `${exception.message}` to a custom header if needed (§3.13, §3.10.5.5).
+- **Simplified Pipeline extras:**
+  - **Parent with one receiver:** Content Modifier **"Set JMS Header Parameters"** sets `SSAB_Dispatcher_ReceiverIFlow` and `SAP_MessageProcessingLogCustomStatus` (§3.10.5.3).
+  - **Deploy order:** the child before the parent (§3.10.5.4).
+  - **Properties to the child:** `CopyPropertiesToHeader` / `CopyHeaderToProperties` only as a last resort; pass headers instead (§3.10.5.6).
+  - **Dispatcher numbers:** I07XX/I08XX, created only by the Central Integration team (§3.10.5.7–8).
+- **Routing:** a Router (multicast) for 2–5 receivers; the Groovy Receiver Determination for 5 or more, or when "No receivers found" must be an error (§4.1.2.1).
+- **Shared helper flows** over ProcessDirect instead of own channels: SAP receivers in `UTIL_SAPReceiverAdapters` (IDoc/XI per system), MDM partner-id lookup `I0096_P_MasterData_MDMLookup_PDToHTTP` (§4.4–4.5). See IFLOW_CONVENTIONS §1.5.
+- **Plain file transfers** (SFTP sender → file) use no JMS queue; the file stays on the sender until delivered (§4.6).
+- **Mapping:** graphical message mapping first; XSLT or Groovy only when the graphical one gets too hard to build or maintain (§3.14).
+- **Versions** (CPI iFlow version, §5.2): major per project, minor per CR / SR / production bug fix, micro per change during development. The version comment carries the project or SR ID (§5.1).
 
 ## CHANGELOG
 - Each mapping folder has a `CHANGELOG.md`. Add an entry for **every** build:

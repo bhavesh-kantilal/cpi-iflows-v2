@@ -1,6 +1,7 @@
 # CPI Best Practices — what Claude has learned so far (SSAB)
 
 Plain-language summary of everything taught through references, feedback rounds and Q&A (Nov 2026).
+The user's own guide "SSAB Integration Suite Best Practises" (v1.9) is summarised in `ssab_best_practices_guide.md`. Its build rules are in `CLAUDE.md`.
 Each point is a rule you gave, or a lesson proven in CPI. Details and evidence live in `CLAUDE.md`,
 `_reference/FORMAT_NOTES.md` and `_reference/IFLOW_CONVENTIONS.md`.
 

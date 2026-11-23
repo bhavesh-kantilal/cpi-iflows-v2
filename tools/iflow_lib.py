@@ -395,3 +395,130 @@ def check_iflow(xml: str, prop: str | None = None, propdef: str | None = None) -
             for k in sorted(set(re.findall(r'param_key="([^"]+)"', propdef)) - used):
                 errs.append(f"param_reference {k} not used")
     return errs
+
+
+# ---------------------------------------------------------------------------
+# SSAB Integration Suite Best Practises (PDF v1.9, L2) - reported as FLAGs
+# ---------------------------------------------------------------------------
+# Not build failures: existing flows predate some rules. Builds print them so they are
+# fixed or confirmed with the user. Section numbers refer to the PDF.
+
+_STEP_KINDS = ("task", "serviceTask", "callActivity", "exclusiveGateway", "parallelGateway")
+
+
+def _props(el) -> dict:
+    """key -> value of the ifl:property children directly under el's extensionElements."""
+    out = {}
+    ext = el.find("bpmn2:extensionElements", NS)
+    if ext is not None:
+        for p in ext.findall("ifl:property", NS):
+            out[p.findtext("key") or ""] = p.findtext("value") or ""
+    return out
+
+
+def _resolve(value: str, params: dict) -> str:
+    m = re.fullmatch(r"\{\{([^}]+)\}\}", value or "")
+    return params.get(m.group(1), value) if m else value
+
+
+def _cm_rows(xml: str) -> list[tuple[str, str, str, str]]:
+    """(table, name, type, value) for every Content Modifier header/property row."""
+    rows = []
+    for table, body in re.findall(r"<key>(headerTable|propertyTable)</key>\s*<value>([^<]*)</value>", xml):
+        body = (body.replace("&lt;", "<").replace("&gt;", ">")
+                .replace("&apos;", "'").replace("&quot;", '"').replace("&amp;", "&"))
+        for row in re.findall(r"<row>(.*?)</row>", body):
+            c = dict(re.findall(r"<cell id='([^']+)'>([^<]*)</cell>", row))
+            rows.append((table, c.get("Name", ""), c.get("Type", ""), c.get("Value", "")))
+    return rows
+
+
+def best_practice_flags(xml: str, prop: str | None = None) -> list[str]:
+    """FLAG messages for the SSAB best-practice rules (PDF v1.9; CLAUDE.md "Best Practises")."""
+    flags = []
+    root = parse(xml)
+    params = {}
+    for line in (prop or "").splitlines():
+        if "=" in line and not line.startswith("#"):
+            k, v = line.split("=", 1)
+            params[k.strip()] = v.replace("\\:", ":").strip()
+    processes = list(root.iter(_q("bpmn2:process")))
+    names = [(p.get("name") or "") for p in processes]
+
+    # A JMS dispatcher (PD address from SSAB_Dispatcher_ReceiverIFlow) gets SAP_* from the parent's
+    # headers and has no Main Process in the PDF sample (§3.10.5.4).
+    dispatcher = "${header.SSAB_Dispatcher_ReceiverIFlow}" in xml
+
+    # §3.1 Main Process; §3.2 at most 15 steps per process
+    if not dispatcher and not any(n.strip().lower() == "main process" for n in names):
+        flags.append("§3.1 no local process 'Main Process'")
+    for p in processes:
+        n = sum(1 for c in p if isinstance(c.tag, str) and etree.QName(c).localname in _STEP_KINDS)
+        if n > 15:
+            flags.append(f"§3.2 process '{p.get('name')}' has {n} steps (max 15)")
+
+    channels = []
+    for mf in root.iter(_q("bpmn2:messageFlow")):
+        d = _props(mf)
+        channels.append((d.get("ComponentType", ""), d.get("direction", "")))
+    jms_rcv = [c for c in channels if c == ("JMS", "Receiver")]
+    jdbc = [c for c in channels if c[0] == "JDBC"]
+
+    # §3.7.1.1/2 no * in the sender's Allowed Headers or a receiver's request headers
+    for el in root.iter(_q("ifl:property")):
+        key = el.findtext("key") or ""
+        if re.search(r"allowedHeader|RequestHeaders", key, re.I):
+            if _resolve(el.findtext("value") or "", params).strip() == "*":
+                msg = f"§3.7.1 '{key}' is * (list only the expected headers)"
+                if msg not in flags:
+                    flags.append(msg)
+
+    # §3.8 transaction handling
+    if jms_rcv and jdbc:
+        flags.append("§3.8.1 JMS and JDBC in one iFlow (CPI has no distributed transactions)")
+    tx = [(_props(p).get("transactionalHandling", ""), _props(p).get("transactionTimeout", ""))
+          for p in processes]
+    if len(jms_rcv) > 1 or (jms_rcv and "CamelLoopIndex" in xml):
+        if not any(h == "Required for JMS" for h, _ in tx):
+            flags.append("§3.8.2 several JMS writes but no process has 'Required for JMS' (timeout 1 min)")
+        elif any(h == "Required for JMS" and t != "1" for h, t in tx):
+            flags.append("§3.8.2 'Required for JMS' timeout is not 1 min")
+    if len(jdbc) > 1 and not any(h == "Required for JDBC" for h, _ in tx):
+        flags.append("§3.8.3 several JDBC receivers but no 'Required for JDBC'")
+
+    # §3.9 session handling externalized ('On Integration Flow' by default)
+    for m in re.finditer(r"<key>httpSessionHandling</key>\s*<value>([^<]*)</value>", xml):
+        if not m.group(1).startswith("{{"):
+            flags.append(f"§3.9 session handling '{m.group(1)}' is not externalized")
+
+    # §3.6 mandatory externalized parameters (SAP_Receiver optional: dynamic receivers, user 2026-11-23)
+    by_name = {}
+    for table, name, typ, value in _cm_rows(xml):
+        by_name.setdefault(name, []).append((typ, value))
+
+    def externalized(name):
+        return all(v.startswith("{{") or t.lower() == "xpath" for t, v in by_name.get(name, []))
+
+    for name in ("SAP_Sender", "SAP_MessageType"):
+        if name not in by_name and not dispatcher:
+            flags.append(f"§3.6 header {name} is not set")
+        elif not externalized(name):
+            flags.append(f"§3.6 {name} is a fixed value, not externalized")
+    if "SAP_Receiver" in by_name and not externalized("SAP_Receiver"):
+        flags.append("§3.6 SAP_Receiver is a fixed value, not externalized")
+    logs = "logPayloadAsAttachment" in xml or "UTIL_LogPayloadAsAttachment" in xml
+    for name in ("LogPayload", "LogPayloadSize"):
+        if name not in by_name:
+            if logs:
+                flags.append(f"§3.6 property {name} is not set")
+        elif not externalized(name):
+            flags.append(f"§3.6 {name} is a fixed value, not externalized")
+    if "SAPJMSRetries" in xml and "{{MaxRetries}}" not in xml:
+        flags.append("§3.6 SAPJMSRetries check without externalized {{MaxRetries}}")
+    if any(v.startswith("{{") for _, v in by_name.get("AttachmentName", [])):
+        flags.append("§1.2.1 AttachmentName must not be externalized")
+
+    # §3.3.2 retrigger needs the 'IncomingPayload' attachment
+    if logs and any("retrigger" in n.lower() for n in names) and "IncomingPayload" not in xml:
+        flags.append("§3.3.2 retrigger flow without an 'IncomingPayload' attachment")
+    return flags
