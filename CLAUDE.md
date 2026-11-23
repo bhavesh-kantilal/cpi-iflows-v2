@@ -112,7 +112,8 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - **Parent iFlows (receiver determination, several receivers) never set `SAP_Receiver`**; only point-to-point flows and children do (user, 2026-11-23). Build check `monitor_header_errors`.
 - **Participant names are unique in an iFlow**: CPI does not allow a sender and a receiver (or a local process) with the same name (user, 2026-11-23). **Ask before renaming** when the plain system name is taken. Patterns agreed so far:
   - ProcessDirect sender from the system = `MSAP`; HTTPS retrigger sender = `Retrigger`; its local process = `Manual Retrigger`
-  - receiver of the same system with a purpose suffix: `MSAP_BOM`, `MSAP_FLOC`; JMS receiver = `CI`, mail utility = `CI_MAIL`
+  - a receiver is the **plain system name** (`MSAP`, `SmarTeam`, `CI`). Add a purpose suffix (`MSAP_BOM`, `MSAP_FLOC`, `CI_MAIL`) **only when that name is already taken** by another participant in the same iFlow (user, 2026-11-23). Never `Receiver`, `Receiver1`, `Sender`…
+  - build flag: a suffixed name whose plain name is free is reported
   - Build check `participant_name_errors` fails on duplicates and generic names.
 - **Always flag participant names that are not the system name** (`Receiver1`, `MSAP_Lookup`, `MSAP_PO`…) to the user (user, 2026-11-23). Generic names fail the build (`participant_name_errors`); other unknown names are printed as FLAG.
 - **Receiver/participant names: keep them simple**, the receiver system name (e.g. `MSAP`, `MSAP_BOM`), not leftovers like `MSAP_PO` (user, 2026-11-23). When the plain name is taken by another participant in the same iFlow, add a short suffix.

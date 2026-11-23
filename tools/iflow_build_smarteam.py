@@ -504,6 +504,10 @@ def participant_name_errors(xml: str) -> list[str]:
             errs.append(f"participant {name!r} is a generic name: use the system name (e.g. MSAP)")
         elif name not in KNOWN_PARTICIPANTS:
             print(f"  FLAG: participant {name!r} is not a known system name ({', '.join(sorted(KNOWN_PARTICIPANTS))})")
+        # A suffix (MSAP_BOM) only when the plain system name is taken by another participant (user, 2026-11-23)
+        base = name.split("_")[0]
+        if "_" in name and base not in names:
+            print(f"  FLAG: participant {name!r} has a suffix, but {base!r} is free: use {base!r}")
     return errs
 
 
