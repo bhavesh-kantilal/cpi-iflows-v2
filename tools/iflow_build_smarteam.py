@@ -216,7 +216,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
     errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
-            + fixed_adapter_values(xml) + location_not_externalized(xml))
+            + fixed_adapter_values(xml) + location_not_externalized(xml) + monitor_param_names(xml))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -401,6 +401,23 @@ def fixed_adapter_values(xml: str) -> list[str]:
     return errs
 
 
+MONITOR_HEADERS = ("SAP_Sender", "SAP_Receiver", "SAP_MessageType")
+
+
+def monitor_param_names(xml: str) -> list[str]:
+    """Build check (Bhavesh's monitoring blog, 2026-11-23): an externalized SAP_Sender / SAP_Receiver /
+    SAP_MessageType header uses the parameter of the same name, e.g. {{SAP_MessageType}}."""
+    errs = []
+    for row in re.findall(r"&lt;row&gt;(.*?)&lt;/row&gt;", xml):
+        name = re.search(r"cell id='Name'&gt;(.*?)&lt;", row)
+        value = re.search(r"cell id='Value'&gt;(.*?)&lt;", row)
+        if name and value and name.group(1) in MONITOR_HEADERS:
+            m = re.fullmatch(r"\{\{(.+)\}\}", value.group(1))
+            if m and m.group(1) != name.group(1):
+                errs.append(f"header {name.group(1)} uses {{{{{m.group(1)}}}}}, expected {{{{{name.group(1)}}}}}")
+    return errs
+
+
 LOCATION_KEY = {"HTTP": "locationID", "HCIOData": "scc_location_id"}
 
 
@@ -554,6 +571,8 @@ def remove_unused(xml: str, p) -> None:
 def rename_params(xml: str, p, pairs) -> str:
     for old, new in pairs:
         assert xml.count("{{%s}}" % old) >= 1, old
+        if new in p.keys() and "{{%s}}" % new not in xml:
+            p.remove(new)          # an unused leftover with the target name (I2024 child SAP_MessageType)
         assert new not in p.keys(), new
         xml = xml.replace("{{%s}}" % old, "{{%s}}" % new)
         p.rename(old, new)
@@ -671,8 +690,8 @@ CHILDREN = {
     I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.6", prefix="I2023", send="ServiceTask_734125",
                 renames=[("CC_Location", "MSAP_LocationID")] + MSAP_RENAMES,
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.12", prefix="I2024", send="ServiceTask_734137",
-                renames=MSAP_RENAMES,
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.13", prefix="I2024", send="ServiceTask_734137",
+                renames=MSAP_RENAMES + [("SAP_Message_name", "SAP_MessageType")],
                 location=("OData", "MSAP_LocationID", "scc_location_id", "Receiver1"),
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
@@ -756,7 +775,8 @@ PARENTS = {
                   # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.21", jms_step_name=True, retrigger_role=True,
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.22", jms_step_name=True, retrigger_role=True,
+                  renames=[("SAP_MESSAGETYPE", "SAP_MessageType")],   # always SAP_MessageType (user, 2026-11-23)
                   externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
     I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.11", jms_step_name=True, retrigger_role=True,
                   externalize=[HTTPS_BODY]),
