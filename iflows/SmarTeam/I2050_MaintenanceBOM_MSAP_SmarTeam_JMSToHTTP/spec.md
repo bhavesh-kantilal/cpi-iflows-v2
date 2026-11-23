@@ -23,7 +23,7 @@ SmarTeam response (L2, user 2026-11-23):
 ## Parameters (v1.0.4)
 | Parameter | Used in | Value |
 |---|---|---|
-| AllowedHeaders | runtime allowed headers | SSAB.*|SAP.* (since 1.0.6) |
+| AllowedHeaders | runtime allowed headers | `SSAB.*\|SAP.*` (since 1.0.6) |
 | HTTPS_Authorization / HTTPS_UserRole / HTTPS_CSRFProtected / HTTPS_BodySize | Manual Retrigger HTTPS sender | RoleBased / SSAB_MessagingSend_InternalOperations / 0 / 40 |
 | HTTP_Session_Reuse | HTTP session | onIntegrationFlow |
 | LogPayload / LogPayloadSize | Log Payload | true / 512 |
