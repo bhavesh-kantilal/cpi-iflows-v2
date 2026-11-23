@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="SAPBOM">
+        <xs:complexType>
+            <xs:sequence>
+                <!-- Required key fields -->
+                <xs:element name="BillOfMaterialUUID" type="xs:string"/>
+                <xs:element name="BOMCategory" type="xs:string"/>
+                <xs:element name="TechnicalObject">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Id" type="xs:string"/>
+                            <xs:element name="Value" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Plant" type="xs:string"/>
+                <!-- Optional header fields -->
+                <xs:element minOccurs="0" name="BOMId" type="xs:string"/>
+                <xs:element minOccurs="0" name="MessageId" type="xs:string"/>
+                <xs:element minOccurs="0" name="ProcessedDateTime" type="xs:string"/>
+                <xs:element minOccurs="0" name="BOMHeaderText" type="xs:string"/>
+                <xs:element minOccurs="0" name="IsMarkedForDeletion" type="xs:string"/>
+                <!-- Items - optional, header-only updates might skip items -->
+                <xs:element minOccurs="0" name="BOMItems">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="BOMItem">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <!-- Required item fields -->
+                                        <xs:element name="Number" type="xs:string"/>
+                                        <xs:element name="MaterialComponent" type="xs:string"/>
+                                        <!-- Optional item fields -->
+                                        <xs:element minOccurs="0" name="Quantity" type="xs:string"/>
+                                        <xs:element minOccurs="0" name="Unit" type="xs:string"/>
+                                        <xs:element minOccurs="0" name="Description" type="xs:string"/>
+                                        <xs:element minOccurs="0" name="ComponentDescription" type="xs:string"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
