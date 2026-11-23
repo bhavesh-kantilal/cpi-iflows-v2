@@ -4,7 +4,7 @@ Bundle-Name: I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_F
  UNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
 Bundle-SymbolicName: I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SA
  VE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
-Bundle-Version: 1.0.9
+Bundle-Version: 1.0.10
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
 
+## 1.0.10 — 2026-11-23 10:44 CET
+- JMS send step "Send TO CI" → "Send To JMS".
+
 ## 1.0.9 — 2026-11-23 10:39 CET
 - Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Custom Headers').
 
