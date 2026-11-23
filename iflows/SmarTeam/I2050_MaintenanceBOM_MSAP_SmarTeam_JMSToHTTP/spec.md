@@ -43,6 +43,7 @@ SmarTeam response (L2, user 2026-11-23):
 | 2026-11-23 | Set Monitoring Identifiers XPaths wrong (L2, user, with sample `BOMHeader/MaintBOMHeader_Type`) | Fix them; **no `local-name()`** unless asked or logically needed (the source has no namespace) | v1.0.5: `/BOMHeader/MaintBOMHeader_Type/<field>` for CH_BillOfMaterial, CH_BillOfMaterialCategory, CH_BillOfMaterialVariant (now really BillOfMaterialVariant), CH_Plant, CH_TechnicalObject, SAP_ApplicationID. Checked against `MaintBOMInput.xsd`. WorkId: `/InboundResponse/WorkId` |
 
 | 2026-11-23 | Allowed Headers (L2, user: for this and all child iFlows) | Externalized `AllowedHeaders` = `SSAB.*\|SAP.*` | 1.0.6: default changed from `SSAB.*`. The build script sets it for every child and fails if Allowed Headers is not `{{AllowedHeaders}}` |
+| 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.7: renamed from 'Set Custom Header' (2 steps). The build names every such step this way and fails on any other name |
 
 ## Open points (not changed)
 - The SmarTeam HTTP receiver address (`smarteam-test.ssab.com`) and its settings are not externalized yet (CLAUDE.md: externalize every adapter setting someone may tune).

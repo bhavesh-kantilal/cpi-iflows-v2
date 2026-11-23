@@ -1,6 +1,9 @@
 # CHANGELOG — I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 
-## 1.0.6 — 2026-11-23 10:55 CET
+## 1.0.7 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Set Custom Header' (2 steps)).
+
+## 1.0.6 — 2026-11-23 10:31 CET
 - Allowed Headers (`{{AllowedHeaders}}`) now defaults to `SSAB.*|SAP.*` (was `SSAB.*`). Set the tenant value again if it was configured.
 
 ## 1.0.5 — 2026-11-23 10:25 CET
