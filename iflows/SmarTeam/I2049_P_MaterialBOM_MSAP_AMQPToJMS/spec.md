@@ -19,6 +19,7 @@ Parent (package MSAPPlantMaintenanceMasterData): Event Mesh (AMQP) → BOM looku
 | 2026-11-23 | Remaining fixed adapter settings (L2, user: "all of them") | Externalize; defaults = old values | 1.0.7: OData lookup: `S4_RetryIterations` (1) and `S4_RetryInterval` (5). Build check `fixed_adapter_values` |
 | 2026-11-23 | Monitoring headers per the user's blog (L2: SAP_Sender `AD1_110` everywhere; no SAP_Receiver in parents; AMQP parents get both headers; IDoc parents `{{SAP_MessageType}}`; receiver name simple, not `MSAP_PO`) | Applied | 1.0.8: Initial Properties (first Content Modifier): header `SAP_Sender` was a fixed `MSAP` → `{SAP_Sender}` (default `AD1_110`); new header `SAP_MessageType` = `{SAP_MessageType}` (default `MaterialBOM`); Receiver participant `MSAP_PO` → `MSAP_BOM` (participant, OData channel `system`, propdef references). Not plain `MSAP`: that is the AMQP sender participant |
 | 2026-11-23 | Participant name `Trigger` (L2, user) | `Retrigger` | 1.0.9 |
+| 2026-11-23 | CPI does not allow two participants with the same name (L2, user) | Unique names; build check | 1.0.10: Local process `Retrigger` → `Manual Retrigger` (clashed with the HTTPS sender `Retrigger`), as in the other flows |
 
 ## Open points (not changed)
 - `metainfo.prop` still has `source=B30`; Bhavesh set `source=MSAP` in I2050_P 1.0.5. Set it the same?

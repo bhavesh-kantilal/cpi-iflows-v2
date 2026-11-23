@@ -114,7 +114,7 @@
         <bpmn2:participant id="Participant_Process_98614801" ifl:type="IntegrationProcess" name="Lookup BOM" processRef="Process_98614801">
             <bpmn2:extensionElements/>
         </bpmn2:participant>
-        <bpmn2:participant id="Participant_Process_895078" ifl:type="IntegrationProcess" name="Retrigger" processRef="Process_895078">
+        <bpmn2:participant id="Participant_Process_895078" ifl:type="IntegrationProcess" name="Manual Retrigger" processRef="Process_895078">
             <bpmn2:extensionElements/>
         </bpmn2:participant>
         <bpmn2:participant id="Participant_Process_895108" ifl:type="IntegrationProcess" name="No Receiver Found" processRef="Process_895108">
@@ -838,7 +838,7 @@
         <bpmn2:sequenceFlow id="SequenceFlow_98614806" sourceRef="CallActivity_98614805" targetRef="ServiceTask_98614808"/>
         <bpmn2:sequenceFlow id="SequenceFlow_98614804" sourceRef="StartEvent_98614802" targetRef="CallActivity_98614805"/>
     </bpmn2:process>
-    <bpmn2:process id="Process_895078" name="Retrigger">
+    <bpmn2:process id="Process_895078" name="Manual Retrigger">
         <bpmn2:extensionElements>
             <ifl:property>
                 <key>transactionTimeout</key>
