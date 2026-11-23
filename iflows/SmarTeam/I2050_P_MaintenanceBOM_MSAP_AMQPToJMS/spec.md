@@ -25,6 +25,7 @@ Parent iFlow of the SSAB Simplified Pipeline (CPI package MSAPPlantMaintenanceMa
 
 | 2026-11-23 | LogPayloadSize missing? (L2, user: "always defaulted to 512 for 512 kb, externalized") | It was never externalized (empty constant in 1.0.3 and 1.0.5), not dropped by a build | 1.0.7: property row = `{{LogPayloadSize}}`, parameter `LogPayloadSize=512`. New build check: no empty LogPayload / LogPayloadSize row. I2049_P has the same gap (its own round) |
 | 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.8: renamed from 'Log Headers'. The build names every such step this way and fails on any other name |
+| 2026-11-23 | Name of the JMS send step (L2, user, screenshot) | "Send To JMS" | 1.0.9: was "Send To Jms". Build rule `name_jms_send_step` (the step whose message flow goes to the JMS receiver) |
 
 ## Build input
 From 1.0.6 on, the build starts from Bhavesh's CPI version 1.0.5 (`source/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS.zip`). The 1.0.4 changes are already in it.

@@ -337,6 +337,23 @@ def logch_name_errors(xml: str) -> list[str]:
             for e in root.iter(_q("bpmn2:callActivity")) if is_logch(e, root) and e.get("name") != LOGCH_NAME]
 
 
+JMS_STEP_NAME = "Send To JMS"   # user, 2026-11-23 (was "Send To Jms", "Send 1", "Send", "Send TO CI", …)
+
+
+def name_jms_send_step(xml: str) -> str:
+    """The step that sends to the JMS receiver is named "Send To JMS"."""
+    root = iflow_lib.parse(xml)
+    for mf in root.iter(_q("bpmn2:messageFlow")):
+        props = {q.findtext("key"): q.findtext("value")
+                 for q in mf.findall("bpmn2:extensionElements/ifl:property", NS)}
+        if props.get("ComponentType") == "JMS" and props.get("direction") == "Receiver":
+            st = by_id(root, mf.get("sourceRef"))
+            if st.get("name") != JMS_STEP_NAME:
+                print(f"  JMS send step {st.get('name')!r} -> {JMS_STEP_NAME!r}")
+                st.set("name", JMS_STEP_NAME)
+    return iflow_lib.serialize(root)
+
+
 def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[str], rename: bool) -> str:
     pp, pd = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     for n in [n for n in files if n.endswith(".iflw")]:
@@ -557,7 +574,7 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.8",
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.9", jms_step_name=True,
                   renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
@@ -590,6 +607,8 @@ def build_parent(name: str) -> str:
     xml = replace_counted(xml, c.get("edits", []))
     xml = set_xpaths(xml, c.get("xpaths", []))
     xml = set_constant_rows(xml, c.get("constants", []))
+    if c.get("jms_step_name"):
+        xml = name_jms_send_step(xml)
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     remove_unused(xml, p)

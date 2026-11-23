@@ -1,5 +1,8 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
+## 1.0.9 — 2026-11-23 10:43 CET
+- JMS send step "Send To Jms" → "Send To JMS".
+
 ## 1.0.8 — 2026-11-23 10:39 CET
 - Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Headers').
 
