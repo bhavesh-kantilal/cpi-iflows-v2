@@ -1,0 +1,18 @@
+#Fri Nov 20 11:17:40 UTC 2026
+AccessType=Non-Exclusive
+Environment=DEV
+HTTPSessionReuse=onIntegrationFlow
+HTTP_Authorization=RoleBased
+HTTP_BodySize=40
+HTTP_CSRF=0
+HTTP_UserRole=ESBMessaging.send
+JMS_EncryptMessage=1
+JMS_Expiration=30
+JMS_QueueName=${property.QueueName}
+JMS_StoredMessage=1
+JMS_Threshold=2
+JMS_Transfer=0
+LogPayload=True
+LogPayloadSize=512
+SAP_MESSAGETYPE=ProductMDMBulkReplicate
+SAP_Sender=MSAP
