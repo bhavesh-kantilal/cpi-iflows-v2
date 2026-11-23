@@ -14,6 +14,7 @@ Parent (package MSAPControllingMasterData): IDoc COD_EQUIPMENT_SAVE from MSAP �
 | 2026-11-23 | Remaining fixed adapter settings (L2, user: "all of them") | Externalize; defaults = old values | 1.0.10: `HTTPS_BodySize` (retrigger max body size, 40 MB). Build check `fixed_adapter_values` |
 | 2026-11-23 | Role of the HTTPS sender in a parent (L2, user) | Parents keep their role, except when the HTTPS sender is only a retrigger (IDoc-based parent): then `SSAB_MessagingSend_InternalOperations` | 1.0.11: `HTTPS_Userrole` = `SSAB_MessagingSend_InternalOperations` (was `ESBMessaging.send`) |
 | 2026-11-23 | Monitoring headers per the user's blog (L2: SAP_Sender `AD1_110` everywhere; no SAP_Receiver in parents; AMQP parents get both headers; IDoc parents `{{SAP_MessageType}}`; receiver name simple, not `MSAP_PO`) | Applied | 1.0.12: `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows); Header `SAP_MessageType` was a fixed constant → `{{SAP_MessageType}}` (default `COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01`) |
+| 2026-11-23 | Participant names not as per naming (L2, user) | `Retrigger`, `CI` | 1.0.13 |
 
 ## Open points (not changed)
 - "Error End" in Main Process (`EndEvent_961984`): left as is (intended failure path?)

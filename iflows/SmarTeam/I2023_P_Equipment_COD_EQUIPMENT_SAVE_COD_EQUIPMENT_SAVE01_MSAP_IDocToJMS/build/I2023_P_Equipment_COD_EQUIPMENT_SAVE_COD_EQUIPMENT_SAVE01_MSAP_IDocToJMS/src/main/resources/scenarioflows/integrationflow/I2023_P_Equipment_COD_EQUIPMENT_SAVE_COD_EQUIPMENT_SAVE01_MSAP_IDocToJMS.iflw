@@ -62,7 +62,7 @@
                 <value>ctype::IFlowVariant/cname::IFlowConfiguration/version::1.2.4</value>
             </ifl:property>
         </bpmn2:extensionElements>
-        <bpmn2:participant id="Participant_1" ifl:type="EndpointSender" name="MSAP">
+        <bpmn2:participant id="Participant_1" ifl:type="EndpointSender" name="Retrigger">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>enableBasicAuthentication</key>
@@ -74,7 +74,7 @@
                 </ifl:property>
             </bpmn2:extensionElements>
         </bpmn2:participant>
-        <bpmn2:participant id="Participant_16" ifl:type="EndpointSender" name="CI_PD">
+        <bpmn2:participant id="Participant_16" ifl:type="EndpointSender" name="CI">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>enableBasicAuthentication</key>
@@ -237,7 +237,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
-                    <value>MSAP</value>
+                    <value>Retrigger</value>
                 </ifl:property>
                 <ifl:property>
                     <key>xsrfProtection</key>
@@ -321,7 +321,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
-                    <value>CI_PD</value>
+                    <value>CI</value>
                 </ifl:property>
                 <ifl:property>
                     <key>TransportProtocol</key>

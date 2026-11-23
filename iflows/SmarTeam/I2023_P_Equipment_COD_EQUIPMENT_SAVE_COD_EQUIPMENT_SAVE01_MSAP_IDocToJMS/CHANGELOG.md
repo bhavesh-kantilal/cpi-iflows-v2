@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
 
+## 1.0.13 — 2026-11-23 12:04 CET
+- Participant names: HTTPS retrigger sender `MSAP` → `Retrigger`, ProcessDirect sender `CI_PD` → `CI` (participant, propdef categories).
+
 ## 1.0.12 — 2026-11-23 11:41 CET
 - `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
 - Header `SAP_MessageType` was a fixed constant → `{{SAP_MessageType}}` (default `COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01`).
