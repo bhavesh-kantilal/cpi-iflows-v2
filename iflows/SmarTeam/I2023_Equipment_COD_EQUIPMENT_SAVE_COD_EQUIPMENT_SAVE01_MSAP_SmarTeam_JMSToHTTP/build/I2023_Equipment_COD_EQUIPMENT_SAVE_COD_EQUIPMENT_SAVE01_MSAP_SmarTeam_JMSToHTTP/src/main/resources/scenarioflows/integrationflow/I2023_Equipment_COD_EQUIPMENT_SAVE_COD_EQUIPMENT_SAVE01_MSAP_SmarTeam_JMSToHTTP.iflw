@@ -337,7 +337,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>urlPath</key>
-                    <value>/I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP</value>
+                    <value>{{HTTPS_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -409,7 +409,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>address</key>
-                    <value>/I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP</value>
+                    <value>{{PD_Address}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentNS</key>
@@ -505,7 +505,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>receiveTimeOut</key>
-                    <value>1</value>
+                    <value>{{MSAP_Timeout}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>contentType</key>
@@ -553,7 +553,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>authenticationMethod</key>
-                    <value>Basic</value>
+                    <value>{{MSAP_Authentication}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>odataOperationExpression</key>
@@ -561,7 +561,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryOnFailure</key>
-                    <value>false</value>
+                    <value>{{MSAP_RetryOnErrorResponse}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>maxIdleTimeout</key>
@@ -621,7 +621,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryOnException</key>
-                    <value>false</value>
+                    <value>{{MSAP_RetryOnException}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentSWCVName</key>
@@ -633,11 +633,11 @@
                 </ifl:property>
                 <ifl:property>
                     <key>maxRetryIterations</key>
-                    <value>1</value>
+                    <value>{{MSAP_RetryIterations}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>retryIntervalSec</key>
-                    <value>5</value>
+                    <value>{{MSAP_RetryInterval}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>MessageProtocol</key>
@@ -665,15 +665,15 @@
                 </ifl:property>
                 <ifl:property>
                     <key>isCSRFEnabled</key>
-                    <value>false</value>
+                    <value>{{MSAP_CSRFProtected}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>proxyType</key>
-                    <value>sapcc</value>
+                    <value>{{MSAP_ProxyType}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>enableTLSSessionReuse</key>
-                    <value>true</value>
+                    <value>{{MSAP_ReuseConnection}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>odatapagesize</key>
@@ -681,7 +681,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>whitelistResponseHeaders</key>
-                    <value>traceparent</value>
+                    <value>{{MSAP_AllowedResponseHeaders}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>enableBatchProcessing</key>
@@ -689,7 +689,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>whitelistRequestHeaders</key>
-                    <value>traceparent</value>
+                    <value>{{MSAP_AllowedRequestHeaders}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>operation</key>
