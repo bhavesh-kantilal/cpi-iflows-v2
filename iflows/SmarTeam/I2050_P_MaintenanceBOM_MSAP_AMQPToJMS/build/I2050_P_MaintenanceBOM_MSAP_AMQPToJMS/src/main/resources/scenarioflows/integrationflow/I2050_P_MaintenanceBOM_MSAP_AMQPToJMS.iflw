@@ -300,11 +300,11 @@
                 </ifl:property>
                 <ifl:property>
                     <key>maxRetryIterations</key>
-                    <value>1</value>
+                    <value>{{S4_RetryIterations}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>retryIntervalSec</key>
-                    <value>5</value>
+                    <value>{{S4_RetryInterval}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>MessageProtocol</key>

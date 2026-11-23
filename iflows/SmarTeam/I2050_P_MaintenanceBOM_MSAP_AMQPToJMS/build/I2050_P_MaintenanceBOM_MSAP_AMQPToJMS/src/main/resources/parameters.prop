@@ -41,4 +41,6 @@ S4_LocationID=
 S4_ProxyType=sapcc
 S4_ReuseConnection=true
 Timeout=1
+S4_RetryIterations=1
+S4_RetryInterval=5
 LogPayloadSize=512

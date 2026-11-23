@@ -1,5 +1,9 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
+## 1.0.10 — 2026-11-23 11:07 CET
+- Externalized OData lookup: `S4_RetryIterations` (1) and `S4_RetryInterval` (5).
+- New build check: no fixed adapter value left (except the shared mail utility's ProcessDirect address).
+
 ## 1.0.9 — 2026-11-23 10:43 CET
 - JMS send step "Send To Jms" → "Send To JMS".
 
