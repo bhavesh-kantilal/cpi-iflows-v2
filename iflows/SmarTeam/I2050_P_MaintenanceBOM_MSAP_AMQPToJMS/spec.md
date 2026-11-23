@@ -27,6 +27,7 @@ Parent iFlow of the SSAB Simplified Pipeline (CPI package MSAPPlantMaintenanceMa
 | 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.8: renamed from 'Log Headers'. The build names every such step this way and fails on any other name |
 | 2026-11-23 | Name of the JMS send step (L2, user, screenshot) | "Send To JMS" | 1.0.9: was "Send To Jms". Build rule `name_jms_send_step` (the step whose message flow goes to the JMS receiver) |
 | 2026-11-23 | Remaining fixed adapter settings (L2, user: "all of them") | Externalize; defaults = old values | 1.0.10: OData lookup: `S4_RetryIterations` (1) and `S4_RetryInterval` (5). Build check `fixed_adapter_values` |
+| 2026-11-23 | Monitoring headers per the user's blog (L2: SAP_Sender `AD1_110` everywhere; no SAP_Receiver in parents; AMQP parents get both headers; IDoc parents `{{SAP_MessageType}}`; receiver name simple, not `MSAP_PO`) | Applied | 1.0.11: Initial Properties (first Content Modifier): header `SAP_Sender` was a fixed `MSAP` → `{SAP_Sender}` (default `AD1_110`); new header `SAP_MessageType` = `{SAP_MessageType}` (default `MaintenanceBOM`); Receiver participant `MSAP_PO` → `MSAP_BOM` (participant, OData channel `system`, propdef references). Not plain `MSAP`: that is the AMQP sender participant |
 
 ## Build input
 From 1.0.6 on, the build starts from Bhavesh's CPI version 1.0.5 (`source/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS.zip`). The 1.0.4 changes are already in it.

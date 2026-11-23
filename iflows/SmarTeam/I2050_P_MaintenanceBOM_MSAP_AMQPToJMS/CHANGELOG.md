@@ -1,5 +1,9 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
+## 1.0.11 — 2026-11-23 11:41 CET
+- Initial Properties (first Content Modifier): header `SAP_Sender` was a fixed `MSAP` → `{SAP_Sender}` (default `AD1_110`); new header `SAP_MessageType` = `{SAP_MessageType}` (default `MaintenanceBOM`).
+- Receiver participant `MSAP_PO` → `MSAP_BOM` (participant, OData channel `system`, propdef references). Not plain `MSAP`: that is the AMQP sender participant.
+
 ## 1.0.10 — 2026-11-23 11:07 CET
 - Externalized OData lookup: `S4_RetryIterations` (1) and `S4_RetryInterval` (5).
 - New build check: no fixed adapter value left (except the shared mail utility's ProcessDirect address).
