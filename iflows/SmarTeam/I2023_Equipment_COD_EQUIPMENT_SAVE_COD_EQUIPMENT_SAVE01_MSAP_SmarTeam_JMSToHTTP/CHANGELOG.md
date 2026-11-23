@@ -1,5 +1,8 @@
 # CHANGELOG — I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.1.2 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Set Custom Header' (2 steps)).
+
 ## 1.1.1 — 2026-11-23 10:25 CET
 Built from I2023_…_JMSToHTTP.jar (1.1).
 - After Send to SmarTeam: property `CH_SmarTeamWorkId` (xpath `/InboundResponse/WorkId`) in the response Content Modifier `CallActivity_734129`, then a new Script step "Set Custom Header" (`UTIL_LogCustomHeaders`). Earlier CH_ headers stay (CPI adds only new values)

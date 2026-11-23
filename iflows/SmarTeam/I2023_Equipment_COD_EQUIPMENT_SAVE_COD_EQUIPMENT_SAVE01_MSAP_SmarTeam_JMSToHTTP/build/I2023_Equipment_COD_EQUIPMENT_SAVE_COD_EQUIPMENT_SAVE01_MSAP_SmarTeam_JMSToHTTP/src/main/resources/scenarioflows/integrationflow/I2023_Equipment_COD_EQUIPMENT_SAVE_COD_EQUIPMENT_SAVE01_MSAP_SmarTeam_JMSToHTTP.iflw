@@ -955,7 +955,7 @@
                 <value>From Calling Process</value>
             </ifl:property>
         </bpmn2:extensionElements>
-        <bpmn2:callActivity id="CallActivity_734029" name="Set Custom Header">
+        <bpmn2:callActivity id="CallActivity_734029" name="LogCustomHeaders">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>scriptFunction</key>
@@ -1120,7 +1120,7 @@
                 </ifl:property>
             </bpmn2:extensionElements>
             <bpmn2:incoming>SequenceFlow_734126</bpmn2:incoming><bpmn2:outgoing>I2023_SF_toLogCH</bpmn2:outgoing></bpmn2:callActivity>
-        <bpmn2:callActivity id="I2023_CA_LogCustomHeaders" name="Set Custom Header">
+        <bpmn2:callActivity id="I2023_CA_LogCustomHeaders" name="LogCustomHeaders">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>scriptFunction</key>
