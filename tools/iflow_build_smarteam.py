@@ -485,12 +485,17 @@ def monitor_param_names(xml: str) -> list[str]:
 # Participant (sender/receiver) names: the plain system name (user, 2026-11-23). Generic names fail the
 # build; names outside KNOWN_PARTICIPANTS are printed so they get flagged to the user.
 GENERIC_PARTICIPANT = re.compile(r"^(Receiver|Sender|Participant|EndpointRecevier|EndpointSender)\s*\d*$", re.I)
-KNOWN_PARTICIPANTS = {"MSAP", "MSAP_BOM", "SmarTeam", "CI", "CI_MAIL", "Retrigger"}
+KNOWN_PARTICIPANTS = {"MSAP", "MSAP_BOM", "MSAP_FLOC", "SmarTeam", "CI", "CI_MAIL", "Retrigger"}
 
 
 def participant_name_errors(xml: str) -> list[str]:
     root = iflow_lib.parse(xml)
     errs = []
+    # CPI does not allow two participants with the same name, not even a sender and a receiver
+    # (user, 2026-11-23). Local integration processes are participants too.
+    names = [pt.get("name") for pt in root.iter(_q("bpmn2:participant"))]
+    for dup in sorted({n for n in names if names.count(n) > 1}):
+        errs.append(f"participant name {dup!r} is used {names.count(dup)} times (CPI needs unique names)")
     for part in root.iter(_q("bpmn2:participant")):
         if part.get("{http:///com.sap.ifl.model/Ifl.xsd}type") == "IntegrationProcess":
             continue
@@ -500,6 +505,18 @@ def participant_name_errors(xml: str) -> list[str]:
         elif name not in KNOWN_PARTICIPANTS:
             print(f"  FLAG: participant {name!r} is not a known system name ({', '.join(sorted(KNOWN_PARTICIPANTS))})")
     return errs
+
+
+def rename_process(xml: str, old: str, new: str) -> str:
+    """Rename a local integration process (its pool participant and the bpmn2:process)."""
+    root = iflow_lib.parse(xml)
+    hits = [pt for pt in root.iter(_q("bpmn2:participant"))
+            if pt.get("name") == old and pt.get("{http:///com.sap.ifl.model/Ifl.xsd}type") == "IntegrationProcess"]
+    assert len(hits) == 1, f"process {old}: {len(hits)}"
+    hits[0].set("name", new)
+    by_id(root, hits[0].get("processRef")).set("name", new)
+    print(f"  process {old!r} -> {new!r}")
+    return iflow_lib.serialize(root)
 
 
 def rename_participant(xml: str, p, old: str, new: str) -> str:
@@ -812,10 +829,10 @@ CHILDREN = {
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
     I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.5", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.7", prefix="I2023", send="ServiceTask_734125", participant=("MSAP_Lookup", "MSAP"),
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.8", prefix="I2023", send="ServiceTask_734125", participant=("MSAP_Lookup", "MSAP_FLOC"),
                 renames=[("CC_Location", "MSAP_LocationID")] + MSAP_RENAMES,
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.16", prefix="I2024", send="ServiceTask_734137", participant=("Receiver1", "MSAP"),
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.17", prefix="I2024", send="ServiceTask_734137", participant=("Receiver1", "MSAP_FLOC"),
                 # Bhavesh's layout in his CPI version 1.0.15: Log Payload pool moved to a free area
                 layout={"Participant_Process_12": (914, 355, 334, 148), "StartEvent_13": (940, 424, 32, 32),
                         "CallActivity_19": (1032, 410, 100, 60), "EndEvent_14": (1192, 424, 32, 32)},
@@ -895,7 +912,8 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.12", jms_step_name=True,
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.13", jms_step_name=True,
+                  processes=[("Retrigger", "Manual Retrigger")],   # sender is Retrigger (CPI: names unique)
                   monitor_step="Initial Properties", message_type="MaintenanceBOM",
                   participants=[("MSAP_PO", "MSAP_BOM"), ("Trigger", "Retrigger")],
                   externalize=[ODATA_S4_RETRY],
@@ -903,7 +921,8 @@ PARENTS = {
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.9", jms_step_name=True,
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.10", jms_step_name=True,
+                  processes=[("Retrigger", "Manual Retrigger")],   # sender is Retrigger (CPI: names unique)
                   monitor_step="Initial Properties", message_type="MaterialBOM",
                   participants=[("MSAP_PO", "MSAP_BOM"), ("Trigger", "Retrigger")],
                   externalize=[ODATA_S4_RETRY],
@@ -916,8 +935,8 @@ PARENTS = {
     I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.23", jms_step_name=True, retrigger_role=True,
                   renames=[("SAP_MESSAGETYPE", "SAP_MessageType")],   # always SAP_MessageType (user, 2026-11-23)
                   externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.13", jms_step_name=True, retrigger_role=True,
-                  participants=[("MSAP", "Retrigger"), ("CI_PD", "CI")],
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.14", jms_step_name=True, retrigger_role=True,
+                  participants=[("MSAP", "Retrigger"), ("CI_PD", "MSAP")],   # = Bhavesh's CPI fix
                   monitor_step="Set Monitoring Identifiers", message_type="COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01",
                   externalize=[HTTPS_BODY]),
     I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.13", jms_step_name=True, retrigger_role=True,
@@ -969,6 +988,8 @@ def build_parent(name: str) -> str:
     else:
         # Never change the role of a parent whose main entry is HTTPS (user, 2026-11-23)
         assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
+    for old, new in c.get("processes", []):
+        xml = rename_process(xml, old, new)
     for old, new in c.get("participants", []):
         xml = rename_participant(xml, p, old, new)
     return finish(name, files, xml, p, c["version"],
