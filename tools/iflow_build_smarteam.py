@@ -215,7 +215,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
     xml = files[iflw[0]].decode("utf-8")
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
-    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml)
+    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -262,7 +262,8 @@ ROW_WORKID = ("<row><cell id='Action'>Create</cell><cell id='Type'>xpath</cell>"
               "<cell id='Value'>/InboundResponse/WorkId</cell>"
               "<cell id='Default'></cell><cell id='Name'>CH_SmarTeamWorkId</cell>"
               "<cell id='Datatype'>java.lang.String</cell></row>")
-LOGCH_TEMPLATE = "CallActivity_734029"   # "Set Custom Header" (UTIL_LogCustomHeaders) in every SmarTeam child
+LOGCH_TEMPLATE = "CallActivity_734029"   # the UTIL_LogCustomHeaders step in every SmarTeam child
+LOGCH_NAME = "LogCustomHeaders"          # step name for every logCustomHeaders.groovy step (user, 2026-11-23)
 DX = 160
 
 
@@ -285,7 +286,7 @@ def add_workid_header(xml: str, prefix: str, send_id: str) -> str:
 
     new_id = f"{prefix}_CA_LogCustomHeaders"
     xml = add_property_row(xml, cm_id, ROW_WORKID)
-    xml = insert_step_after(xml, template_id=LOGCH_TEMPLATE, new_id=new_id, new_name="Set Custom Header",
+    xml = insert_step_after(xml, template_id=LOGCH_TEMPLATE, new_id=new_id, new_name=LOGCH_NAME,
                             after_id=cm_id, flow_out_id=flow_after_cm, new_flow_id=f"{prefix}_SF_toLogCH")
     xml, log = iflow_lib.fix_diagram(xml, bounds={new_id: (cx + DX, cy, 100, 60), pool: (px, py, pw + DX, ph)},
                                      shift=(shift_ids, DX))
@@ -310,10 +311,37 @@ def odata_idle_settings(xml: str, p, channel: str, prefix: str, propdef_category
     return iflow_lib.serialize(root)
 
 
+def is_logch(e, root) -> bool:
+    props = {q.findtext("key"): q.findtext("value")
+             for q in e.findall("bpmn2:extensionElements/ifl:property", NS)}
+    return props.get("activityType") == "Script" and props.get("script") == "logCustomHeaders.groovy"
+
+
+def name_logch_steps(xml: str) -> str:
+    """Every logCustomHeaders.groovy step is named LogCustomHeaders (user, 2026-11-23: was
+    "Set Custom Header", "Log Custom Header(s)", "Log Headers")."""
+    root = iflow_lib.parse(xml)
+    renamed = []
+    for e in root.iter(_q("bpmn2:callActivity")):
+        if is_logch(e, root) and e.get("name") != LOGCH_NAME:
+            renamed.append(e.get("name"))
+            e.set("name", LOGCH_NAME)
+    if renamed:
+        print(f"  step names -> {LOGCH_NAME}: {', '.join(repr(r) for r in renamed)}")
+    return iflow_lib.serialize(root)
+
+
+def logch_name_errors(xml: str) -> list[str]:
+    root = iflow_lib.parse(xml)
+    return [f"step {e.get('id')} {e.get('name')!r} runs logCustomHeaders.groovy but is not named {LOGCH_NAME}"
+            for e in root.iter(_q("bpmn2:callActivity")) if is_logch(e, root) and e.get("name") != LOGCH_NAME]
+
+
 def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[str], rename: bool) -> str:
     pp, pd = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     for n in [n for n in files if n.endswith(".iflw")]:
         files.pop(n)
+    xml = name_logch_steps(xml)
     files[IFLW_DIR + name + ".iflw"] = xml.encode("utf-8")
     files[pp], files[pd] = p.prop.encode("utf-8"), p.propdef.encode("utf-8")
     vals = {"Bundle-Version": version}
@@ -459,16 +487,16 @@ CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023
 
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.6", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.7", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
-    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.4", prefix="I2049",
+    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.5", prefix="I2049",
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
-    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.1", prefix="I2018", send="ServiceTask_734107",
+    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.2", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.1", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.2", prefix="I2023", send="ServiceTask_734125",
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.7", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.8", prefix="I2024", send="ServiceTask_734137",
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
 }
@@ -529,18 +557,21 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.7",
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.8",
                   renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.4",
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.5",
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
-                  renames=S4_RENAMES, props={"S4_CSRFProtected": "false"}, odata=("OData", "S4", "MSAP_PO")),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.17", xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.7"),
-    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.8", props={"SAP_MessageType": FLOC_MT}),
+                  renames=S4_RENAMES, props={"S4_CSRFProtected": "false"}, odata=("OData", "S4", "MSAP_PO"),
+                  # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
+                  constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
+                  new_params=[("LogPayloadSize", "512")]),
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.18", xpaths=XPATH_I2018_P),
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.8"),
+    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.9", props={"SAP_MessageType": FLOC_MT}),
 }
 
 
