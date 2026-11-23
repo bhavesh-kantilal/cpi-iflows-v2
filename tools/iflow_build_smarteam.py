@@ -656,6 +656,9 @@ def set_xpaths(xml: str, fixes) -> str:
 CHILD_ROLE = "SSAB_MessagingSend_InternalOperations"   # every child; parents keep their own role
 CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023/I2024 already had it)
 
+# OData lookup parameters named MSAP_<Setting> like the rest (user, 2026-11-23: "make the naming consistent")
+MSAP_RENAMES = [("MSAPHost", "MSAP_Host"), ("MSAPCredentials", "MSAP_Credentials"), ("sap-client", "MSAP_Client")]
+
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
     I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.10", prefix="I2050",
@@ -665,9 +668,11 @@ CHILDREN = {
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
     I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.5", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.5", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.6", prefix="I2023", send="ServiceTask_734125",
+                renames=[("CC_Location", "MSAP_LocationID")] + MSAP_RENAMES,
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.11", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.12", prefix="I2024", send="ServiceTask_734137",
+                renames=MSAP_RENAMES,
                 location=("OData", "MSAP_LocationID", "scc_location_id", "Receiver1"),
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
@@ -694,6 +699,7 @@ def build_child(name: str) -> str:
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     for k, v in c.get("props", {}).items():
         p.set(k, v)
+    xml = rename_params(xml, p, c.get("renames", []))
     # Every child: runtime Allowed Headers externalized as AllowedHeaders = SSAB.*|SAP.* (user, 2026-11-23)
     assert re.search(r"<key>allowedHeaderList</key>\s*<value>\{\{AllowedHeaders\}\}</value>", xml), \
         "Allowed Headers is not {{AllowedHeaders}}"
