@@ -352,6 +352,14 @@
     </additionalMetadata>
   </parameter><parameter>
     <key/>
+    <name>LogPayloadSize</name>
+    <type>xsd:string</type>
+    <isRequired>false</isRequired>
+    <constraint/>
+    <description/>
+    <additionalMetadata/>
+  </parameter><parameter>
+    <key/>
     <name>S4_DeleteIdleConnection</name>
     <type>xsd:boolean</type>
     <isRequired>false</isRequired>

@@ -1,5 +1,9 @@
 # CHANGELOG — I2049_P_MaterialBOM_MSAP_AMQPToJMS
 
+## 1.0.5 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Headers').
+- `LogPayloadSize` was an empty constant in Set Monitoring Identifiers (same gap as I2050_P): now `{{LogPayloadSize}}`, new parameter `LogPayloadSize=512`.
+
 ## 1.0.4 — 2026-11-23 10:25 CET
 Built from MSAPPlantMaintenanceMasterData_artifacts (1).zip → I2049_P_MaterialBOM_MSAP_AMQPToJMS (1.0.3).
 - ReceiverDetermination.groovy: child `I2049_MaterialBOM_MSAP_SmarTeam_PDToHTTP` → `I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP`. Deploy together with the child

@@ -39,5 +39,6 @@ S4_ReuseConnection=true
 S4_CustomQuery=sap-client\=110
 Timeout=1
 S4_ProxyType=sapcc
+LogPayloadSize=512
 S4_DeleteIdleConnection=true
 S4_IdleTimeout=300

@@ -14,6 +14,7 @@ Parent (package MSAPPlantMaintenanceMasterData): Event Mesh (AMQP) → BOM looku
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | Renamed spaced parameters: `S4 Address`→`S4_Address`, `S4 Authentication`→`S4_Authentication`, `S4 Credential Name`→`S4_CredentialName`, `S4 Location ID`→`S4_LocationID`, `S4 CSRF Protected`→`S4_CSRFProtected`, `S4 Reuse Connection`→`S4_ReuseConnection`, `proxy Type`→`S4_ProxyType`, `Body Size`→`HTTPS_BodySize`. **Set tenant values again** |
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | OData Lookup BOM: `S4_CSRFProtected=false` (GET); Delete Idle Connection → `{{S4_DeleteIdleConnection}}` (true), Idle Timeout → `{{S4_IdleTimeout}}` (300), as in I2050_P |
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | iflw file `I0040_P_EDI_DESADV_B30_AMQPToJMS.iflw` → `I2049_P_MaterialBOM_MSAP_AMQPToJMS.iflw` |
+| 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.5: renamed from 'Log Headers'. The build names every such step this way and fails on any other name |
 
 ## Open points (not changed)
 - `metainfo.prop` still has `source=B30`; Bhavesh set `source=MSAP` in I2050_P 1.0.5. Set it the same?
