@@ -467,6 +467,16 @@ def externalize_fixed(xml: str, p, channels) -> str:
     return xml
 
 
+def sender_role(xml: str, p) -> str:
+    """Effective HTTPS sender role: the fixed value or the parameter's value."""
+    v = re.search(r"<key>userRole</key>\s*<value>([^<]*)</value>", xml).group(1)
+    m = re.fullmatch(r"\{\{(.+)\}\}", v)
+    if not m:
+        return v
+    hit = re.search(r"^" + iflow_lib.Params._key_re(m.group(1)) + r"=(.*)$", p.prop, re.M)
+    return hit.group(1) if hit else ""
+
+
 def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[str], rename: bool) -> str:
     pp, pd = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     for n in [n for n in files if n.endswith(".iflw")]:
@@ -613,6 +623,7 @@ def set_xpaths(xml: str, fixes) -> str:
     return xml
 
 
+CHILD_ROLE = "SSAB_MessagingSend_InternalOperations"   # every child; parents keep their own role
 CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023/I2024 already had it)
 
 CHILDREN = {
@@ -656,6 +667,9 @@ def build_child(name: str) -> str:
     assert re.search(r"<key>allowedHeaderList</key>\s*<value>\{\{AllowedHeaders\}\}</value>", xml), \
         "Allowed Headers is not {{AllowedHeaders}}"
     p.set("AllowedHeaders", CHILD_ALLOWED_HEADERS)
+    # Child retrigger role is always the SSAB role (user, 2026-11-23)
+    assert re.search(r"<key>userRole</key>\s*<value>\{\{HTTPS_UserRole\}\}</value>", xml), "child role not {{HTTPS_UserRole}}"
+    p.set("HTTPS_UserRole", CHILD_ROLE)
     xml = externalize_smarteam_receiver(xml, p)
     xml = externalize_fixed(xml, p, [PD_SENDER, HTTPS_PATH] + ([ODATA_MSAP] if c.get("odata") else []))
     if c.get("odata"):
@@ -731,6 +745,7 @@ def build_parent(name: str) -> str:
         xml = name_jms_send_step(xml)
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
+    role_before = sender_role(xml, p)
     xml = externalize_fixed(xml, p, c.get("externalize", []))
     remove_unused(xml, p)
     xml = rename_params(xml, p, c.get("renames", []))
@@ -742,6 +757,8 @@ def build_parent(name: str) -> str:
         p.set(k, v)
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
+    # Never change the role of a parent (user, 2026-11-23)
+    assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
     return finish(name, files, xml, p, c["version"],
                   ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn"], rename=False)
 
