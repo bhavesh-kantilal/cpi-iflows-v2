@@ -4,7 +4,7 @@ Bundle-Name: I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUN
  CTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
 Bundle-SymbolicName: I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE
  _COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
-Bundle-Version: 1.0.8
+Bundle-Version: 1.0.9
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
