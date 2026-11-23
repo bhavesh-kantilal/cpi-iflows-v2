@@ -161,7 +161,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>allowedResponseHeaders</key>
-                    <value>*</value>
+                    <value>{{SmarTeam_AllowedResponseHeaders}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>Name</key>
@@ -177,7 +177,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryOnException</key>
-                    <value>false</value>
+                    <value>{{SmarTeam_RetryOnException}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>proxyPort</key>
@@ -197,7 +197,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>pooledConnectionIdleTimeout</key>
-                    <value>300000</value>
+                    <value>{{SmarTeam_IdleTimeout}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>httpAddressQuery</key>
@@ -205,7 +205,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>httpRequestTimeout</key>
-                    <value>60000</value>
+                    <value>{{SmarTeam_Timeout}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>ComponentSWCVId</key>
@@ -217,7 +217,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>allowedRequestHeaders</key>
-                    <value>traceparent</value>
+                    <value>{{SmarTeam_AllowedRequestHeaders}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>MessageProtocol</key>
@@ -237,11 +237,11 @@
                 </ifl:property>
                 <ifl:property>
                     <key>throwExceptionOnFailure</key>
-                    <value>true</value>
+                    <value>{{SmarTeam_ThrowExceptionOnFailure}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>proxyType</key>
-                    <value>sapcc</value>
+                    <value>{{SmarTeam_ProxyType}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>componentVersion</key>
@@ -249,7 +249,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryIteration</key>
-                    <value>1</value>
+                    <value>{{SmarTeam_RetryIterations}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>proxyHost</key>
@@ -261,7 +261,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryOnConnectionFailure</key>
-                    <value>false</value>
+                    <value>{{SmarTeam_RetryOnConnectionFailure}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
@@ -269,7 +269,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>authenticationMethod</key>
-                    <value>None</value>
+                    <value>{{SmarTeam_Authentication}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>locationID</key>
@@ -277,7 +277,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>retryInterval</key>
-                    <value>5</value>
+                    <value>{{SmarTeam_RetryInterval}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>TransportProtocol</key>
@@ -309,7 +309,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>httpAddressWithoutQuery</key>
-                    <value>http://smarteam-test.ssab.com:443/SmarTeam.InboundService/inbound</value>
+                    <value>{{SmarTeam_Address}}</value>
                 </ifl:property>
             </bpmn2:extensionElements>
         </bpmn2:messageFlow>
