@@ -354,6 +354,40 @@ def name_jms_send_step(xml: str) -> str:
     return iflow_lib.serialize(root)
 
 
+# SmarTeam HTTP receiver: every setting someone may tune is externalized (CLAUDE.md / IFLOW_CONVENTIONS §1.4;
+# missed in the first round, user 2026-11-23). (param, iflw key, expected value, propdef category, UI label)
+SMARTEAM_HTTP = [
+    ("SmarTeam_Address", "httpAddressWithoutQuery", "http://smarteam-test.ssab.com:443/SmarTeam.InboundService/inbound",
+     "SmarTeam", "Address"),
+    ("SmarTeam_ProxyType", "proxyType", "sapcc", "SmarTeam", ""),
+    ("SmarTeam_Authentication", "authenticationMethod", "None", "SmarTeam.Receiver.Auth", ""),
+    ("SmarTeam_Timeout", "httpRequestTimeout", "60000", "SmarTeam", ""),
+    ("SmarTeam_ThrowExceptionOnFailure", "throwExceptionOnFailure", "true", "SmarTeam", ""),
+    ("SmarTeam_RetryOnConnectionFailure", "retryOnConnectionFailure", "false", "SmarTeam", ""),
+    ("SmarTeam_RetryIterations", "retryIteration", "1", "SmarTeam", ""),
+    ("SmarTeam_RetryInterval", "retryInterval", "5", "SmarTeam", ""),
+    ("SmarTeam_RetryOnException", "retryOnException", "false", "SmarTeam", ""),
+    ("SmarTeam_AllowedRequestHeaders", "allowedRequestHeaders", "traceparent", "SmarTeam", ""),
+    ("SmarTeam_AllowedResponseHeaders", "allowedResponseHeaders", "*", "SmarTeam", ""),
+    ("SmarTeam_IdleTimeout", "pooledConnectionIdleTimeout", "300000", "SmarTeam", ""),
+]
+
+
+def externalize_smarteam_receiver(xml: str, p) -> str:
+    """Same method as the I0539 Medius receiver (L3): {{param}} in the channel, xsd:string parameter,
+    propdef reference <category> + <adapter variant>/attrId::<key>."""
+    root = iflow_lib.parse(xml)
+    mf = iflow_lib._owner(root, "HTTP", "messageFlow")
+    variant = iflow_lib.get_prop(root, mf, "cmdVariantUri").text
+    assert "cname::sap:HTTP/" in variant and "direction::Receiver" in variant, variant
+    for param, key, value, cat, label in SMARTEAM_HTTP:
+        xml = iflow_lib.externalize(xml, "HTTP", key, "{{%s}}" % param, expect=value)
+        # parameters.prop escapes ":" in values as CPI writes them (S4_Address=http\://…)
+        p.add(param, value.replace(":", "\:"), ref=(cat, variant + "/attrId::" + key, label))
+    print(f"  SmarTeam receiver: {len(SMARTEAM_HTTP)} settings externalized")
+    return xml
+
+
 def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[str], rename: bool) -> str:
     pp, pd = "src/main/resources/parameters.prop", "src/main/resources/parameters.propdef"
     for n in [n for n in files if n.endswith(".iflw")]:
@@ -504,16 +538,16 @@ CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023
 
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.7", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.8", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
-    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.5", prefix="I2049",
+    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.6", prefix="I2049",
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
-    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.2", prefix="I2018", send="ServiceTask_734107",
+    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.3", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.2", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.3", prefix="I2023", send="ServiceTask_734125",
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.8", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.9", prefix="I2024", send="ServiceTask_734137",
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
 }
@@ -543,6 +577,7 @@ def build_child(name: str) -> str:
     assert re.search(r"<key>allowedHeaderList</key>\s*<value>\{\{AllowedHeaders\}\}</value>", xml), \
         "Allowed Headers is not {{AllowedHeaders}}"
     p.set("AllowedHeaders", CHILD_ALLOWED_HEADERS)
+    xml = externalize_smarteam_receiver(xml, p)
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
     remove_unused(xml, p)

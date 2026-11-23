@@ -107,6 +107,7 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 - **Child iFlows (`…_JMSToHTTP`): Allowed Headers externalized as `{{AllowedHeaders}}` = `SSAB.*|SAP.*`** (user, 2026-11-23). `iflow_build_smarteam.py` sets it for every child and fails if it is not externalized.
 - **HTTPS sender role and CSRF: always ask.** SSAB default: `SSAB_MessagingSend_InternalOperations`, CSRF off.
 - **Externalize every adapter setting someone may tune**, with `HTTP_<Setting>` / `<System>_<Setting>` names (IFLOW_CONVENTIONS §1.4, §2.4). Channels to the same system share one set. Fix misspelt parameter names and tell the user that the tenant value must be set again.
+  - **Check every adapter of every iFlow in each round, not only the ones being changed** (SmarTeam, 2026-11-23: the SmarTeam receiver stayed fixed for 3 rounds). List every non-empty fixed value per channel, and externalize it or ask. Never leave it as an "open point".
 - Every iFlow folder gets a `spec.md` with a Decisions table (user, 2026-11-16).
 - **Checks for every iFlow build** (`iflow_lib.check_iflow`, run in the build and in `tools/check_all_iflows.py`):
   - well-formed XML
