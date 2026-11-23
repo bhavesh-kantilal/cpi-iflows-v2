@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.8 — 2026-11-23 10:39 CET
+- Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Set Custom Header' (2 steps)).
+
 ## 1.0.7 — 2026-11-23 10:25 CET
 Built from I2024_…_JMSToHTTP.jar (1.0.6).
 - Step "Request Reply 1" renamed to "Send to SmarTeam" (as in the other children)
