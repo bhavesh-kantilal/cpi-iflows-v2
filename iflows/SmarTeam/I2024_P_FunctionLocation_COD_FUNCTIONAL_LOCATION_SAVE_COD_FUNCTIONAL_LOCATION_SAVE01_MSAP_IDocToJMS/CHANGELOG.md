@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
 
+## 1.0.13 — 2026-11-23 11:41 CET
+- `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
+
 ## 1.0.12 — 2026-11-23 11:23 CET
 - Retrigger role `HTTPS_Userrole`: `ESBMessaging.send` → `SSAB_MessagingSend_InternalOperations` (the flow's main entry is IDoc; the HTTPS sender is only the retrigger). Set the tenant value again if it was configured.
 
