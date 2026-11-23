@@ -642,7 +642,7 @@
                 <value>From Calling Process</value>
             </ifl:property>
         </bpmn2:extensionElements>
-        <bpmn2:callActivity id="CallActivity_80" name="Log Custom Header">
+        <bpmn2:callActivity id="CallActivity_80" name="LogCustomHeaders">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>scriptFunction</key>
