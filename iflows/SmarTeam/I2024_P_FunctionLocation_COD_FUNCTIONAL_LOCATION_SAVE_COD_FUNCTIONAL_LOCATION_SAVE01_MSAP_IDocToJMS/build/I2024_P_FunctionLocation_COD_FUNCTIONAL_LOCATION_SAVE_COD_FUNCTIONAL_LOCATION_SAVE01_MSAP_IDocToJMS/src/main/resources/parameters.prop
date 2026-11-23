@@ -1,0 +1,13 @@
+#Fri Nov 20 11:18:30 UTC 2026
+Enviroinment=DEV
+HTTPS_Authorization=RoleBased
+HTTPS_Userrole=ESBMessaging.send
+JMS_Accesstype=Non-Exclusive
+JMS_Expirationperiod=30
+JMS_Queuename=${property.QueueName}
+JMS_Retentionthreshold=2
+LogPayload=True
+LogPayloadSize=512
+SAP_MessageType=COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01
+SAP_Sender=MSAP
+SessionReuse=onIntegrationFlow
