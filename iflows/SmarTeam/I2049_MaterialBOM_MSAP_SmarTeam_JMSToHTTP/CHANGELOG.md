@@ -1,5 +1,8 @@
 # CHANGELOG — I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.9 — 2026-11-23 11:41 CET
+- `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
+
 ## 1.0.8 — 2026-11-23 11:29 CET
 - SmarTeam HTTP receiver: Location ID → `{{SmarTeam_LocationID}}` (default empty), always together with Proxy Type.
 
