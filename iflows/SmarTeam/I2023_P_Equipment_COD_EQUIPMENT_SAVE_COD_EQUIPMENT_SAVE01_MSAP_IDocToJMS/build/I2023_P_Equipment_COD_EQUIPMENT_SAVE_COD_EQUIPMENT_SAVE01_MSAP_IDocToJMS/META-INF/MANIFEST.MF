@@ -4,7 +4,7 @@ Bundle-Name: I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_M
  SAP_IDocToJMS
 Bundle-SymbolicName: I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_
  SAVE01_MSAP_IDocToJMS
-Bundle-Version: 1.0.11
+Bundle-Version: 1.0.12
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

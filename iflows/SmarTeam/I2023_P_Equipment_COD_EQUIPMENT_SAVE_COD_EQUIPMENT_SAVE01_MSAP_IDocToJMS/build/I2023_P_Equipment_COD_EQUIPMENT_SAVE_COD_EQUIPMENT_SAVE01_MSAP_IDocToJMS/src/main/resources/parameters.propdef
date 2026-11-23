@@ -150,6 +150,14 @@
     </additionalMetadata>
   </parameter><parameter>
     <key/>
+    <name>SAP_MessageType</name>
+    <type>xsd:string</type>
+    <isRequired>false</isRequired>
+    <constraint/>
+    <description/>
+    <additionalMetadata/>
+  </parameter><parameter>
+    <key/>
     <name>HTTPS_BodySize</name>
     <type>xsd:string</type>
     <isRequired>false</isRequired>

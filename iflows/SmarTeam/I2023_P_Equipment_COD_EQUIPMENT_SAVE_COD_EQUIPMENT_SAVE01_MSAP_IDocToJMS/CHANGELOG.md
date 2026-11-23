@@ -1,5 +1,9 @@
 # CHANGELOG — I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS
 
+## 1.0.12 — 2026-11-23 11:41 CET
+- `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
+- Header `SAP_MessageType` was a fixed constant → `{{SAP_MessageType}}` (default `COD_EQUIPMENT_SAVE.COD_EQUIPMENT_SAVE01`).
+
 ## 1.0.11 — 2026-11-23 11:23 CET
 - Retrigger role `HTTPS_Userrole`: `ESBMessaging.send` → `SSAB_MessagingSend_InternalOperations` (the flow's main entry is IDoc; the HTTPS sender is only the retrigger). Set the tenant value again if it was configured.
 
