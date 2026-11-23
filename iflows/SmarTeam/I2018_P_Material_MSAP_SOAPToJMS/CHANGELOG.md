@@ -1,5 +1,8 @@
 # CHANGELOG — I2018_P_Material_MSAP_SOAPToJMS
 
+## 1.0.19 — 2026-11-23 10:44 CET
+- JMS send step "Send" → "Send To JMS".
+
 ## 1.0.18 — 2026-11-23 10:39 CET
 - Every logCustomHeaders.groovy step is now named `LogCustomHeaders` (was 'Log Custom Header').
 

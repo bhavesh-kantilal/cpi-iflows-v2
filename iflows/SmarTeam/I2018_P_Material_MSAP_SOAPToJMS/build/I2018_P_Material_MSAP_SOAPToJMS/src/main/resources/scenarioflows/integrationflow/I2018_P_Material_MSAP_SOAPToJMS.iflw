@@ -951,7 +951,7 @@
             </bpmn2:extensionElements>
             <bpmn2:incoming>SequenceFlow_111</bpmn2:incoming>
         </bpmn2:endEvent>
-        <bpmn2:serviceTask id="ServiceTask_110" name="Send">
+        <bpmn2:serviceTask id="ServiceTask_110" name="Send To JMS">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>componentVersion</key>

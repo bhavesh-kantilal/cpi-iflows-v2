@@ -11,6 +11,7 @@ Parent (package MSAPControllingMasterData): SOAP ProductMDMBulkReplicate from MS
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | Set Monitoring Identifiers XPaths without local-name(): CH_Material = `/*/ProductMDMReplicateRequestMessage/Product/ProductInternalID`, CH_MessageID = `/*/MessageHeader/ID` (only the root element has a namespace) |
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | iflw file `I2017_P_Material_ASAP_FSAP_SOAPToJMS.iflw` → `I2018_P_Material_MSAP_SOAPToJMS.iflw`. No unused parameters |
 | 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.18: renamed from 'Log Custom Header'. The build names every such step this way and fails on any other name |
+| 2026-11-23 | Name of the JMS send step (L2, user: all parents) | "Send To JMS" | 1.0.19: was "Send". Build rule `name_jms_send_step` |
 
 ## Open points (not changed)
 - "Error End" in Main Process (`EndEvent_682`): left as is, it looks like the intended failure path (I2050_P uses an escalation end there)
