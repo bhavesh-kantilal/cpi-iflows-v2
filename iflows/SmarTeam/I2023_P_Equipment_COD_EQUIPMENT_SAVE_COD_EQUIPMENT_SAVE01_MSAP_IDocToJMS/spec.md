@@ -9,6 +9,7 @@ Parent (package MSAPControllingMasterData): IDoc COD_EQUIPMENT_SAVE from MSAP â†
 | Date | Question | Answer | Impact |
 |---|---|---|---|
 | 2026-11-23 | Same round as I2050 (L2, user: "change the remaining iFlows") | Applied | Removed 8 unused parameters: `AttachmentName`, `CompressStoredMessage`, `Encryptstoredmessage`, `Expirationperiod`, `HTTP_Adress`, `JMS_TransferexchangeProperties`, `RetentionThreshold`, `TransferexchangeProperties`. The iflw file name was already right |
+| 2026-11-23 | Step name of the logCustomHeaders.groovy step (L2, user, screenshot: "LogCustomHeaders" for all iFlows) | `LogCustomHeaders` | 1.0.8: renamed from 'Log Custom Headers'. The build names every such step this way and fails on any other name |
 
 ## Open points (not changed)
 - "Error End" in Main Process (`EndEvent_961984`): left as is (intended failure path?)
