@@ -1,0 +1,12 @@
+#Fri Nov 20 11:16:53 UTC 2026
+AllowedHeaders=SSAB.*
+HTTPS_Authorization=RoleBased
+HTTPS_BodySize=40
+HTTPS_CSRFProtected=0
+HTTPS_UserRole=SSAB_MessagingSend_InternalOperations
+HTTP_Session_Reuse=onIntegrationFlow
+LogPayload=true
+LogPayloadSize=512
+SAP_MessageType=ProductMDMBulkReplicateRequest
+SAP_Receiver=SmarTeam
+SAP_Sender=AD1_110
