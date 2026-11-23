@@ -1,7 +1,7 @@
 #Fri Nov 20 11:18:30 UTC 2026
 Enviroinment=DEV
 HTTPS_Authorization=RoleBased
-HTTPS_Userrole=ESBMessaging.send
+HTTPS_Userrole=SSAB_MessagingSend_InternalOperations
 JMS_Accesstype=Non-Exclusive
 JMS_Expirationperiod=30
 JMS_Queuename=${property.QueueName}

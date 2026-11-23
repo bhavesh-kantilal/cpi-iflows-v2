@@ -1,5 +1,8 @@
 # CHANGELOG — I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS
 
+## 1.0.12 — 2026-11-23 11:23 CET
+- Retrigger role `HTTPS_Userrole`: `ESBMessaging.send` → `SSAB_MessagingSend_InternalOperations` (the flow's main entry is IDoc; the HTTPS sender is only the retrigger). Set the tenant value again if it was configured.
+
 ## 1.0.11 — 2026-11-23 11:07 CET
 - Externalized `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; keep it equal to what its callers use).
 - Externalized `HTTPS_Address` (retrigger path, default `/<iFlow name>`).
