@@ -215,7 +215,8 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
     xml = files[iflw[0]].decode("utf-8")
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
-    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml) + fixed_adapter_values(xml)
+    errs = (iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
+            + fixed_adapter_values(xml) + location_not_externalized(xml))
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -360,6 +361,8 @@ SMARTEAM_HTTP = [
     ("SmarTeam_Address", "httpAddressWithoutQuery", "http://smarteam-test.ssab.com:443/SmarTeam.InboundService/inbound",
      "SmarTeam", "Address"),
     ("SmarTeam_ProxyType", "proxyType", "sapcc", "SmarTeam", ""),
+    # Location ID always together with Proxy Type, even when empty (user, 2026-11-23)
+    ("SmarTeam_LocationID", "locationID", "", "SmarTeam", "Location ID"),
     ("SmarTeam_Authentication", "authenticationMethod", "None", "SmarTeam.Receiver.Auth", ""),
     ("SmarTeam_Timeout", "httpRequestTimeout", "60000", "SmarTeam", ""),
     ("SmarTeam_ThrowExceptionOnFailure", "throwExceptionOnFailure", "true", "SmarTeam", ""),
@@ -396,6 +399,33 @@ def fixed_adapter_values(xml: str) -> list[str]:
                     and (props.get("ComponentType"), k, v) not in FIXED_OK):
                 errs.append(f"channel {mf.get('name')}: {k}={v!r} is not externalized")
     return errs
+
+
+LOCATION_KEY = {"HTTP": "locationID", "HCIOData": "scc_location_id"}
+
+
+def location_not_externalized(xml: str) -> list[str]:
+    """Build check: an adapter with a Proxy Type has its Location ID as {{…}} (user, 2026-11-23)."""
+    root = iflow_lib.parse(xml)
+    errs = []
+    for mf in root.iter(_q("bpmn2:messageFlow")):
+        props = {q.findtext("key"): (q.findtext("value") or "")
+                 for q in mf.findall("bpmn2:extensionElements/ifl:property", NS)}
+        key = LOCATION_KEY.get(props.get("ComponentType"))
+        if key and props.get("proxyType") and key in props and "{{" not in props[key]:
+            errs.append(f"channel {mf.get('name')}: {key}={props[key]!r} is not externalized (Proxy Type is set)")
+    return errs
+
+
+def externalize_location(xml: str, p, channel: str, param: str, key: str, category: str) -> str:
+    """Externalize an empty Location ID (default empty)."""
+    root = iflow_lib.parse(xml)
+    mf = iflow_lib._owner(root, channel, "messageFlow")
+    variant = iflow_lib.get_prop(root, mf, "cmdVariantUri").text
+    xml = iflow_lib.externalize(xml, channel, key, "{{%s}}" % param, expect="")
+    p.add(param, "", ref=(category, variant + "/attrId::" + key, "Location ID"))
+    print(f"  {channel}: externalized {param} (Location ID)")
+    return xml
 
 
 def prop_escape(value: str) -> str:
@@ -628,16 +658,17 @@ CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023
 
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.9", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.10", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
-    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.7", prefix="I2049",
+    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.8", prefix="I2049",
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
-    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.4", prefix="I2018", send="ServiceTask_734107",
+    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.5", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.4", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.5", prefix="I2023", send="ServiceTask_734125",
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.10", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.11", prefix="I2024", send="ServiceTask_734137",
+                location=("OData", "MSAP_LocationID", "scc_location_id", "Receiver1"),
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
 }
@@ -672,6 +703,8 @@ def build_child(name: str) -> str:
     p.set("HTTPS_UserRole", CHILD_ROLE)
     xml = externalize_smarteam_receiver(xml, p)
     xml = externalize_fixed(xml, p, [PD_SENDER, HTTPS_PATH] + ([ODATA_MSAP] if c.get("odata") else []))
+    if c.get("location"):
+        xml = externalize_location(xml, p, *c["location"])
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
     remove_unused(xml, p)
