@@ -1,5 +1,8 @@
 # CHANGELOG — I2050_P_MaintenanceBOM_MSAP_AMQPToJMS
 
+## 1.0.12 — 2026-11-23 12:04 CET
+- HTTPS retrigger sender `Trigger` → `Retrigger` (as in every other flow).
+
 ## 1.0.11 — 2026-11-23 11:41 CET
 - Initial Properties (first Content Modifier): header `SAP_Sender` was a fixed `MSAP` → `{SAP_Sender}` (default `AD1_110`); new header `SAP_MessageType` = `{SAP_MessageType}` (default `MaintenanceBOM`).
 - Receiver participant `MSAP_PO` → `MSAP_BOM` (participant, OData channel `system`, propdef references). Not plain `MSAP`: that is the AMQP sender participant.

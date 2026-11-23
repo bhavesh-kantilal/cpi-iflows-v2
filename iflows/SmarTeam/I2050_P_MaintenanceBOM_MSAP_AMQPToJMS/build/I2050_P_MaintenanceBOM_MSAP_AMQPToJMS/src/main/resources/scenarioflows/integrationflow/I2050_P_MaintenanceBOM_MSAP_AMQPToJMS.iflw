@@ -75,7 +75,7 @@
                 </ifl:property>
             </bpmn2:extensionElements>
         </bpmn2:participant>
-        <bpmn2:participant id="Participant_895080" ifl:type="EndpointSender" name="Trigger">
+        <bpmn2:participant id="Participant_895080" ifl:type="EndpointSender" name="Retrigger">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>enableBasicAuthentication</key>
@@ -404,7 +404,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>system</key>
-                    <value>Trigger</value>
+                    <value>Retrigger</value>
                 </ifl:property>
                 <ifl:property>
                     <key>xsrfProtection</key>
