@@ -676,7 +676,7 @@
             <bpmn2:incoming>SequenceFlow_961973</bpmn2:incoming>
             <bpmn2:outgoing>SequenceFlow_961975</bpmn2:outgoing>
         </bpmn2:callActivity>
-        <bpmn2:callActivity id="CallActivity_961972" name="Log Custom Headers">
+        <bpmn2:callActivity id="CallActivity_961972" name="LogCustomHeaders">
             <bpmn2:extensionElements>
                 <ifl:property>
                     <key>scriptFunction</key>
