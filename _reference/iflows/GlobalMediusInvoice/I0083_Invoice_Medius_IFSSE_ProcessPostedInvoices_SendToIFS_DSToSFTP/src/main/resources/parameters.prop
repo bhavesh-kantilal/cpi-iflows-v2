@@ -1,0 +1,34 @@
+#
+#Sun Nov 15 19:24:13 UTC 2026
+BORTimer=<row><cell>dayValue</cell><cell></cell></row><row><cell>monthValue</cell><cell></cell></row><row><cell>yearValue</cell><cell></cell></row><row><cell>dateType</cell><cell>DAILY</cell></row><row><cell>secondValue</cell><cell>0</cell></row><row><cell>minutesValue</cell><cell></cell></row><row><cell>hourValue</cell><cell></cell></row><row><cell>toInterval</cell><cell>16</cell></row><row><cell>fromInterval</cell><cell>8</cell></row><row><cell>OnEveryMinute</cell><cell>15</cell></row><row><cell>timeType</cell><cell>TIME_INTERVAL</cell></row><row><cell>timeZone</cell><cell>( UTC 1\:00 ) Central European Standard Time(Europe/Berlin)</cell></row><row><cell>throwExceptionOnExpiry</cell><cell>true</cell></row><row><cell>second</cell><cell>*</cell></row><row><cell>minute</cell><cell>*</cell></row><row><cell>hour</cell><cell>*</cell></row><row><cell>day_of_month</cell><cell>?</cell></row><row><cell>month</cell><cell>*</cell></row><row><cell>dayOfWeek</cell><cell>*</cell></row><row><cell>year</cell><cell>*</cell></row><row><cell>startAt</cell><cell></cell></row><row><cell>endAt</cell><cell></cell></row><row><cell>attributeBehaviour</cell><cell>isRunOnceRequired,isScheduleOnDayRequired,isScheduleRecurRequired,isThrowExceptionOnExpiryVisible,isScheduleAdvancedVisible,isScheduleAdvancedStartEndVisible</cell></row><row><cell>triggerType</cell><cell>cron</cell></row><row><cell>noOfSchedules</cell><cell>1</cell></row><row><cell>schedule1</cell><cell>0+0/15+8-15+?+*+*+*&amp;trigger.timeZone\=Europe/Berlin</cell></row>
+BOR_DS=I0083_Invoice_Medius_IFSSE_BLE
+BOR_FileDirectory=../../SFTP/Test_IntegrationFile/IFS/ImportInvoice/Invoices/BLE/
+BOR_FileName=Till_IFSTest
+DeleteOnCompletion=true
+LULTimer=<row><cell>dayValue</cell><cell></cell></row><row><cell>monthValue</cell><cell></cell></row><row><cell>yearValue</cell><cell></cell></row><row><cell>dateType</cell><cell>DAILY</cell></row><row><cell>secondValue</cell><cell>0</cell></row><row><cell>minutesValue</cell><cell></cell></row><row><cell>hourValue</cell><cell></cell></row><row><cell>toInterval</cell><cell>16</cell></row><row><cell>fromInterval</cell><cell>8</cell></row><row><cell>OnEveryMinute</cell><cell>15</cell></row><row><cell>timeType</cell><cell>TIME_INTERVAL</cell></row><row><cell>timeZone</cell><cell>( UTC 0\:00 ) Greenwich Mean Time(Etc/GMT)</cell></row><row><cell>throwExceptionOnExpiry</cell><cell>true</cell></row><row><cell>second</cell><cell>*</cell></row><row><cell>minute</cell><cell>*</cell></row><row><cell>hour</cell><cell>*</cell></row><row><cell>day_of_month</cell><cell>?</cell></row><row><cell>month</cell><cell>*</cell></row><row><cell>dayOfWeek</cell><cell>*</cell></row><row><cell>year</cell><cell>*</cell></row><row><cell>startAt</cell><cell></cell></row><row><cell>endAt</cell><cell></cell></row><row><cell>attributeBehaviour</cell><cell>isRunOnceRequired,isScheduleOnDayRequired,isScheduleRecurRequired,isThrowExceptionOnExpiryVisible,isScheduleAdvancedVisible,isScheduleAdvancedStartEndVisible</cell></row><row><cell>triggerType</cell><cell>cron</cell></row><row><cell>noOfSchedules</cell><cell>1</cell></row><row><cell>schedule1</cell><cell>0+0/15+8-15+?+*+*+*&amp;trigger.timeZone\=Etc/GMT</cell></row>
+LUL_DS=I0083_Invoice_Medius_IFSSE_LLA
+LUL_FileDirectory=../../SFTP/Test_IntegrationFile/IFS/ImportInvoice/Invoices/LLA/
+LUL_FileName=Till_IFSTestLUL
+LogPayload=True
+LogPayloadSize=512
+MediusTimer=<row><cell>dateType</cell><cell></cell></row><row><cell>timeType</cell><cell></cell></row><row><cell>dayValue</cell><cell></cell></row><row><cell>monthValue</cell><cell></cell></row><row><cell>yearValue</cell><cell></cell></row><row><cell>onWeekly</cell><cell></cell></row><row><cell>onMonthly</cell><cell></cell></row><row><cell>OnEveryMinute</cell><cell></cell></row><row><cell>fromInterval</cell><cell></cell></row><row><cell>toInterval</cell><cell></cell></row><row><cell>timeZone</cell><cell>( UTC 0\:00 ) Greenwich Mean Time(Etc/GMT)</cell></row><row><cell>secondValue</cell><cell>0</cell></row><row><cell>minutesValue</cell><cell></cell></row><row><cell>hourValue</cell><cell></cell></row><row><cell>triggerType</cell><cell>simple</cell></row><row><cell>noOfSchedules</cell><cell>1</cell></row><row><cell>schedule1</cell><cell>fireNow\=true</cell></row>
+OXE_FileDirectory=../../SFTP/Test_IntegrationFile/IFS/ImportInvoice/Invoices/OXE/
+OXE_FileName=Till_IFSTestOXE
+OX_DS=I0083_Invoice_Medius_IFSSE_OXE
+OxTimer=<row><cell>dayValue</cell><cell></cell></row><row><cell>monthValue</cell><cell></cell></row><row><cell>yearValue</cell><cell></cell></row><row><cell>dateType</cell><cell>DAILY</cell></row><row><cell>secondValue</cell><cell>0</cell></row><row><cell>minutesValue</cell><cell></cell></row><row><cell>hourValue</cell><cell></cell></row><row><cell>toInterval</cell><cell>16</cell></row><row><cell>fromInterval</cell><cell>8</cell></row><row><cell>OnEveryMinute</cell><cell>15</cell></row><row><cell>timeType</cell><cell>TIME_INTERVAL</cell></row><row><cell>timeZone</cell><cell>( UTC 0\:00 ) Greenwich Mean Time(Etc/GMT)</cell></row><row><cell>throwExceptionOnExpiry</cell><cell>true</cell></row><row><cell>second</cell><cell>*</cell></row><row><cell>minute</cell><cell>*</cell></row><row><cell>hour</cell><cell>*</cell></row><row><cell>day_of_month</cell><cell>?</cell></row><row><cell>month</cell><cell>*</cell></row><row><cell>dayOfWeek</cell><cell>*</cell></row><row><cell>year</cell><cell>*</cell></row><row><cell>startAt</cell><cell></cell></row><row><cell>endAt</cell><cell></cell></row><row><cell>attributeBehaviour</cell><cell>isRunOnceRequired,isScheduleOnDayRequired,isScheduleRecurRequired,isThrowExceptionOnExpiryVisible,isScheduleAdvancedVisible,isScheduleAdvancedStartEndVisible</cell></row><row><cell>triggerType</cell><cell>cron</cell></row><row><cell>noOfSchedules</cell><cell>1</cell></row><row><cell>schedule1</cell><cell>0+0/15+8-15+?+*+*+*&amp;trigger.timeZone\=Etc/GMT</cell></row>
+PolledMessages=1000
+SAP_MessageType=Invoice
+SAP_Receiver=IFSSE
+SAP_Sender=Medius
+SFTP_AppendTimestamp=0
+SFTP_Authentication=user_password
+SFTP_AutoDisconnect=1
+SFTP_Credentials=SFTPShare_User_TEST
+SFTP_LocationID=
+SFTP_MaxReconnectAttempts=3
+SFTP_ProxyType=sapcc
+SFTP_Reconnect_Delay=1000
+SFTP_Server=srt02962.ssab.com\:22
+SFTP_Timeout_ms=10000
+SFTP_TmpFileName=${file\:name}.tmp
+SFTP_UseTemporaryFile=1

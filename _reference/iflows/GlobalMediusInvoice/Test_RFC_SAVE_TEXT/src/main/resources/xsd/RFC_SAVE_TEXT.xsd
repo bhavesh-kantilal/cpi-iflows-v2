@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s0="urn:sap-com:document:sap:rfc:functions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="urn:sap-com:document:sap:rfc:functions">
+	<types>
+		<xsd:schema targetNamespace="urn:sap-com:document:sap:rfc:functions">
+			<xsd:element name="RFC_SAVE_TEXT">
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="MESSAGES">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="item" minOccurs="0" maxOccurs="unbounded" type="s0:BAPIRET2"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="TEXT_LINES">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="item" minOccurs="0" maxOccurs="unbounded" type="s0:IBIPTEXTLN"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="RFC_SAVE_TEXT.Response">
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="MESSAGES">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="item" minOccurs="0" maxOccurs="unbounded" type="s0:BAPIRET2"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="TEXT_LINES">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="item" minOccurs="0" maxOccurs="unbounded" type="s0:IBIPTEXTLN"/>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="BAPIRET2">
+				<xsd:sequence>
+					<xsd:element name="TYPE" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="ID" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="20"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="NUMBER" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+								<xsd:pattern value="\d*"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESSAGE" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="220"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="LOG_NO" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="20"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="LOG_MSG_NO" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="6"/>
+								<xsd:pattern value="\d*"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESSAGE_V1" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESSAGE_V2" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESSAGE_V3" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESSAGE_V4" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="PARAMETER" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="32"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="ROW" minOccurs="0" type="xsd:int"/>
+					<xsd:element name="FIELD" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="30"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SYSTEM" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="IBIPTEXTLN">
+				<xsd:sequence>
+					<xsd:element name="MANDT" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDOBJECT" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDNAME" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="70"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDID" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="4"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDSPRAS" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="COUNTER" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+								<xsd:pattern value="\d*"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDFORMAT" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TDLINE" minOccurs="0">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="132"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</types>
+	<message name="RFC_SAVE_TEXTInput">
+		<part name="parameters" element="s0:RFC_SAVE_TEXT"/>
+	</message>
+	<message name="RFC_SAVE_TEXTOutput">
+		<part name="parameters" element="s0:RFC_SAVE_TEXT.Response"/>
+	</message>
+	<portType name="RFC_SAVE_TEXTPortType">
+		<operation name="RFC_SAVE_TEXT">
+			<input message="s0:RFC_SAVE_TEXTInput"/>
+			<output message="s0:RFC_SAVE_TEXTOutput"/>
+		</operation>
+	</portType>
+	<binding name="RFC_SAVE_TEXTBinding" type="s0:RFC_SAVE_TEXTPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="RFC_SAVE_TEXT">
+			<soap:operation soapAction="http://www.sap.com/RFC_SAVE_TEXT"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="RFC_SAVE_TEXTService">
+		<documentation>SAP Service RFC_SAVE_TEXT via SOAP</documentation>
+		<port name="RFC_SAVE_TEXTPortType" binding="s0:RFC_SAVE_TEXTBinding">
+			<soap:address location="https://vhruoda4ci.sap.ssab.com:44300/sap/bc/soap/rfc"/>
+		</port>
+	</service>
+</definitions>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s0="urn:sap-com:document:sap:rfc:functions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="urn:sap-com:document:sap:rfc:functions">
+	<types>
+		<xsd:schema targetNamespace="urn:sap-com:document:sap:rfc:functions">
+			<xsd:element name="ARCHIV_CONNECTION_INSERT">
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="ARCHIV_ID" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="2"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="ARC_DOC_ID">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="40"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="AR_DATE" minOccurs="0" type="s0:date"/>
+						<xsd:element name="AR_OBJECT">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="BARCODE" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="40"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="CREATOR" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="12"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="DEL_DATE" minOccurs="0" type="s0:date"/>
+						<xsd:element name="DESCR" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="60"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="DOC_TYPE" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="FILENAME" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="255"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="MANDANT" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="3"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="OBJECT_ID">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="50"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="SAP_OBJECT">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ARCHIV_CONNECTION_INSERT.Response">
+				<xsd:complexType>
+					<xsd:all/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:simpleType name="date">
+				<xsd:restriction base="xsd:string">
+					<xsd:maxLength value="10"/>
+					<xsd:pattern value="....-..-.."/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:schema>
+	</types>
+	<message name="ARCHIV_CONNECTION_INSERTInput">
+		<part name="parameters" element="s0:ARCHIV_CONNECTION_INSERT"/>
+	</message>
+	<message name="ARCHIV_CONNECTION_INSERTOutput">
+		<part name="parameters" element="s0:ARCHIV_CONNECTION_INSERT.Response"/>
+	</message>
+	<portType name="ARCHIV_CONNECTION_INSERTPortType">
+		<operation name="ARCHIV_CONNECTION_INSERT">
+			<input message="s0:ARCHIV_CONNECTION_INSERTInput"/>
+			<output message="s0:ARCHIV_CONNECTION_INSERTOutput"/>
+		</operation>
+	</portType>
+	<binding name="ARCHIV_CONNECTION_INSERTBinding" type="s0:ARCHIV_CONNECTION_INSERTPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="ARCHIV_CONNECTION_INSERT">
+			<soap:operation soapAction="http://www.sap.com/ARCHIV_CONNECTION_INSERT"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="ARCHIV_CONNECTION_INSERTService">
+		<documentation>SAP Service ARCHIV_CONNECTION_INSERT via SOAP</documentation>
+		<port name="ARCHIV_CONNECTION_INSERTPortType" binding="s0:ARCHIV_CONNECTION_INSERTBinding">
+			<soap:address location="https://chsn-vma-aa03.breitling.ch:8001/sap/bc/soap/rfc"/>
+		</port>
+	</service>
+</definitions>

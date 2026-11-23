@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="correlationKey" type="xs:string"/>
+				<xs:element name="invoice">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="documentId" type="xs:string"/>
+							<xs:element name="balanceCodeString">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="dimensions"/>
+										<xs:element name="amount" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="companyExternalSystemId" type="xs:string"/>
+							<xs:element name="companyId" type="xs:string"/>
+							<xs:element name="companyName" type="xs:string"/>
+							<xs:element maxOccurs="unbounded" name="companyIdentifiers">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="identifierType" type="xs:string"/>
+										<xs:element name="identifierValue" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="companyOrganizationNumber" type="xs:string"/>
+							<xs:element name="currencyCode" type="xs:string"/>
+							<xs:element name="currencyExternalSystemId" type="xs:string"/>
+							<xs:element name="currencyRate" type="xs:string"/>
+							<xs:element name="isCurrencyRateImported" type="xs:string"/>
+							<xs:element name="hasCrossCompanyPostings" type="xs:string"/>
+							<xs:element name="customField_Boolean1" type="xs:string"/>
+							<xs:element name="supplierCustomField_Text1" type="xs:string"/>
+							<xs:element name="supplierCustomField_Text2" type="xs:string"/>
+							<xs:element name="customField_List1" type="xs:string"/>
+							<xs:element name="supplierCountry" type="xs:string"/>
+							<xs:element name="originalDocumentType" type="xs:string"/>
+							<xs:element name="dueDate" type="xs:string"/>
+							<xs:element name="finalBookingDate" type="xs:string"/>
+							<xs:element name="imagePath" type="xs:string"/>
+							<xs:element name="documentURL" type="xs:string"/>
+							<xs:element name="invoiceDate" type="xs:string"/>
+							<xs:element name="invoiceNumber" type="xs:string"/>
+							<xs:element name="netAmount" type="xs:string"/>
+							<xs:element name="paymentTerm" type="xs:string"/>
+							<xs:element name="preferredPaymentDate" type="xs:string"/>
+							<xs:element name="preliminaryBookingDate" type="xs:string"/>
+							<xs:element name="preliminaryVoucherNumber"/>
+							<xs:element name="finalVoucherNumber"/>
+							<xs:element name="roundingAmount" type="xs:string"/>
+							<xs:element name="supplierExternalSystemId" type="xs:string"/>
+							<xs:element name="supplierId" type="xs:string"/>
+							<xs:element name="customField_Numeric1" type="xs:string"/>
+							<xs:element name="customField_Text1" type="xs:string"/>
+							<xs:element name="customField_Text2" type="xs:string"/>
+							<xs:element name="customField_Text3" type="xs:string"/>
+							<xs:element name="customField_Text4" type="xs:string"/>
+							<xs:element name="customField_Text5" type="xs:string"/>
+							<xs:element name="customField_List2" type="xs:string"/>
+							<xs:element name="customField_DateTime1" type="xs:string"/>
+							<xs:element name="vatDate" type="xs:string"/>
+							
+							<xs:element name="paymentDetailId" type="xs:string"/>
+							<xs:element maxOccurs="unbounded" name="supplierIdentifiers">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="identifierType" type="xs:string"/>
+										<xs:element name="identifierValue" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="supplierName" type="xs:string"/>
+							<xs:element name="invoiceReference" type="xs:string"/>
+							<xs:element name="paymentReference" type="xs:string"/>
+							<xs:element name="referencedDocuments"/>
+							<xs:element name="taxAmount" type="xs:string"/>
+							<xs:element name="supplierTaxIndicator1" type="xs:string"/>
+							<xs:element name="totalAmount" type="xs:string"/>
+							<xs:element name="totalCodedNetAmount" type="xs:string"/>
+							<xs:element name="totalCodedTaxAmount" type="xs:string"/>
+							<xs:element maxOccurs="unbounded" name="invoiceLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="amount" type="xs:string"/>
+										<xs:element name="itemDescription" type="xs:string"/>
+										<xs:element name="lineNumber" type="xs:string"/>
+										<xs:element name="quantity" type="xs:string"/>
+										<xs:element name="quantityUnit" type="xs:string"/>
+										<xs:element name="unitPrice" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element maxOccurs="unbounded" name="codingLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="companyId" type="xs:string"/>
+										<xs:element name="companyExternalSystemId" type="xs:string"/>
+										<xs:element name="dimensions">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="dimension1" type="xs:string"/>
+													<xs:element name="dimension2" type="xs:string"/>
+													<xs:element name="dimension3" type="xs:string"/>
+													<xs:element name="dimension4" type="xs:string"/>
+													<xs:element name="dimension5" type="xs:string"/>
+													<xs:element name="dimension6" type="xs:string"/>
+													<xs:element name="freeText1" type="xs:string"/>
+													<xs:element name="freeText2" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="amount" type="xs:string"/>
+										<xs:element name="grossAmount" type="xs:string"/>
+										<xs:element name="codingLineNumber" type="xs:string"/>
+										<xs:element name="taxIndicator1" type="xs:string"/>
+										<xs:element name="isEnabled" type="xs:string"/>
+										<xs:element name="tag" type="xs:string"/>
+										<xs:element maxOccurs="unbounded" name="poConnectionLineNumbers" type="xs:string"/>
+										<xs:element name="lastApproverFirstName" type="xs:string"/>
+										<xs:element name="lastApproverLastName" type="xs:string"/>
+										<xs:element name="lastApproverUserName" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element maxOccurs="unbounded" name="taxLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="dimensions" type="xs:string"/>
+										<xs:element name="amount" type="xs:string"/>
+										<xs:element name="netAmount" type="xs:string"/>
+										<xs:element name="grossAmount" type="xs:string"/>
+										<xs:element name="codingLineNumber" type="xs:string"/>
+										<xs:element name="deductiblePercentage" type="xs:string"/>
+										<xs:element name="percentage" type="xs:string"/>
+										<xs:element name="taxCode" type="xs:string"/>
+										<xs:element name="taxLineNumber" type="xs:string"/>
+										<xs:element name="taxIndicator1" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element maxOccurs="unbounded" name="poLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="lineNumber" type="xs:string"/>
+										<xs:element name="purchaseOrderNumber" type="xs:string"/>
+										<xs:element name="purchaseOrderNumber2" type="xs:string"/>
+										<xs:element name="purchaseOrderLineNumber" type="xs:string"/>
+										<xs:element name="itemNumber" type="xs:string"/>
+										<xs:element name="itemDescription" type="xs:string"/>
+										<xs:element name="conversionFactor" type="xs:string"/>
+										<xs:element name="quantity" type="xs:string"/>
+										<xs:element name="unit" type="xs:string"/>
+										<xs:element name="unitPrice" type="xs:string"/>
+										<xs:element name="reference" type="xs:string"/>
+										<xs:element name="orderType" type="xs:string"/>
+										<xs:element name="isTwoWayMatch" type="xs:string"/>
+										<xs:element name="externalSystemId" type="xs:string"/>
+										<xs:element name="isSynchronizedWithExternalSystem" type="xs:string"/>
+										<xs:element maxOccurs="unbounded" name="purchaseOrderExternalSystemMetadata">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="name" type="xs:string"/>
+													<xs:element name="value" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element minOccurs="0" name="purchaseOrderLineExternalSystemMetadata">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="name" type="xs:string"/>
+													<xs:element name="value" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element maxOccurs="unbounded" name="poConnectionLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="connectedAmount" type="xs:string"/>
+										<xs:element name="connectedQuantity" type="xs:string"/>
+										<xs:element name="connectionLevel" type="xs:string"/>
+										<xs:element name="conversionFactor" type="xs:string"/>
+										<xs:element name="deliveredQuantity" type="xs:string"/>
+										<xs:element name="deliveredAmount" type="xs:string"/>
+										<xs:element name="deliveredUnitPrice" type="xs:string"/>
+										<xs:element name="deliveryDate" type="xs:string"/>
+										<xs:element name="deliveryNote" type="xs:string"/>
+										<xs:element name="deliveryNumber" type="xs:string"/>
+										<xs:element name="releaseNumber" type="xs:string"/>
+										<xs:element name="invoiceLineNumber" type="xs:string"/>
+										<xs:element name="isManual" type="xs:string"/>
+										<xs:element name="lineNumber" type="xs:string"/>
+										<xs:element name="purchaseOrderLineNumber" type="xs:string"/>
+										<xs:element maxOccurs="unbounded" name="codingLineNumbers" type="xs:string"/>
+										<xs:element name="deliveryLineExternalSystemId" type="xs:string"/>
+										<xs:element name="deliveryLineIsFictive" type="xs:string"/>
+										<xs:element name="isSynchronizedWithExternalSystem" type="xs:string"/>
+										<xs:element maxOccurs="unbounded" minOccurs="0" name="externalSystemMetadata">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="name" type="xs:string"/>
+													<xs:element name="value" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element minOccurs="0" maxOccurs="unbounded" name="deviationLines">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="deviationAmount" type="xs:string"/>
+										<xs:element name="deviationType" type="xs:string"/>
+										<xs:element name="isApproved" type="xs:string"/>
+										<xs:element name="isAutoCoded" type="xs:string"/>
+										<xs:element name="isRejected" type="xs:string"/>
+										<xs:element name="isWithinTolerance" type="xs:string"/>
+										<xs:element name="poConnectionLineNumbers" maxOccurs="unbounded" type="xs:string"/>
+										<xs:element name="codingLineNumbers" maxOccurs="unbounded" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="isPaymentBlocked" type="xs:string"/>
+							<xs:element name="erpId" type="xs:string"/>
+							<xs:element name="receivedDate" type="xs:string"/>
+							<xs:element name="eInvoiceTrackingId" type="xs:string"/>
+							<xs:element name="addressInformation"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="tag" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

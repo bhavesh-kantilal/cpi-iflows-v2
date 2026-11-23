@@ -1,0 +1,5 @@
+#Mon Apr 27 07:34:54 UTC 2026
+SAP_Sender=CI
+SAP_Receiver=MDM
+SAP_MessageType=lookupservice
+MDMURL=http\://fihelmdmprod01.rrsteel.net\:8080/lookupservice/lookupget-v1/

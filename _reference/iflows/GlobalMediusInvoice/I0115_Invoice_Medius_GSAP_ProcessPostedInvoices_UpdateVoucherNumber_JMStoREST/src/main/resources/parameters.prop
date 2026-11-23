@@ -1,0 +1,13 @@
+#Mon Oct 19 10:56:53 UTC 2026
+Concurrency=1
+DLQ=1
+ExponentialBackoff=0
+FSAPInvoiceTargetERP=FSAP
+FSAP_Companies=SE78_S4H,SE77_S4H,SE77_S4H_TMS
+MSAPCompanies=SE77_S4H,SE77_S4H_TMS
+MSAPInvoiceTargetERP=MSAP
+MaxRetries=1
+Medius_Credentials=Medius_OAUTH_Test
+Medius_TenantName=ssabQA
+RetryInterval=1
+tenant=ssabQA
