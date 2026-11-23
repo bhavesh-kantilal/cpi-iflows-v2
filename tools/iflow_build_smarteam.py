@@ -717,11 +717,11 @@ PARENTS = {
                   # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.20", jms_step_name=True,
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.21", jms_step_name=True, retrigger_role=True,
                   externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.10", jms_step_name=True,
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.11", jms_step_name=True, retrigger_role=True,
                   externalize=[HTTPS_BODY]),
-    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.11", jms_step_name=True,
+    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.12", jms_step_name=True, retrigger_role=True,
                   externalize=[PD_SENDER, I2024_P_HTTPS, I2024_P_JMS], props={"SAP_MessageType": FLOC_MT}),
 }
 
@@ -757,8 +757,14 @@ def build_parent(name: str) -> str:
         p.set(k, v)
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
-    # Never change the role of a parent (user, 2026-11-23)
-    assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
+    if c.get("retrigger_role"):
+        # SOAP/IDoc parent: the HTTPS sender is only the retrigger -> SSAB role (user, 2026-11-23)
+        param = re.search(r"<key>userRole</key>\s*<value>\{\{([^}]+)\}\}</value>", xml).group(1)
+        p.set(param, CHILD_ROLE)
+        print(f"  retrigger role {param}: {role_before} -> {CHILD_ROLE}")
+    else:
+        # Never change the role of a parent whose main entry is HTTPS (user, 2026-11-23)
+        assert sender_role(xml, p) == role_before, f"parent role changed: {role_before} -> {sender_role(xml, p)}"
     return finish(name, files, xml, p, c["version"],
                   ["Maintanance", "PDToHTTP", "Intial", "Contition", "Connnectopn"], rename=False)
 
