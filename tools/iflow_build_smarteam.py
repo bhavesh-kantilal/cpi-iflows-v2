@@ -215,7 +215,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
     xml = files[iflw[0]].decode("utf-8")
     prop = files["src/main/resources/parameters.prop"].decode("utf-8")
     propdef = files["src/main/resources/parameters.propdef"].decode("utf-8")
-    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml)
+    errs = iflow_lib.check_iflow(xml, prop, propdef) + empty_logpayload_rows(xml) + logch_name_errors(xml) + fixed_adapter_values(xml)
     _, mf = mf_parse(files["META-INF/MANIFEST.MF"])
     mfd = dict(mf)
     for k in ("Bundle-Name", "Bundle-SymbolicName", "Origin-Bundle-Name", "Origin-Bundle-SymbolicName"):
@@ -373,6 +373,36 @@ SMARTEAM_HTTP = [
 ]
 
 
+# Build check (user, 2026-11-23: "we always externalize adapters"): every non-empty adapter value is
+# {{…}}, except technical fields nobody tunes and the shared mail utility's PD address.
+NOT_TUNABLE = {"ComponentNS", "ComponentSWCVId", "ComponentSWCVName", "ComponentType", "Description",
+               "MessageProtocol", "MessageProtocolVersion", "Name", "TransportProtocol", "TransportProtocolVersion",
+               "cmdVariantUri", "componentVersion", "direction", "system", "Vendor", "enableMPLAttachments",
+               "httpShouldSendBody", "streaming", "httpMethod", "operation", "resourcePath", "fields",
+               "queryOptions", "edmxFilePath", "isPagingEnabled", "pagingSize", "contentType", "odataVersion",
+               "entitySet", "expandOptions", "customQueryOptions", "characterEncoding", "pagination",
+               "enableBatchProcessing", "disableReplyTo", "connectWithTLS"}
+FIXED_OK = {("ProcessDirect", "address", "/I0031_P_UTIL_SendEmail_JMSToMail")}
+
+
+def fixed_adapter_values(xml: str) -> list[str]:
+    root = iflow_lib.parse(xml)
+    errs = []
+    for mf in root.iter(_q("bpmn2:messageFlow")):
+        props = {q.findtext("key"): (q.findtext("value") or "")
+                 for q in mf.findall("bpmn2:extensionElements/ifl:property", NS)}
+        for k, v in props.items():
+            if (v and "{{" not in v and k not in NOT_TUNABLE and not k.startswith(("api", "provider"))
+                    and (props.get("ComponentType"), k, v) not in FIXED_OK):
+                errs.append(f"channel {mf.get('name')}: {k}={v!r} is not externalized")
+    return errs
+
+
+def prop_escape(value: str) -> str:
+    """parameters.prop value as CPI writes it: ':' and '=' escaped (S4_Address=http\\://…)."""
+    return value.replace(":", r"\:").replace("=", r"\=")
+
+
 def externalize_smarteam_receiver(xml: str, p) -> str:
     """Same method as the I0539 Medius receiver (L3): {{param}} in the channel, xsd:string parameter,
     propdef reference <category> + <adapter variant>/attrId::<key>."""
@@ -383,8 +413,57 @@ def externalize_smarteam_receiver(xml: str, p) -> str:
     for param, key, value, cat, label in SMARTEAM_HTTP:
         xml = iflow_lib.externalize(xml, "HTTP", key, "{{%s}}" % param, expect=value)
         # parameters.prop escapes ":" in values as CPI writes them (S4_Address=http\://…)
-        p.add(param, value.replace(":", "\:"), ref=(cat, variant + "/attrId::" + key, label))
+        p.add(param, prop_escape(value), ref=(cat, variant + "/attrId::" + key, label))
     print(f"  SmarTeam receiver: {len(SMARTEAM_HTTP)} settings externalized")
+    return xml
+
+
+# Remaining fixed adapter settings (user, 2026-11-23: "all of them"). Names follow what the flows already use:
+# PD_Address (I0539, L3), HTTPS_Address (I2023_P/I2049_P/I2050_P), JMS_* of I2023_P, MSAP_* like S4_* in I2050_P.
+# (param, iflw key, UI label); "plain" = reference id "/attrId::key" (HTTPS sender style), else <variant>/attrId::key
+PD_SENDER = ("ProcessDirect", [("PD_Address", "address", "Address")], "variant")
+HTTPS_PATH = ("HTTPS", [("HTTPS_Address", "urlPath", "")], "plain")
+ODATA_MSAP = ("OData", [
+    ("MSAP_Timeout", "receiveTimeOut", "Timeout (in min)"),
+    ("MSAP_Authentication", "authenticationMethod", "Authentication"),
+    ("MSAP_ProxyType", "proxyType", "Proxy Type"),
+    ("MSAP_CSRFProtected", "isCSRFEnabled", "CSRF Protected"),
+    ("MSAP_ReuseConnection", "enableTLSSessionReuse", "Reuse Connection"),
+    ("MSAP_RetryOnException", "retryOnException", "Retry on Exception"),
+    ("MSAP_RetryOnErrorResponse", "retryOnFailure", "Retry on Error Response"),
+    ("MSAP_RetryIterations", "maxRetryIterations", ""),
+    ("MSAP_RetryInterval", "retryIntervalSec", ""),
+    ("MSAP_AllowedRequestHeaders", "whitelistRequestHeaders", ""),
+    ("MSAP_AllowedResponseHeaders", "whitelistResponseHeaders", "")], "variant")
+I2024_P_HTTPS = ("HTTPS", [("HTTPS_Address", "urlPath", ""), ("HTTPS_BodySize", "maximumBodySize", ""),
+                           ("HTTPS_CSRF_Protected", "xsrfProtection", "")], "plain")
+HTTPS_BODY = ("HTTPS", [("HTTPS_BodySize", "maximumBodySize", "")], "plain")
+ODATA_S4_RETRY = ("OData", [("S4_RetryIterations", "maxRetryIterations", ""),
+                            ("S4_RetryInterval", "retryIntervalSec", "")], "variant")
+I2024_P_JMS = ("JMS", [("JMS_CompressStoredMessage", "UseMessageCompression", "Compress Stored Message"),
+                       ("JMS_Encryptstoredmessage", "EncryptMessage", "Encrypt Stored Message"),
+                       ("JMS_TransferExchangeProperties", "TransferExchangeProperties", "Transfer Exchange Properties")],
+               "variant")
+
+
+def externalize_fixed(xml: str, p, channels) -> str:
+    """{{param}} for fixed channel settings; default = the current value. Propdef reference category =
+    the channel's participant (".Receiver.Auth" for authentication), as in the existing references."""
+    for channel, items, style in channels:
+        root = iflow_lib.parse(xml)
+        mf = iflow_lib._owner(root, channel, "messageFlow")
+        props = {q.findtext("key"): (q.findtext("value") or "")
+                 for q in mf.findall("bpmn2:extensionElements/ifl:property", NS)}
+        sender = props.get("direction") == "Sender"
+        part = by_id(root, mf.get("sourceRef" if sender else "targetRef")).get("name")
+        for param, key, label in items:
+            value = props[key]
+            assert value and "{{" not in value, f"{channel}.{key} = {value!r}"
+            xml = iflow_lib.externalize(xml, channel, key, "{{%s}}" % param, expect=value)
+            cat = part + (".Receiver.Auth" if key == "authenticationMethod" else "")
+            aid = ("/attrId::" if style == "plain" else props["cmdVariantUri"] + "/attrId::") + key
+            p.add(param, prop_escape(value), ref=(cat, aid, label))
+        print(f"  {channel}: externalized {', '.join(i[0] for i in items)}")
     return xml
 
 
@@ -538,16 +617,16 @@ CHILD_ALLOWED_HEADERS = r"SSAB.*|SAP.*"   # as written in parameters.prop (I2023
 
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.8", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.9", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
                     props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
-    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.6", prefix="I2049",
+    I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.7", prefix="I2049",
                     send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
-    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.3", prefix="I2018", send="ServiceTask_734107",
+    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.4", prefix="I2018", send="ServiceTask_734107",
                 xpaths=XPATH_I2018),
-    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.3", prefix="I2023", send="ServiceTask_734125",
+    I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.4", prefix="I2023", send="ServiceTask_734125",
                 odata=("OData", "MSAP", "MSAP_Lookup")),
-    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.9", prefix="I2024", send="ServiceTask_734137",
+    I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.10", prefix="I2024", send="ServiceTask_734137",
                 edits=[('name="Request Reply 1"', 'name="Send to SmarTeam"', 1)],
                 odata=("OData", "MSAP", "Receiver1")),
 }
@@ -578,6 +657,7 @@ def build_child(name: str) -> str:
         "Allowed Headers is not {{AllowedHeaders}}"
     p.set("AllowedHeaders", CHILD_ALLOWED_HEADERS)
     xml = externalize_smarteam_receiver(xml, p)
+    xml = externalize_fixed(xml, p, [PD_SENDER, HTTPS_PATH] + ([ODATA_MSAP] if c.get("odata") else []))
     if c.get("odata"):
         xml = odata_idle_settings(xml, p, *c["odata"])
     remove_unused(xml, p)
@@ -609,21 +689,26 @@ FLOC_MT = "COD_FUNCTIONAL_LOCATION_SAVE.COD_FUNCTIONAL_LOCATION_SAVE01"
 
 PARENTS = {
     # I2050_P: Bhavesh's CPI version 1.0.5 (2026-11-23) is the new baseline; only the misspelt name is fixed
-    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.9", jms_step_name=True,
+    I2050_P: dict(src=(None, I2050_P + ".zip"), version="1.0.10", jms_step_name=True,
+                  externalize=[ODATA_S4_RETRY],
                   renames=[("S4_DeleteIdleConnnectopn", "S4_DeleteIdleConnection")],
                   # 1.0.7: LogPayloadSize was an empty constant and not externalized (also in 1.0.3/1.0.5)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.6", jms_step_name=True,
+    I2049_P: dict(src=(PKG_PLANT_MAINT, I2049_P), version="1.0.7", jms_step_name=True,
+                  externalize=[ODATA_S4_RETRY],
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
                   renames=S4_RENAMES, props={"S4_CSRFProtected": "false"}, odata=("OData", "S4", "MSAP_PO"),
                   # 1.0.5: LogPayloadSize was an empty constant (same gap as I2050_P)
                   constants=[(SMI, "LogPayloadSize", "{{LogPayloadSize}}")],
                   new_params=[("LogPayloadSize", "512")]),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.19", jms_step_name=True, xpaths=XPATH_I2018_P),
-    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.9", jms_step_name=True),
-    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.10", jms_step_name=True, props={"SAP_MessageType": FLOC_MT}),
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.20", jms_step_name=True,
+                  externalize=[PD_SENDER, HTTPS_PATH], xpaths=XPATH_I2018_P),
+    I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.10", jms_step_name=True,
+                  externalize=[HTTPS_BODY]),
+    I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.11", jms_step_name=True,
+                  externalize=[PD_SENDER, I2024_P_HTTPS, I2024_P_JMS], props={"SAP_MessageType": FLOC_MT}),
 }
 
 
@@ -646,6 +731,7 @@ def build_parent(name: str) -> str:
         xml = name_jms_send_step(xml)
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
+    xml = externalize_fixed(xml, p, c.get("externalize", []))
     remove_unused(xml, p)
     xml = rename_params(xml, p, c.get("renames", []))
     for k, v in c.get("new_params", []):     # same definition as in the children (xsd:string)
