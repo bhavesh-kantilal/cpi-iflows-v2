@@ -1,5 +1,8 @@
 # CHANGELOG — I2018_P_Material_MSAP_SOAPToJMS
 
+## 1.0.23 — 2026-11-23 11:41 CET
+- `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows).
+
 ## 1.0.22 — 2026-11-23 11:36 CET
 - Parameter renamed: `SAP_MESSAGETYPE` → `SAP_MessageType` (header SAP_MessageType = `{{SAP_MessageType}}`). Set the tenant value again if configured.
 

@@ -15,6 +15,7 @@ Parent (package MSAPControllingMasterData): SOAP ProductMDMBulkReplicate from MS
 | 2026-11-23 | Remaining fixed adapter settings (L2, user: "all of them") | Externalize; defaults = old values | 1.0.20: `PD_Address` (ProcessDirect sender address, default `/<iFlow name>`; keep it equal to what its callers use); `HTTPS_Address` (retrigger path, default `/<iFlow name>`). Build check `fixed_adapter_values` |
 | 2026-11-23 | Role of the HTTPS sender in a parent (L2, user) | Parents keep their role, except when the HTTPS sender is only a retrigger (SOAP-based parent): then `SSAB_MessagingSend_InternalOperations` | 1.0.21: `HTTP_UserRole` = `SSAB_MessagingSend_InternalOperations` (was `ESBMessaging.send`) |
 | 2026-11-23 | Parameter for SAP_MessageType (L2, user: always `SAP_MessageType`; monitoring blog) | `{{SAP_MessageType}}` | 1.0.22: `SAP_MESSAGETYPE` → `SAP_MessageType` (header SAP_MessageType = `{{SAP_MessageType}}`). Build check `monitor_param_names` |
+| 2026-11-23 | Monitoring headers per the user's blog (L2: SAP_Sender `AD1_110` everywhere; no SAP_Receiver in parents; AMQP parents get both headers; IDoc parents `{{SAP_MessageType}}`; receiver name simple, not `MSAP_PO`) | Applied | 1.0.23: `SAP_Sender` default `MSAP` → `AD1_110` (same in all SmarTeam flows) |
 
 ## Open points (not changed)
 - "Error End" in Main Process (`EndEvent_682`): left as is, it looks like the intended failure path (I2050_P uses an escalation end there)
