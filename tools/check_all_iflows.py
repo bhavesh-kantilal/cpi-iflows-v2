@@ -1,5 +1,5 @@
 """Validate all built iFlow ZIPs: well-formed XML + no AI strings + manifest match."""
-import sys, zipfile
+import os, re, sys, zipfile
 sys.stdout.reconfigure(encoding="utf-8")
 from lxml import etree
 sys.path.insert(0, "tools")
@@ -19,12 +19,21 @@ iflows = [
     "I0544_BusinessPartner_FSAP_StreamServeDDS_PDToJDBC",
     "SmarTeam/I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP",
     "SmarTeam/I2050_P_MaintenanceBOM_MSAP_AMQPToJMS",
+    "SmarTeam/I2049_MaterialBOM_MSAP_SmarTeam_JMSToHTTP",
+    "SmarTeam/I2049_P_MaterialBOM_MSAP_AMQPToJMS",
+    "SmarTeam/I2018_Material_MSAP_SmarTeam_JMSToHTTP",
+    "SmarTeam/I2018_P_Material_MSAP_SOAPToJMS",
+    "SmarTeam/I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP",
+    "SmarTeam/I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS",
+    "SmarTeam/I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP",
+    "SmarTeam/I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS",
 ]
 
 all_ok = True
 for entry in iflows:
     name = entry.split("/")[-1]   # "<Package>/<IFlowName>" or "<IFlowName>"
-    zip_path = f"iflows/{entry}/build/{name}.zip"
+    # \\?\ + absolute path: the I2023/I2024 SmarTeam names exceed 260 characters on Windows
+    zip_path = "\\\\?\\" + os.path.abspath(os.path.join("iflows", *entry.split("/"), "build", name + ".zip"))
     with zipfile.ZipFile(zip_path) as z:
         entries = z.namelist()
         iflw_path = next(n for n in entries if n.endswith(".iflw"))
@@ -40,6 +49,7 @@ for entry in iflows:
         mf_name = ""
         try:
             mf = z.read("META-INF/MANIFEST.MF").decode("utf-8")
+            mf = re.sub(r"\r?\n ", "", mf)   # undo the 72-byte line wrapping
             for line in mf.splitlines():
                 if line.startswith("Bundle-Name:"):
                     mf_name = line.split(":", 1)[1].strip()

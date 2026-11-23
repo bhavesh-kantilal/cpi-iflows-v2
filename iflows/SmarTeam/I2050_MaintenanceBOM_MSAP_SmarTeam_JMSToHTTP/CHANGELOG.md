@@ -1,5 +1,9 @@
 # CHANGELOG — I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP
 
+## 1.0.5 — 2026-11-23 10:25 CET
+- Set Monitoring Identifiers XPaths fixed: they pointed to `A_MaintBillOfMaterial`, which is not in the message. Now `/BOMHeader/MaintBOMHeader_Type/BillOfMaterial`, `…/BillOfMaterialCategory`, `…/BillOfMaterialVariant`, `…/Plant`, `…/TechnicalObject` (also SAP_ApplicationID). CH_BillOfMaterialVariant read `BillOfMaterialCategory` before; it now reads `BillOfMaterialVariant`.
+- No `local-name()` anymore. The WorkId XPath is `/InboundResponse/WorkId`.
+
 ## 1.0.4 — 2026-11-23 10:00 CET
 Built from Bhavesh's export 1.0.3 (`I2050_MaintananceBOM_MSAP_SmarTeam_PDToHTTP.jar`).
 - Renamed from `I2050_MaintananceBOM_MSAP_SmarTeam_PDToHTTP`: the typo is fixed and the name follows the new `_JMSToHTTP` naming. The ProcessDirect address and the HTTPS retrigger path are now `/I2050_MaintenanceBOM_MSAP_SmarTeam_JMSToHTTP`. SAP_MessageType is `MaintenanceBOM`.

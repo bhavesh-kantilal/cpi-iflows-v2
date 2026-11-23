@@ -238,19 +238,20 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
         for e in errs:
             print("  -", e)
         sys.exit(1)
-    out_dir = os.path.join(PKG, name, "build")
+    # \\?\ prefix: the I2023/I2024 names give paths over 260 characters on Windows
+    out_dir = "\\\\?\\" + os.path.abspath(os.path.join(PKG, name, "build"))
     os.makedirs(out_dir, exist_ok=True)
     zpath = os.path.join(out_dir, name + ".zip")
     with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         for n, b in files.items():
             z.writestr(n, b)
-    # \\?\ prefix: the I2023/I2024 names give paths over 260 characters on Windows
-    ext = "\\\\?\\" + os.path.abspath(os.path.join(out_dir, name))
+    ext = os.path.join(out_dir, name)
     if os.path.isdir(ext):
         shutil.rmtree(ext)
     with zipfile.ZipFile(zpath) as z:
         z.extractall(ext)
-    print(f"checks OK, wrote {os.path.relpath(zpath, REPO)} (+ extracted folder)")
+    print(f"checks OK, wrote {os.path.relpath(os.path.join(PKG, name, 'build', name + '.zip'), REPO)}"
+          " (+ extracted folder)")
 
 
 # ---------------------------------------------------------------------------
@@ -258,7 +259,7 @@ def check_and_write(name: str, files: dict[str, bytes], forbidden: list[str]) ->
 # ---------------------------------------------------------------------------
 
 ROW_WORKID = ("<row><cell id='Action'>Create</cell><cell id='Type'>xpath</cell>"
-              "<cell id='Value'>/*[local-name()=&apos;InboundResponse&apos;]/*[local-name()=&apos;WorkId&apos;]</cell>"
+              "<cell id='Value'>/InboundResponse/WorkId</cell>"
               "<cell id='Default'></cell><cell id='Name'>CH_SmarTeamWorkId</cell>"
               "<cell id='Datatype'>java.lang.String</cell></row>")
 LOGCH_TEMPLATE = "CallActivity_734029"   # "Set Custom Header" (UTIL_LogCustomHeaders) in every SmarTeam child
@@ -328,6 +329,16 @@ def finish(name: str, files: dict, xml: str, p, version: str, forbidden: list[st
     return name
 
 
+def read_folder_package(pkg_zip: str, folder: str) -> dict[str, bytes]:
+    """One iFlow from a package export whose iFlows are plain folders (<folder>/META-INF/…)."""
+    z = zipfile.ZipFile(os.path.join(SOURCE, pkg_zip))
+    pre = folder + "/"
+    files = {n[len(pre):]: z.read(n) for n in z.namelist() if n.startswith(pre) and not n.endswith("/")}
+    if not files:
+        raise FileNotFoundError(f"{folder} not in {pkg_zip}")
+    return files
+
+
 def replace_counted(text: str, pairs) -> str:
     for old, new, n in pairs:
         assert text.count(old) == n, f"{old!r}: found {text.count(old)}, expected {n}"
@@ -365,14 +376,64 @@ I2018 = "I2018_Material_MSAP_SmarTeam_JMSToHTTP"
 I2023 = "I2023_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_SmarTeam_JMSToHTTP"
 I2024 = "I2024_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_SmarTeam_JMSToHTTP"
 
+# XPaths without local-name() (user rule 2026-11-23: only when asked or when there is a logical reason).
+# Checked against Bhavesh's sample (I2050) and the mapping source XSD/WSDL of each flow.
+SMI = "Set Monitoring Identifiers"
+MBOM = "/BOMHeader/MaintBOMHeader_Type/"          # MaintBOMInput.xsd + sample 2026-11-23
+XBOM = "/MaterialBOM/MaterialBOMType/"            # MaterialBOM_Input.xsd
+PROD = "/*/ProductMDMReplicateRequestMessage/Product/"   # WSDL: root is namespaced, children are not -> /*
+XPATH_I2050 = [(SMI, "CH_BillOfMaterial", MBOM + "BillOfMaterial"),
+               (SMI, "CH_BillOfMaterialCategory", MBOM + "BillOfMaterialCategory"),
+               (SMI, "CH_BillOfMaterialVariant", MBOM + "BillOfMaterialVariant"),   # read BillOfMaterialCategory
+               (SMI, "CH_Plant", MBOM + "Plant"),
+               (SMI, "CH_TechnicalObject", MBOM + "TechnicalObject"),
+               (SMI, "SAP_ApplicationID", MBOM + "TechnicalObject")]
+XPATH_I2049 = [(SMI, "CH_BillOfMaterial", XBOM + "BillOfMaterial"),
+               (SMI, "CH_BillOfMaterialCategory", XBOM + "BillOfMaterialCategory"),
+               (SMI, "CH_BillOfMaterialVariant", XBOM + "BillOfMaterialVariant"),   # read …VariantUsage
+               (SMI, "CH_Plant", XBOM + "Plant"),
+               (SMI, "CH_Material", XBOM + "Material"),
+               (SMI, "SAP_ApplicationID", XBOM + "Material")]
+XPATH_I2018 = [(SMI, "CH_Material", PROD + "ProductInternalID"),
+               (SMI, "CH_MaterialType", PROD + "ProductTypeCode"),
+               (SMI, "SAP_ApplicationID", PROD + "ProductInternalID")]
+XPATH_I2018_P = [(SMI, "CH_Material", PROD + "ProductInternalID"),
+                 (SMI, "CH_MessageID", "/*/MessageHeader/ID")]
+
+
+def set_xpaths(xml: str, fixes) -> str:
+    """Replace the Value of xpath rows (by row Name) in a Content Modifier's property/header table."""
+    root = iflow_lib.parse(xml)
+    for step, name, new in fixes:
+        hits = 0
+        for owner in [e for e in root.iter(_q("bpmn2:callActivity")) if e.get("name") == step]:
+            for table in ("propertyTable", "headerTable"):
+                try:
+                    v = iflow_lib.get_prop(root, owner, table)
+                except KeyError:
+                    continue
+                for row in re.findall(r"<row>.*?</row>", v.text or ""):
+                    if f"<cell id='Name'>{name}</cell>" in row and "<cell id='Type'>xpath</cell>" in row:
+                        new_row = re.sub(r"<cell id='Value'>.*?</cell>",
+                                         lambda m: f"<cell id='Value'>{new}</cell>", row)
+                        v.text = v.text.replace(row, new_row)
+                        hits += 1
+        assert hits >= 1, f"{step}/{name}: no xpath row"
+        print(f"  xpath {name} = {new} ({hits} row{'s' if hits > 1 else ''})")
+    xml = iflow_lib.serialize(root)
+    assert "local-name()" not in xml, "local-name() left in the iflw"
+    return xml
+
+
 CHILDREN = {
     # name: source jar, old name, version, prefix, send step, error end, extra iflw edits, prop sets, OData lookup
-    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.4", prefix="I2050",
+    I2050_NEW: dict(src=I2050_OLD + ".jar", old=I2050_OLD, version="1.0.5", prefix="I2050",
                     send="I2050_ServiceTask_Send", error_end="EndEvent_734103",
-                    props={"SAP_MessageType": "MaintenanceBOM"}),
+                    props={"SAP_MessageType": "MaintenanceBOM"}, xpaths=XPATH_I2050),
     I2049_NEW: dict(src=I2049_OLD + ".jar", old=I2049_OLD, version="1.0.4", prefix="I2049",
-                    send="I2049_ServiceTask_Send", error_end="EndEvent_734103"),
-    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.1", prefix="I2018", send="ServiceTask_734107"),
+                    send="I2049_ServiceTask_Send", error_end="EndEvent_734103", xpaths=XPATH_I2049),
+    I2018: dict(src=I2018 + ".jar", old=I2018, version="1.1.1", prefix="I2018", send="ServiceTask_734107",
+                xpaths=XPATH_I2018),
     I2023: dict(src=I2023 + ".jar", old=I2023, version="1.1.1", prefix="I2023", send="ServiceTask_734125",
                 odata=("OData", "MSAP", "MSAP_Lookup")),
     I2024: dict(src=I2024 + ".jar", old=I2024, version="1.0.7", prefix="I2024", send="ServiceTask_734137",
@@ -396,6 +457,7 @@ def build_child(name: str) -> str:
         xml = error_end_to_message_end(xml, c["error_end"])
     xml = replace_counted(xml, c.get("edits", []))
     xml = add_workid_header(xml, c["prefix"], c["send"])
+    xml = set_xpaths(xml, c.get("xpaths", []))
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     for k, v in c.get("props", {}).items():
@@ -437,7 +499,7 @@ PARENTS = {
                   rd=[(f'"{I2049_OLD}"', f'"{I2049_NEW}"', 1)],
                   edits=[('name="Intial Properties"', 'name="Initial Properties"', 1)],
                   renames=S4_RENAMES, props={"S4_CSRFProtected": "false"}, odata=("OData", "S4", "MSAP_PO")),
-    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.17"),
+    I2018_P: dict(src=(PKG_CONTROLLING, I2018_P), version="1.0.17", xpaths=XPATH_I2018_P),
     I2023_P: dict(src=(PKG_CONTROLLING, I2023_P), version="1.0.7"),
     I2024_P: dict(src=(PKG_CONTROLLING, I2024_P), version="1.0.8", props={"SAP_MessageType": FLOC_MT}),
 }
@@ -456,6 +518,7 @@ def build_parent(name: str) -> str:
         files[rd] = replace_counted(files[rd].decode("utf-8"), c["rd"]).encode("utf-8")
     xml = [b for n, b in files.items() if n.endswith(".iflw")][0].decode("utf-8")
     xml = replace_counted(xml, c.get("edits", []))
+    xml = set_xpaths(xml, c.get("xpaths", []))
     p = iflow_lib.Params(files["src/main/resources/parameters.prop"].decode("utf-8"),
                          files["src/main/resources/parameters.propdef"].decode("utf-8"))
     remove_unused(xml, p)
