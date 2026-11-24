@@ -110,7 +110,9 @@ def build(mill: dict):
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    b.map(D, C(""))
+    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
+    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
+    b.map(D, F("createIf", is_mill))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))
     b.map(f"{D}/DIRECT", C("2"))
@@ -120,9 +122,9 @@ def build(mill: dict):
     b.map(f"{D}/STDVRS", C("93A"))
     b.map(f"{D}/STDMES", C("DESADV"))
     b.map(f"{D}/SNDPOR", F("getProperty", C("SNDPOR")))      # #3 OP-05 ('INOBIZ' today)
-    b.map(f"{D}/SNDPRT", F("ifWithoutElse", is_mill, C("LI"), keepss="false"))
-    b.map(f"{D}/SNDPFC", F("ifWithoutElse", is_mill, C("LF"), keepss="false"))
-    b.map(f"{D}/SNDPRN", F("ifWithoutElse", is_mill, C(mill["sndprn"]), keepss="false"))
+    b.map(f"{D}/SNDPRT", C("LI"))
+    b.map(f"{D}/SNDPFC", C("LF"))
+    b.map(f"{D}/SNDPRN", C(mill["sndprn"]))
     b.map(f"{D}/SNDLAD", S(f"{H}/Header/InterchangeSender"))
     b.map(f"{D}/RCVPOR", F("getProperty", C("RCVPOR")))
     b.map(f"{D}/RCVPRT", C("LS"))
@@ -134,10 +136,10 @@ def build(mill: dict):
     b.map(L20, C(""))
     b.map(f"{L20}/@SEGMENT", C("1"))
     b.map(f"{L20}/VBELN", order_no)
-    b.map(f"{L20}/E1ADRM1", C(""))
+    b.map(f"{L20}/E1ADRM1", F("createIf", is_mill))              # segment-level filter, fields constant
     b.map(f"{L20}/E1ADRM1/@SEGMENT", C("1"))
     b.map(f"{L20}/E1ADRM1/PARTNER_Q", C("LF"))
-    b.map(f"{L20}/E1ADRM1/PARTNER_ID", F("ifWithoutElse", is_mill, C(mill["vendor"]), keepss="false"))
+    b.map(f"{L20}/E1ADRM1/PARTNER_ID", C(mill["vendor"]))
     b.map(f"{L20}/E1EDT13", C(""))
     b.map(f"{L20}/E1EDT13/@SEGMENT", C("1"))
     b.map(f"{L20}/E1EDT13/QUALF", C("007"))
