@@ -24,3 +24,6 @@ See the Raahe spec (same questions, same build logic).
 | 2026-11-16 | E1EDK05 (#17) | Built as the spec says (Assumed), for both mills; constants as today | OP-06 stays open |
 | 2026-11-16 | VM-04 | Only the confirmed OY row | OP-08 |
 | 2026-11-16 | iFlow steps | None: mapping only (user) | — |
+
+- **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_mill), PARTN constant. (logic shared with INVOIC_RaaheTilkku-to-Tibnor)
+  - Kept as chains: E1EDK01 (is_380 with CURCY), E1EDK05 (sum condition), item qualified values, header values.
