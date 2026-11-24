@@ -56,3 +56,5 @@ Invoice 122683168: E1EDK05 created (165 and 260 present, one segment), RE NAME1 
   - Kept as chains: E1EDK01 (is_380 with CURCY), E1EDK05 (sum condition), item qualified values, header values.
 
 - **2026-11-24 (v1.0.2, L2, user Q2 a+b).** E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), MWSBT 1:1; E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38), BETRG 1:1. No segment when the amount type is missing (before: always).
+
+- **2026-11-24 v1.0.3 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40, E1EDKA1 (LF) and E1EDKA1[1] (RE) ← empty constant; the mill check `InterchangeSender = <mill GLN>` is removed, because the parent iFlow already routes by mill. `E1EDK04/MWSKZ ← Tax/@Type` 1:1: `removeContexts` → `SplitByValue` removed (the attribute already has one context per Tax).

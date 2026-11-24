@@ -54,3 +54,5 @@ PO 46540729: BELNR 46540729, E1EDK03 20261113, AG 0142700, WE empty, LF 0003000,
   - Kept as chains: E1EDKA1 AG/LF: PARTN is the ZTI PartyId inside the Party (own-value filter), so it stays a chain. Item values as in Metocs ORDRSP.
 
 - **2026-11-24 (v1.0.2, L2, user Q1).** E1EDKA1 (AG) ← createIf(Party/@Role [context OrderResponseMessage] = BY), E1EDKA1[2] (LF) ← createIf(… = SE); PARTN ← ifWithoutElse(PartyId/@Type [context Party] = ZTI, PartyId) within that Party (useOneAsMany removed). No E1EDKA1 AG/LF when the Party is missing (before: always, possibly empty).
+
+- **2026-11-24 v1.0.3 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40 ← empty constant; the mill check `InterchangeSender = <mill GLN>` is removed, because the parent iFlow already routes by mill.

@@ -1,6 +1,6 @@
 # IXXXX_DespatchAdvice_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc
 
-Child (package Tibnor_SSAB_EDIMigration) for not METOCS, InterchangeSender 00372389445741. The parent `IXXXX_P_DespatchAdvice_FinMessageHub_MQToJMS` puts the message on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps it with `Map_RaaheTilkkuHub_TibnorS4_DeliveryNotice_DESADV` (v1.0.1) to DESADV.DELVRY01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
+Child (package Tibnor_SSAB_EDIMigration) for not METOCS, InterchangeSender 00372389445741. The parent `IXXXX_P_DespatchAdvice_FinMessageHub_MQToJMS` puts the message on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps it with `Map_RaaheTilkkuHub_TibnorS4_DeliveryNotice_DESADV` (v1.0.2) to DESADV.DELVRY01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
 
 - Same shape as the ORDRSP children (templates: our ORDERS child, ProcessDirect receiver of I2052).
 - Build: `py -I tools/iflow_build_tibnor_inbound.py --flow DESADV --only RaaheTilkku`

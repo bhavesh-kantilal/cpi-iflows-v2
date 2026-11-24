@@ -99,7 +99,8 @@ FLOWS = {
             "RaaheTilkku": ("9_INVOIC_RaaheTilkku-to-Tibnor",
                             "Map_RaaheTilkkuHub_TibnorS4_Invoice_INVOIC", RAAHE)}),
 }
-VERSIONS = {"ORDRSP": "1.0.0", "DESADV": "1.0.0", "INVOIC": "1.0.0"}
+VERSIONS = {"ORDRSP": "1.0.0", "DESADV": "1.0.0", "INVOIC": "1.0.0"}             # parents
+CHILD_VERSIONS = {"ORDRSP": "1.0.1", "DESADV": "1.0.1", "INVOIC": "1.0.1"}       # children
 
 
 def parent_name(mt: str) -> str:
@@ -113,7 +114,7 @@ def child_name(mt: str, mill: str) -> str:
 VERSION = {}
 for _mt, _cfg in FLOWS.items():
     VERSION[parent_name(_mt)] = VERSIONS[_mt]
-    VERSION.update({child_name(_mt, m): VERSIONS[_mt] for m in _cfg["children"]})
+    VERSION.update({child_name(_mt, m): CHILD_VERSIONS[_mt] for m in _cfg["children"]})
 
 I2017 = "I2017_PurchaseOrder_SalesOrderBulkRequest_TILKKU_MSAP_IBMMQtoSOAP"
 I2052 = "I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc"

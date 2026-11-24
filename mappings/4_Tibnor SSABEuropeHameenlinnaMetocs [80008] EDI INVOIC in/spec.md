@@ -68,3 +68,5 @@ All header, tax, item and total values match, **except** ZEILE in 552-601893 (ME
 
 - **2026-11-24 E1EDK04 / E1EDP26 (v1.0.4, L2, user Q2 a+b).** Segment-level filter instead of a filtered value per field: E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38); the amount fields 1:1. Impact: no segment when the amount type is missing.
 - **2026-11-24 E1EDK01 BSART/FKART_RL/FKTYP (L2, user Q4).** Keep the field-level `DocumentType = 380` checks for now (CURCY in the same segment is always sent). To explain to the user later.
+
+- **2026-11-24 v1.0.5 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40, E1EDKA1 (LF) and E1EDKA1[1] (RE) ← empty constant; the mill check `startsWith(SourceSystem, 'METOCS')` is removed, because the parent iFlow already routes by mill. `E1EDK04/MWSKZ ← Tax/@Type` 1:1: `removeContexts` → `SplitByValue` removed (the attribute already has one context per Tax).

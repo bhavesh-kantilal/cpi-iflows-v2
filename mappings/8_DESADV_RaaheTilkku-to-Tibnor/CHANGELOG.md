@@ -1,5 +1,9 @@
 # CHANGELOG — Map_RaaheTilkkuHub_TibnorS4_DeliveryNotice_DESADV
 
+## 1.0.2 — 2026-11-24 20:30 CET
+- EDI_DC40 and E1EDL20/E1ADRM1 ← empty constant; the mill check `InterchangeSender = <mill GLN>` is removed, because the parent iFlow already routes by mill.
+- Only these targets changed (semantic diff). All build checks passed.
+
 ## 1.0.1 — 2026-11-24 15:10 CET
 - Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_mill), sender fields constants; E1ADRM1 ← createIf(is_mill), PARTNER_ID constant.
 - Kept as filtered chains (rule limits): Header values and the grouping chains of E1EDL24.

@@ -67,22 +67,21 @@ def build(mill: dict):
     T = "/INVOIC01/IDOC"
 
     # ---- header values ------------------------------------------------------------------------
-    is_mill = eq(S(f"{H}/Header/InterchangeSender"), mill["gln"])                       # VM-01
     is_380 = eq(S(f"{H}/Header/DocumentType"), "380")                                    # VM-03 (OP-04)
     currency = header(by_attr(f"{H}/Currency", "Type", "1", "CurrencyCode"))
     inv_date = header(by_attr(f"{H}/DocumentId/Date", "Type", "149", attr_context=f"{H}/DocumentId"))
     po_no = F("formatNumber", header(by_attr(f"{H}/Reference", "Type", "ON", "ReferenceIdentification")),
               nformat="0000000000", separator=".")                                      # #24: 10 digits
-    vendor = C(mill["vendor"])            # E1EDKA1 segments carry the mill check (segment-level filter)
+    vendor = C(mill["vendor"])            # E1EDKA1 LF / RE: constants
 
     # ---- control record EDI_DC40 (#1-7) --------------------------------------------------------
     b.map("/INVOIC01", C(""))
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
-    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
-    b.map(D, F("createIf", is_mill))
+    # EDI_DC40 from an empty constant, no condition (user 2026-11-24): the parent iFlow already routes
+    # by mill, so only this mill's messages reach this mapping. Sender fields stay constants.
+    b.map(D, C(""))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))
     b.map(f"{D}/DIRECT", C("2"))
@@ -110,11 +109,11 @@ def build(mill: dict):
     b.map(f"{T}/E1EDK01/FKART_RL", F("ifWithoutElse", is_380, C("LR"), keepss="false"))
     b.map(f"{T}/E1EDK01/FKTYP", F("ifWithoutElse", is_380, C("L"), keepss="false"))
 
-    b.map(f"{T}/E1EDKA1", F("createIf", is_mill))            # #12 LF = vendor
+    b.map(f"{T}/E1EDKA1", C(""))            # #12 LF = vendor
     b.map(f"{T}/E1EDKA1/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1/PARVW", C("LF"))
     b.map(f"{T}/E1EDKA1/PARTN", vendor)
-    b.map(f"{T}/E1EDKA1[1]", F("createIf", is_mill))         # #13 RE = same vendor
+    b.map(f"{T}/E1EDKA1[1]", C(""))         # #13 RE = same vendor
     b.map(f"{T}/E1EDKA1[1]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1[1]/PARVW", C("RE"))
     b.map(f"{T}/E1EDKA1[1]/PARTN", vendor)
@@ -146,7 +145,7 @@ def build(mill: dict):
     # exactly one MonetaryAmount, XSD); @Type lifted to the Invoice context, MWSBT 1:1
     b.map(f"{T}/E1EDK04", F("createIf", eq(S(f"{H}/Tax/MonetaryAmount/@Type", context=H), "176")))
     b.map(f"{T}/E1EDK04/@SEGMENT", C("1"))
-    b.map(f"{T}/E1EDK04/MWSKZ", each(S(f"{H}/Tax/@Type")))   # attribute: one context per Tax
+    b.map(f"{T}/E1EDK04/MWSKZ", S(f"{H}/Tax/@Type"))          # 1:1, one context per Tax (user 2026-11-24)
     b.map(f"{T}/E1EDK04/MSATZ", S(f"{H}/Tax/TaxRate"))        # #19 copy
     b.map(f"{T}/E1EDK04/MWSBT", S(f"{H}/Tax/MonetaryAmount/MonetaryValue"))
 

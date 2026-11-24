@@ -70,7 +70,6 @@ def build(mill: dict):
     T = "/DELVRY01/IDOC"
 
     # ---- header values ------------------------------------------------------------------------
-    is_mill = eq(S(f"{H}/Header/InterchangeSender"), mill["gln"])                       # VM-01
     order_no = b.udf("getBuyerOrderId", "getBuyerOrderId", F("removeContexts", by_key(
         f"{H}/Reference", "ReferenceType", "BuyersOrderId", "ReferenceId")))           # #8
     order_10 = F("formatNumber", order_no, nformat="0000000000", separator=".")       # #15, #21, #25
@@ -110,9 +109,9 @@ def build(mill: dict):
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
-    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
-    b.map(D, F("createIf", is_mill))
+    # EDI_DC40 from an empty constant, no condition (user 2026-11-24): the parent iFlow already routes
+    # by mill, so only this mill's messages reach this mapping. Sender fields stay constants.
+    b.map(D, C(""))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))
     b.map(f"{D}/DIRECT", C("2"))
@@ -136,7 +135,7 @@ def build(mill: dict):
     b.map(L20, C(""))
     b.map(f"{L20}/@SEGMENT", C("1"))
     b.map(f"{L20}/VBELN", order_no)
-    b.map(f"{L20}/E1ADRM1", F("createIf", is_mill))              # segment-level filter, fields constant
+    b.map(f"{L20}/E1ADRM1", C(""))              # fields constant (no mill check: the iFlow routes)
     b.map(f"{L20}/E1ADRM1/@SEGMENT", C("1"))
     b.map(f"{L20}/E1ADRM1/PARTNER_Q", C("LF"))
     b.map(f"{L20}/E1ADRM1/PARTNER_ID", C(mill["vendor"]))

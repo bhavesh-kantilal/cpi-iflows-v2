@@ -4,7 +4,7 @@ Bundle-Name: IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaMetocs_Tibnor
  S4_JMSToIDoc
 Bundle-SymbolicName: IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaMetoc
  s_TibnorS4_JMSToIDoc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

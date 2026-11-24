@@ -1,6 +1,6 @@
 # IXXXX_OrderResponse_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc
 
-Child (package Tibnor_SSAB_EDIMigration) for ApplicationId `TILKKURA`. The parent `IXXXX_P_OrderResponse_FinMessageHub_MQToJMS` puts the order response on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps the hub ORDRSP with `Map_RaaheTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP` (v1.0.2) to ORDERS01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
+Child (package Tibnor_SSAB_EDIMigration) for ApplicationId `TILKKURA`. The parent `IXXXX_P_OrderResponse_FinMessageHub_MQToJMS` puts the order response on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps the hub ORDRSP with `Map_RaaheTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP` (v1.0.3) to ORDERS01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
 
 - Templates:
   - flow shape: our ORDERS child `IXXXX_PurchaseOrder_…_JMSToMQ` (L3)

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: IXXXX_Invoice_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc
 Bundle-SymbolicName: IXXXX_Invoice_FinMessageHub_RaaheTilkku_TibnorS4_JM
  SToIDoc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.5 — 2026-11-24 20:30 CET
+- EDI_DC40, E1EDKA1 (LF) and E1EDKA1[1] (RE) ← empty constant; the mill check `startsWith(SourceSystem, 'METOCS')` is removed, because the parent iFlow already routes by mill. `E1EDK04/MWSKZ ← Tax/@Type` 1:1: `removeContexts` → `SplitByValue` removed (the attribute already has one context per Tax).
+- Only these targets changed (semantic diff). All build checks passed.
+
 ## 1.0.4 — 2026-11-24 16:20 CET
 - Segment-level filters (user 2026-11-24, Q2):
   - `E1EDK04` ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176); MWSBT ← Tax/MonetaryAmount/MonetaryValue 1:1 (a Tax has exactly one MonetaryAmount). A Tax without a 176 amount gives no E1EDK04 (before: one per Tax).

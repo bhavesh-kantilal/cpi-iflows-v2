@@ -68,3 +68,5 @@ A Python model of exactly these rules reproduces all **11 E1EDL24 of the 5 expec
 
 - **2026-11-24 Segment-level filters (v1.0.2, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_metocs), sender fields constants; E1ADRM1 ← createIf(is_metocs), PARTNER_ID constant.
   - Kept as chains: PO number / cargo id header values (used in several segments), the groupByHeat UDF chain for E1EDL24.
+
+- **2026-11-24 v1.0.3 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40 and E1EDL20/E1ADRM1 ← empty constant; the mill check `startsWith(SourceSystem, 'METOCS')` is removed, because the parent iFlow already routes by mill.

@@ -57,3 +57,5 @@ All 7 Tilkku sets (4 Raahe, 3 Hämeenlinna Tilkku): E1EDL24 count, POSNR, LFIMG 
 
 - **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1ADRM1 ← createIf(is_mill), PARTNER_ID constant.
   - Kept as chains: Header values and the grouping chains of E1EDL24.
+
+- **2026-11-24 v1.0.2 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40 and E1EDL20/E1ADRM1 ← empty constant; the mill check `InterchangeSender = <mill GLN>` is removed, because the parent iFlow already routes by mill.

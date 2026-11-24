@@ -54,7 +54,6 @@ SP = f"{LN}/SinglePart"
 T = "/DELVRY01/IDOC"
 
 # ---- header values ------------------------------------------------------------------------
-is_metocs = F("startWith2", S(f"{H}/SourceSystem"), C("METOCS"))                          # VM-01
 po_no = F("removeContexts", by_key(f"{H}/Reference", "ReferenceType", "BuyersOrderId", "ReferenceId"))
 cargo_id = F("removeContexts", by_key(f"{H}/Reference", "ReferenceType", "CargoId", "ReferenceId"))
 desp_date = F("TransformDate", S(f"{H}/DespatchDate"), iform="yyyy-MM-dd", oform="yyyyMMdd", calend=CALEND)
@@ -97,9 +96,9 @@ b.map("/DELVRY01", C(""))
 b.map(T, C(""))
 b.map(f"{T}/@BEGIN", C("1"))
 D = f"{T}/EDI_DC40"
-# segment-level filter (CLAUDE.md, user 2026-11-24): the Metocs check sits on the segment, the sender
-# fields are constants. A non-Metocs message gets no control record (it could not be posted anyway).
-b.map(D, F("createIf", is_metocs))
+# EDI_DC40 from an empty constant, no condition (user 2026-11-24): the parent iFlow already routes
+# by mill, so only this mill's messages reach this mapping. Sender fields stay constants.
+b.map(D, C(""))
 b.map(f"{D}/@SEGMENT", C("1"))
 b.map(f"{D}/TABNAM", C("EDI_DC40"))
 b.map(f"{D}/DIRECT", C("2"))
@@ -123,7 +122,7 @@ L20 = f"{T}/E1EDL20"
 b.map(L20, C(""))
 b.map(f"{L20}/@SEGMENT", C("1"))
 b.map(f"{L20}/VBELN", cargo_id)
-b.map(f"{L20}/E1ADRM1", F("createIf", is_metocs))              # segment-level filter, fields constant
+b.map(f"{L20}/E1ADRM1", C(""))              # fields constant (no mill check: the iFlow routes)
 b.map(f"{L20}/E1ADRM1/@SEGMENT", C("1"))
 b.map(f"{L20}/E1ADRM1/PARTNER_Q", C("LF"))
 b.map(f"{L20}/E1ADRM1/PARTNER_ID", C("80008"))

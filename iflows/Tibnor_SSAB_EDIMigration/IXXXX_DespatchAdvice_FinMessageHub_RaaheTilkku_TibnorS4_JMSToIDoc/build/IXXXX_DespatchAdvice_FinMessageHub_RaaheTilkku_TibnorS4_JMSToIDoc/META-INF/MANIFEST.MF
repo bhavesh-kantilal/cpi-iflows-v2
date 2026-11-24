@@ -4,7 +4,7 @@ Bundle-Name: IXXXX_DespatchAdvice_FinMessageHub_RaaheTilkku_TibnorS4_JMS
  ToIDoc
 Bundle-SymbolicName: IXXXX_DespatchAdvice_FinMessageHub_RaaheTilkku_Tibn
  orS4_JMSToIDoc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

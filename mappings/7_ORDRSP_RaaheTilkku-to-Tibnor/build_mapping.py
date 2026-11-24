@@ -83,16 +83,15 @@ def build(mill: dict):
     # #8: Date/@Type compared with its own element's value -> context DocumentId (FORMAT_NOTES §3.6)
     doc_date = each(F("ifWithoutElse", eq(S(f"{M}/DocumentId/Date/@Type", f"{M}/DocumentId"), "137"),
                       S(f"{M}/DocumentId/Date"), keepss="false"))
-    is_mill = eq(S(f"{M}/Header/InterchangeSender"), mill["gln"])        # VM-01
 
     # ---- control record EDI_DC40 (#1-6) ---------------------------------------------------------
     b.map("/ORDERS01", C(""))
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
-    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
-    b.map(D, F("createIf", is_mill))
+    # EDI_DC40 from an empty constant, no condition (user 2026-11-24): the parent iFlow already routes
+    # by mill, so only this mill's messages reach this mapping. Sender fields stay constants.
+    b.map(D, C(""))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))                       # mandatory, as reference CLFMAS02
     b.map(f"{D}/DIRECT", C("2"))                              # inbound, as reference CLFMAS02

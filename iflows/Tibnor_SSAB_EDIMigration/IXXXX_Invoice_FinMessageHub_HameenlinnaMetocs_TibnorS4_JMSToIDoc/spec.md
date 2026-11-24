@@ -1,6 +1,6 @@
 # IXXXX_Invoice_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMSToIDoc
 
-Child (package Tibnor_SSAB_EDIMigration) for SourceSystem METOCS*. The parent `IXXXX_P_Invoice_FinMessageHub_MQToJMS` puts the message on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps it with `Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC` (v1.0.4) to INVOIC.INVOIC01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
+Child (package Tibnor_SSAB_EDIMigration) for SourceSystem METOCS*. The parent `IXXXX_P_Invoice_FinMessageHub_MQToJMS` puts the message on `IXXXX_TibnorS4`; the dispatcher calls this flow over ProcessDirect `/<iFlow name>`. The flow maps it with `Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC` (v1.0.5) to INVOIC.INVOIC01 and sends it over ProcessDirect to the shared IDoc flow `T0143_P_IDocReceiver_TibnorS4_PDToIDoc`.
 
 - Same shape as the ORDRSP children (templates: our ORDERS child, ProcessDirect receiver of I2052).
 - Build: `py -I tools/iflow_build_tibnor_inbound.py --flow INVOIC --only HameenlinnaMetocs`

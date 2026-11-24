@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.3 — 2026-11-24 20:30 CET
+- EDI_DC40 ← empty constant; the mill check `InterchangeSender = <mill GLN>` (shared build() of the Raahe mapping) is removed, because the parent iFlow already routes by mill.
+- Only these targets changed (semantic diff). All build checks passed.
+
 ## 1.0.2 — 2026-11-24 16:40 CET
 - Segment-level filters (user 2026-11-24, Q1): E1EDKA1 (AG) ← createIf(Party/@Role [context OrderResponseMessage] = BY), E1EDKA1[2] (LF) ← createIf(… = SE); PARTN ← ifWithoutElse(PartyId/@Type [context Party] = ZTI, PartyId) within that Party (useOneAsMany removed). No E1EDKA1 AG/LF when the Party is missing (before: always, possibly empty).
 - All checks passed. Semantic diff: only these 4 targets changed. Not tested in CPI.

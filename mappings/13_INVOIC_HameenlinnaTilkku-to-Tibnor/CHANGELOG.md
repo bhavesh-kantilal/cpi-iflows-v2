@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaTilkkuHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.3 — 2026-11-24 20:30 CET
+- EDI_DC40, E1EDKA1 (LF) and E1EDKA1[1] (RE) ← empty constant; the mill check `InterchangeSender = <mill GLN>` (shared build() of the Raahe mapping) is removed, because the parent iFlow already routes by mill. `E1EDK04/MWSKZ ← Tax/@Type` 1:1: `removeContexts` → `SplitByValue` removed (the attribute already has one context per Tax).
+- Only these targets changed (semantic diff). All build checks passed.
+
 ## 1.0.2 — 2026-11-24 16:40 CET
 - Segment-level filters (user 2026-11-24, Q2 a+b): E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), MWSBT 1:1; E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38), BETRG 1:1. No segment when the amount type is missing (before: always).
 - All checks passed. Semantic diff: only these 4 targets changed. Not tested in CPI.

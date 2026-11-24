@@ -127,6 +127,8 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 | # | Proposal | Where | Why | Status |
 |---|---|---|---|---|
 | A6.1 | `EDI_DC40` ← empty constant, no `createIf`; the sender fields stay constants | CLAUDE.md conventions | User's test of `Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP` v1.0.8: "EDI_DC40 does not need a condition… blank constant for it for future" | OK (user statement, applied 2026-11-24; mappings change at their next version) |
+| A6.2 | No mill / sender check in a mapping when the parent iFlow routes on it (EDI_DC40, E1EDKA1, E1ADRM1 ← empty constant) | CLAUDE.md conventions | User's test of `Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC` v1.0.4 | OK (user statement, applied 2026-11-24 to all 9 Tibnor inbound mappings) |
+| A6.3 | Attribute of the repeating source element (`Tax/@Type`) under a segment created per element: straight map, no `removeContexts` → `SplitByValue` | CLAUDE.md conventions | Same test, `E1EDK04/MWSKZ` | OK (user statement, applied 2026-11-24) |
 
 ## D. Other actions taken
 | # | Action | Status |

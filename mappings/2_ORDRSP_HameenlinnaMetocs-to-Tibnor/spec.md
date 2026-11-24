@@ -144,3 +144,5 @@ What was wrong, in plain words:
 - **2026-11-15 Rule R4 applied (user: "Docs + R4 fix only"):** no `mapWithDefault` around an attribute that has a `context=` setting (AddArticleNo/@Type → IDTNR). See CHANGELOG.
 
 - **2026-11-24 User test (L2): mapping OK.** Only feedback: `EDI_DC40` needs no condition; it should come from an empty constant (kept for future use). **Not changed now** (user: "Need not change anything now"). Apply at the next version of this mapping and the other EDI mappings. CLAUDE.md rule updated.
+
+- **2026-11-24 v1.0.9 (L2, user's test of the Metocs INVOIC: "overkill… this check has been done already"; applied to all mappings, user: "Yes, all mappings").** EDI_DC40 ← empty constant; the mill check `startsWith(ApplicationId, 'METOCS')` is removed, because the parent iFlow already routes by mill.

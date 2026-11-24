@@ -4,7 +4,7 @@ Bundle-Name: IXXXX_Invoice_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMST
  oIDoc
 Bundle-SymbolicName: IXXXX_Invoice_FinMessageHub_HameenlinnaMetocs_Tibno
  rS4_JMSToIDoc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

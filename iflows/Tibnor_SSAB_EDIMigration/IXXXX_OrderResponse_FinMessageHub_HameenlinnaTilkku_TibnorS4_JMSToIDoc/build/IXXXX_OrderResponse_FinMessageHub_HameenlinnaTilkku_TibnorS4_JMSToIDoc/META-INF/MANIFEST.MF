@@ -4,7 +4,7 @@ Bundle-Name: IXXXX_OrderResponse_FinMessageHub_HameenlinnaTilkku_TibnorS
  4_JMSToIDoc
 Bundle-SymbolicName: IXXXX_OrderResponse_FinMessageHub_HameenlinnaTilkku
  _TibnorS4_JMSToIDoc
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap

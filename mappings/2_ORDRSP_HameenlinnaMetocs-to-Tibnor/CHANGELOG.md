@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.9 — 2026-11-24 20:30 CET
+- EDI_DC40 ← empty constant; the mill check `startsWith(ApplicationId, 'METOCS')` is removed, because the parent iFlow already routes by mill.
+- Only these targets changed (semantic diff). All build checks passed.
+
 ## 1.0.8 — 2026-11-24 16:05 CET
 - E1EDK03 and E1EDK03/DATUM from one filtered chain: `SplitByValue(removeContexts(ifWithoutElse(Date/@Type [context DocumentId] = 137, Date)))`. This replaces createIf on the segment plus ifWithoutElse on DATUM (user 2026-11-24, Q3; same as the Tilkku ORDRSP and E1EDP03). **Review in detail when testing** (user request).
 - All checks passed. Semantic diff: only these 2 targets changed.
