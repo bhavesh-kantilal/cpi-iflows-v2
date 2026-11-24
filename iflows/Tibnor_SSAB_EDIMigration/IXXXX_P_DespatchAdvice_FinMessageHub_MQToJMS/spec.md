@@ -30,7 +30,7 @@ As the ORDRSP parent (IBM MQ sender; `IBMMQ_QueueName` / `IBMMQ_DLQueueName` emp
 | 2026-11-24 | Routing (L2, user's PO conditions) | No `ApplicationId` in this message. PO: `/p1:DeliveryBatch[starts-with(p1:SourceSystem,'METOCS')]` → 96A (Metocs), `not(...)` → 93A (Tilkku); receiver `Header/InterchangeRecipient` = one of the 4 GLNs | Receiver determination below |
 | 2026-11-24 | Split of Tilkku (L2, user) | PO had one Tilkku mapping, we have two: split by `InterchangeSender` (Raahe 00372389445741, Hämeenlinna 00372389445751), the GLN the Tilkku mappings check | A Tilkku message with another GLN → no receiver → Error End |
 | 2026-11-24 | Recipient check (L2, user) | Yes: only recipient GLNs 7340195700006, 7080003309006, 5790002585623, 003723894430 | Externalized `FinMessageHub_AllowedRecipients` (comma list) |
-| 2026-11-24 | Namespaces | iFlow Namespace Mapping `xmlns:p1=http://www.ruukki.com/schemas/eai/rucomef/otc` (**UNVERIFIED**, as ORDRSP) | |
+| 2026-11-24 | Namespaces | iFlow Namespace Mapping `xmlns:p1=http://www.ruukki.com/schemas/eai/rucomef/otc` (**verified** (L2, user 2026-11-24: the Namespace Mapping works in CPI)) | |
 
 ## Call-outs
 - **Bhavesh, I extended `ReceiverDetermination.groovy` because** the receiver depends on three values (recipient list, SourceSystem prefix, mill GLN).

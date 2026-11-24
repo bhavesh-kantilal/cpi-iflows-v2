@@ -52,8 +52,8 @@ RECIPIENTS = "7340195700006,7080003309006,5790002585623,003723894430"
 METOCS = 'sourceSystem.startsWith("METOCS")'
 RAAHE, HAMEENLINNA = 'sender == "00372389445741"', 'sender == "00372389445751"'
 
-# ns: iFlow Namespace Mapping xmlns:p1=<ns> (Runtime Configuration). UNVERIFIED: the field exists in every
-# template, no reference has it filled. Prefix p1 as in the user's PO conditions.
+# ns: iFlow Namespace Mapping xmlns:p1=<ns> (Runtime Configuration). Works in CPI (L2, user 2026-11-24).
+# Prefix p1 as in the user's PO conditions.
 # rows: XPath properties in both parent and child (logged as custom headers); route_rows: parent only.
 FLOWS = {
     "ORDRSP": dict(
