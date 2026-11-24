@@ -54,3 +54,5 @@ Invoice 122683168: E1EDK05 created (165 and 260 present, one segment), RE NAME1 
 
 - **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_mill), PARTN constant.
   - Kept as chains: E1EDK01 (is_380 with CURCY), E1EDK05 (sum condition), item qualified values, header values.
+
+- **2026-11-24 (v1.0.2, L2, user Q2 a+b).** E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), MWSBT 1:1; E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38), BETRG 1:1. No segment when the amount type is missing (before: always).

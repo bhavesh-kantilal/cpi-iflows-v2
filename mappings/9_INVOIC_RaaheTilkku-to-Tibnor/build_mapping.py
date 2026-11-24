@@ -142,11 +142,13 @@ def build(mill: dict):
     b.map(f"{T}/E1EDK05/BETRG", C("0.00"))
     b.map(f"{T}/E1EDK05/UPRBS", C("SEK"))
 
-    b.map(f"{T}/E1EDK04", S(f"{H}/Tax"))                      # #18-20 one E1EDK04 per Tax
+    # #18-20 segment-level filter (user 2026-11-24, Q2b): one E1EDK04 per Tax whose amount is type 176 (a Tax has
+    # exactly one MonetaryAmount, XSD); @Type lifted to the Invoice context, MWSBT 1:1
+    b.map(f"{T}/E1EDK04", F("createIf", eq(S(f"{H}/Tax/MonetaryAmount/@Type", context=H), "176")))
     b.map(f"{T}/E1EDK04/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDK04/MWSKZ", each(S(f"{H}/Tax/@Type")))   # attribute: one context per Tax
     b.map(f"{T}/E1EDK04/MSATZ", S(f"{H}/Tax/TaxRate"))        # #19 copy
-    b.map(f"{T}/E1EDK04/MWSBT", each(by_attr(f"{H}/Tax/MonetaryAmount", "Type", "176", "MonetaryValue")))
+    b.map(f"{T}/E1EDK04/MWSBT", S(f"{H}/Tax/MonetaryAmount/MonetaryValue"))
 
     # ---- items (#21-28) ---------------------------------------------------------------------------
     art_in = each(by_attr(f"{IT}/ArticleNo", "Type", "IN", attr_context=IT))
@@ -170,10 +172,11 @@ def build(mill: dict):
     b.map(f"{P}/E1EDP19/@SEGMENT", C("1"))
     b.map(f"{P}/E1EDP19/QUALF", C("001"))
     b.map(f"{P}/E1EDP19/IDTNR", art_in)
-    b.map(f"{P}/E1EDP26", C(""))                              # #28
+    # #28 segment-level filter (user 2026-11-24, Q2a): one E1EDP26 per item amount of type 38; BETRG 1:1
+    b.map(f"{P}/E1EDP26", F("createIf", eq(S(f"{IT}/MonetaryAmount/@Type", context=IT), "38")))
     b.map(f"{P}/E1EDP26/@SEGMENT", C("1"))
     b.map(f"{P}/E1EDP26/QUALF", C("003"))
-    b.map(f"{P}/E1EDP26/BETRG", each(by_attr(f"{IT}/MonetaryAmount", "Type", "38", "MonetaryValue")))
+    b.map(f"{P}/E1EDP26/BETRG", S(f"{IT}/MonetaryAmount/MonetaryValue"))
 
     # ---- totals (#29-30) ---------------------------------------------------------------------------
     b.map(f"{T}/E1EDS01", C(""))
