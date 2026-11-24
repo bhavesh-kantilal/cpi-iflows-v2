@@ -74,3 +74,6 @@ E1CUCFG/E1CUVAL sit **beside** the items at IDOC level and point to their item b
 | 2026-11-16 | Environment suffix PRD/TST (#7–8) | Same as Metocs ORDERS Q3: exchange property `HubEnvironment` (my default, stated to the user) | iFlow / simulator must set the property |
 | 2026-11-16 | Values as sent | Today's output keeps leading spaces of VALUE_TXT; the UDF does not trim | like-for-like |
 | 2026-11-16 | Not well-formed sample originals | Escaped only in the `_utf8` copies | Originals unchanged |
+
+- **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** Party BY/MF/CN ← createIf(E1EDKA1/PARVW [context IDOC] = AG/LF/WE), fields 1:1 from that E1EDKA1; TermsOfDelivery ← createIf(E1EDK17/QUALF [context IDOC] = 001), LKOND/LKTEXT 1:1. Change: a Party is now created only when its partner segment exists (before: always); TermsOfDelivery for every QUALF 001 segment (before: only when LKOND had a value).
+  - Kept as chains: Header InterchangeSender/Recipient/MessageRoutingOutbound (header fields from the AG/LF partner), the ship-to copied onto every item (CopyValue of header values), DocumentId/Date (E1EDK03 IDDAT 012), the item characteristics (itemCharacteristic UDF) and ArticleNo.

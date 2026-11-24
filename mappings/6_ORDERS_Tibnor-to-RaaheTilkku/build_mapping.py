@@ -55,10 +55,6 @@ def build(mill: dict):
     def has(v):
         return F("not", eq(v, ""))
 
-    def nonempty(v):
-        """Pass v on only when it is not empty, so no empty target element is created."""
-        return F("ifWithoutElse", has(v), v, keepss="false")
-
     def partner(parvw, field, default=""):
         """Field of the E1EDKA1 with PARVW = parvw (as Metocs ORDERS)."""
         return F("removeContexts",
@@ -69,6 +65,14 @@ def build(mill: dict):
         return F("removeContexts",
                  F("ifWithoutElse", eq(S(f"{I}/{seg}/{qkey}"), qval),
                    F("mapWithDefault", S(f"{I}/{seg}/{field}"), default_value=""), keepss="false"))
+
+    def party_if(parvw):
+        """Segment-level filter (CLAUDE.md, user 2026-11-24): one PARVW value per E1EDKA1 in the IDOC context."""
+        return F("createIf", eq(S(f"{I}/E1EDKA1/PARVW", context=I), parvw))
+
+    def ka(field, default=""):
+        """E1EDKA1 field, 1:1 under a party_if segment."""
+        return F("mapWithDefault", S(f"{I}/E1EDKA1/{field}"), default_value=default)
 
     def table(inp, rows):
         return b.table("FixValues", inp, rows, default="", strategy="1")      # Use Default Value, empty
@@ -129,24 +133,24 @@ def build(mill: dict):
     b.map(f"{T}/Date/@Format", C("102"))
 
     # ---- Party BY = Party (#13-17) ---------------------------------------------------------------
+    # segment-level filter: Party ← createIf(PARVW = AG), fields 1:1 from that E1EDKA1 (user 2026-11-24)
     P = f"{T}/Party"
-    bname = partner("AG", "BNAME")
-    b.map(P, C(""))
+    b.map(P, party_if("AG"))
     b.map(f"{P}/@Role", C("BY"))
-    b.map(f"{P}/PartyId", table(ag_partn, VM04_BUYER))
+    b.map(f"{P}/PartyId", table(ka("PARTN"), VM04_BUYER))
     b.map(f"{P}/PartyId/@Type", C("ZZZ"))
-    b.map(f"{P}/PartyName1", partner("AG", "NAME1"))
-    b.map(f"{P}/Contact", F("createIf", has(bname)))         # container only when there is a contact
+    b.map(f"{P}/PartyName1", ka("NAME1"))
+    b.map(f"{P}/Contact", F("createIf", has(ka("BNAME"))))   # container only when there is a contact
     b.map(f"{P}/Contact/@Type", C("EB"))
-    b.map(f"{P}/Contact/ContactName", F("trim", bname))        # straight under createIf
-    b.map(f"{P}/Contact/CommId", nonempty(partner("AG", "TELF1")))    # #17 copy as it is
+    b.map(f"{P}/Contact/ContactName", F("trim", ka("BNAME")))
+    b.map(f"{P}/Contact/CommId", S(f"{I}/E1EDKA1/TELF1"))      # #17 copy as it is; none when missing
     b.map(f"{P}/Contact/CommId/@Type", C("TE"))
 
     # ---- Party MF = Party[1] (#18-19) ------------------------------------------------------------
     P = f"{T}/Party[1]"
-    b.map(P, C(""))
+    b.map(P, party_if("LF"))
     b.map(f"{P}/@Role", C("MF"))
-    b.map(f"{P}/PartyId", no_zeros(lf_partn))
+    b.map(f"{P}/PartyId", no_zeros(ka("PARTN")))
     b.map(f"{P}/PartyId/@Type", C("ZZZ"))
 
     # ---- Party CN = Party[2] (#20-25) ------------------------------------------------------------
@@ -157,22 +161,27 @@ def build(mill: dict):
     cn_city = F("concat",
                 F("substring", F("concat", partner("WE", "PSTLZ"), C("        "), delimeter=""), start="0", count="8"),
                 F("toUpperCase", partner("WE", "ORT01")), delimeter="")
+    # Party[2] at segment level, fields 1:1 from the WE E1EDKA1. The chains above stay for the
+    # ship-to copied onto every item (#61-64, header values with CopyValue).
     P = f"{T}/Party[2]"
-    b.map(P, C(""))
+    b.map(P, party_if("WE"))
     b.map(f"{P}/@Role", C("CN"))
-    b.map(f"{P}/PartyId", cn_id)
+    b.map(f"{P}/PartyId", no_zeros(ka("PARNR", default="0")))
     b.map(f"{P}/PartyId/@Type", C("ZZZ"))
-    b.map(f"{P}/PartyName1", cn_name)
-    b.map(f"{P}/AddressLine1", cn_street)
-    b.map(f"{P}/AddressLine2", nonempty(partner("WE", "PFACH")))                          # #24 left out when empty
-    b.map(f"{P}/AddressLine3", cn_city)
+    b.map(f"{P}/PartyName1", ka("NAME1"))
+    b.map(f"{P}/AddressLine1", ka("STRAS"))
+    b.map(f"{P}/AddressLine2", S(f"{I}/E1EDKA1/PFACH"))                                    # #24 none when missing
+    b.map(f"{P}/AddressLine3", F("concat",
+                                 F("substring", F("concat", ka("PSTLZ"), C("        "), delimeter=""), start="0", count="8"),
+                                 F("toUpperCase", ka("ORT01")), delimeter=""))
 
     # ---- Commercial terms (#26-28) ---------------------------------------------------------------
     b.map(f"{T}/Currency", S(f"{I}/E1EDK01/CURCY"))
     b.map(f"{T}/Currency/@Type", C("5"))
-    lkond = header_qualified("E1EDK17", "QUALF", "001", "LKOND")
-    lktext = header_qualified("E1EDK17", "QUALF", "001", "LKTEXT")
-    b.map(f"{T}/TermsOfDelivery", F("createIf", has(lkond)))
+    # segment-level filter: QUALF 001 in the IDOC context, fields 1:1 from the same E1EDK17
+    lkond = F("mapWithDefault", S(f"{I}/E1EDK17/LKOND"), default_value="")
+    lktext = F("mapWithDefault", S(f"{I}/E1EDK17/LKTEXT"), default_value="")
+    b.map(f"{T}/TermsOfDelivery", F("createIf", eq(S(f"{I}/E1EDK17/QUALF", context=I), "001")))
     b.map(f"{T}/TermsOfDelivery/@Type", C("6"))
     b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond)
     b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode/@CodeSet", C("Z2K"))
