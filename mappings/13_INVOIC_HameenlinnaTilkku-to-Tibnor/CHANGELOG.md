@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaTilkkuHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.2 — 2026-11-24 16:40 CET
+- Segment-level filters (user 2026-11-24, Q2 a+b): E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), MWSBT 1:1; E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38), BETRG 1:1. No segment when the amount type is missing (before: always).
+- All checks passed. Semantic diff: only these 4 targets changed. Not tested in CPI.
+
 ## 1.0.1 — 2026-11-24 15:10 CET
 - Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_mill), PARTN constant. (logic shared with INVOIC_RaaheTilkku-to-Tibnor)
 - Kept as filtered chains (rule limits): E1EDK01 (is_380 with CURCY), E1EDK05 (sum condition), item qualified values, header values.
