@@ -50,7 +50,7 @@ RECEIVER = "FinMessageHub_HameenlinnaMetocs"   # SAP_Receiver, child only (user,
 MQ_SYSTEM = "FinMessageHub"              # receiver participant: plain system name
 MESSAGE_TYPE = "ORDERS.ORDERS02"
 MAPPING = "Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02"
-VERSION = {PARENT: "1.0.1", CHILD: "1.0.0"}
+VERSION = {PARENT: "1.0.1", CHILD: "1.0.1"}
 
 I2023_P = "I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS"
 I2018 = "I2018_Material_MSAP_SmarTeam_JMSToHTTP"

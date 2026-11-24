@@ -4,7 +4,7 @@ Bundle-Name: IXXXX_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_FinMessageHub_
  HameenlinnaMetocs_JMSToMQ
 Bundle-SymbolicName: IXXXX_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_FinMes
  sageHub_HameenlinnaMetocs_JMSToMQ
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
