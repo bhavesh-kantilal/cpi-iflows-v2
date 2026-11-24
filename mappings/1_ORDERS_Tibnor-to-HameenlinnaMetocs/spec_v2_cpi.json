@@ -1,0 +1,27 @@
+{
+  "sheet": "Mapping",
+  "key_col": 1,
+  "rule_col": 5,
+  "header_row": 1,
+  "version": "Draft v2 · 24 Nov 2026 · Status: CPI mapping v1.2.0 differs from the spec on the orange rows",
+  "overview_note": "v2: column H 'Current CPI mapping' shows what CPI mapping Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02 v1.2.0 does where it differs from this spec (orange). The partner rules of the spec are under review; for now the CPI mapping is kept simple (hardcoded or copied values). Each Party is created only when its IDoc partner (LF / AG / WE) exists.",
+  "rows": {
+    "14": "Copy E1EDKA1[AG]-PARTN (no MDM / VM-02 lookup)",
+    "15": "Copy E1EDKA1[AG]-PARTN (no VM-04)",
+    "16": "Copy E1EDKA1[AG]-NAME1 (IDoc name, spec says do not copy)",
+    "17": "Value table on AG-PARTN: 0500 → 'Niinistönkatu 7', 0010 → 'Norsavägen 38', 0310 → 'Professor Birkelandsvei 21'; other values passed through. Tibnor OY: fixed address, not the ship-to; Tibnor AB: 'Norsavägen 38' (spec: 'Sjöhagsvägen 2')",
+    "18": "Value table on AG-PARTN: 0010 → '909', 0310 → '140', 0500 → '' (empty element for Tibnor OY instead of leaving it out)",
+    "19": "Value table on AG-PARTN: 0500 → 'HYVINKÄÄ', 0010 → 'Köping', 0310 → 'OSLO' (Tibnor OY: fixed, not the ship-to city)",
+    "20": "Value table on AG-PARTN: 0500 → '05800', 0010 → '73129', 0310 → '1081' (Tibnor OY: fixed, not the ship-to postal code)",
+    "24": "Copy E1EDKA1[LF]-PARTN (no MDM lookup, no fallback 0003092)",
+    "25": "Copy E1EDKA1[LF]-PARTN (no VM-01 → GLN)",
+    "26": "Hardcoded 'METFORM'",
+    "27": "Hardcoded 'METFORM HÄMEENLINNA'",
+    "28": "Hardcoded 'HARVIALANTIE 420' (BA partner not read)",
+    "29": "Hardcoded 'HÄMEENLINNA'",
+    "30": "Hardcoded '13300'",
+    "31": "Hardcoded 'FI'",
+    "32": "Copy E1EDKA1[WE]-PARTN (no MDM lookup)",
+    "33": "Copy E1EDKA1[WE]-LIFNR without the Tibnor prefix; also sent for Tibnor OY"
+  }
+}

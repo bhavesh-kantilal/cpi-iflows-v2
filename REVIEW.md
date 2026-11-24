@@ -118,6 +118,11 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 - `iflow_lib.Params.keys()` now undoes java.util.Properties escapes (`Body\ Size` → `Body Size`), and `remove()` matches escaped keys. Before, parameters with spaces were reported as unused although `{{Body Size}}` used them (I2050_P). The FSAP checks still pass.
 - Folder layout per CPI package (`iflows/<Package>/source/` + `iflows/<Package>/<IFlowName>/`), with `iflowdevelopment/` as the single drop folder. CLAUDE.md is updated (user choice, 2026-11-23).
 
+## A5. Segment-level filter (ORDERS v1.2.0 feedback, 2026-11-24)
+| # | Lesson | Where | Evidence | Status |
+|---|---|---|---|---|
+| S16 | **Filter at segment level, map the fields 1:1**: `createIf(qualifier [context = parent of the source segment] = X)` on the target segment; its fields are straight maps of the same source segment. SUPPRESS skips the children's contexts. A filtered chain only where the value is the element itself or a field mixes segments | CLAUDE.md + FORMAT_NOTES §3.5 (applied) | L2 (user's CPI mapping `… (1).zip`, Party SE/BY/CN; explanation confirmed in chat 2026-11-24) | OK (approved with the plan, 2026-11-24) |
+
 ## D. Other actions taken
 | # | Action | Status |
 |---|---|---|
