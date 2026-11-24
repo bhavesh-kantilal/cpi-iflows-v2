@@ -62,14 +62,15 @@ def build(mill: dict):
         key = attr if attr_context else F("mapWithDefault", attr, default_value="")
         return F("ifWithoutElse", eq(key, value), F("mapWithDefault", val, default_value=""), keepss="false")
 
-    def party_zti(role):
-        """Party[@Role=role]/PartyId[@Type='ZTI'] (#9, #11). A Party has several PartyIds:
-        PartyId sits in the Party context (default); PartyId/@Type is compared with its own element's value,
-        so its context is Party; @Role (one per Party) is repeated per PartyId with useOneAsMany."""
-        pid = S(f"{M}/Party/PartyId")
-        role_per_id = F("useOneAsMany", S(f"{M}/Party/@Role"), pid, pid)
-        cond = F("and", eq(role_per_id, role), eq(S(f"{M}/Party/PartyId/@Type", f"{M}/Party"), "ZTI"))
-        return F("removeContexts", F("ifWithoutElse", cond, S(f"{M}/Party/PartyId"), keepss="false"))
+    def party_if(role):
+        """Segment-level filter (user 2026-11-24, Q1): one Party/@Role value per Party in the message context."""
+        return F("createIf", eq(S(f"{M}/Party/@Role", M), role))
+
+    def zti_id():
+        """PartyId[@Type='ZTI'] of the current Party: PartyId/@Type is compared with its own element's value,
+        so its context is Party (FORMAT_NOTES §3.6); PartyId's default context is Party too."""
+        return F("ifWithoutElse", eq(S(f"{M}/Party/PartyId/@Type", f"{M}/Party"), "ZTI"),
+                 S(f"{M}/Party/PartyId"), keepss="false")
 
     M = "/OrdrspInterchange/OrderResponseMessage"
     IT = f"{M}/Item"
@@ -118,17 +119,17 @@ def build(mill: dict):
     b.map(f"{T}/E1EDK03/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDK03/IDDAT", C("012"))
     b.map(f"{T}/E1EDK03/DATUM", doc_date)
-    b.map(f"{T}/E1EDKA1", C(""))                              # #9 AG = buyer
+    b.map(f"{T}/E1EDKA1", party_if("BY"))                       # #9 AG = buyer
     b.map(f"{T}/E1EDKA1/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1/PARVW", C("AG"))
-    b.map(f"{T}/E1EDKA1/PARTN", party_zti("BY"))
+    b.map(f"{T}/E1EDKA1/PARTN", zti_id())
     b.map(f"{T}/E1EDKA1[1]", C(""))                           # #10 WE, no other fields (OP-03)
     b.map(f"{T}/E1EDKA1[1]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1[1]/PARVW", C("WE"))
-    b.map(f"{T}/E1EDKA1[2]", C(""))                           # #11 LF = mill (SSAB party number)
+    b.map(f"{T}/E1EDKA1[2]", party_if("SE"))                    # #11 LF = mill (SSAB party number)
     b.map(f"{T}/E1EDKA1[2]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1[2]/PARVW", C("LF"))
-    b.map(f"{T}/E1EDKA1[2]/PARTN", party_zti("SE"))
+    b.map(f"{T}/E1EDKA1[2]/PARTN", zti_id())
     # #12 QUALF 001, one per CO reference: segment-level filter, @Type lifted to the message context; BELNR 1:1
     b.map(f"{T}/E1EDK02", F("createIf", eq(S(f"{M}/Reference/@Type", M), "CO")))
     b.map(f"{T}/E1EDK02/@SEGMENT", C("1"))
