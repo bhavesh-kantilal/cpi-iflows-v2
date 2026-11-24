@@ -1,5 +1,11 @@
 # CHANGELOG — Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02
 
+## 1.2.0 — 2026-11-24 14:30 CET
+- Takes over the user's CPI version (`feedback/… (1).zip`): Party SE/BY/CN filtered at segment level (`createIf(PARVW [context IDOC] = X)`), fields 1:1 from E1EDKA1. The partner rules differ from the v0.1 sheet on purpose; see the v2 sheet.
+- `Party[2]/AddressLine1` ← STRAS again (dropped in the CPI version; user 2026-11-24).
+- Same pattern: `Contact` ← createIf(BNAME not empty) on the raw field; `TermsOfDelivery` ← createIf(QUALF [context IDOC] = 001), LKOND/LKTEXT 1:1.
+- Semantic diff against the user's version: only these 6 targets differ. All checks passed.
+
 ## 1.1.1 — 2026-11-15 11:43 CET
 - Applies the rules accepted in the review of 2026-11-15 (CLAUDE.md, FORMAT_NOTES):
   - `Item/Property` is built from the same chain as `PropertyText`, instead of `createIf` plus an `ifWithoutElse` field (createIf rule).

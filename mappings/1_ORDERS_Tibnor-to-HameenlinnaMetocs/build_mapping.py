@@ -35,18 +35,6 @@ def partner(parvw, field):
                F("mapWithDefault", S(f"{I}/E1EDKA1/{field}"), default_value=""), keepss="false"))
 
 
-def header_qualified(seg, qualf, field):
-    """Field of header segment seg with QUALF = qualf (e.g. E1EDK17 QUALF 001)."""
-    return F("removeContexts",
-             F("ifWithoutElse", F("stringEquals", S(f"{I}/{seg}/QUALF"), C(qualf)),
-               F("mapWithDefault", S(f"{I}/{seg}/{field}"), default_value=""), keepss="false"))
-
-
-def nonempty(v):
-    """Pass v on only when it is not empty, so no empty target element is created."""
-    return F("ifWithoutElse", F("not", F("stringEquals", v, C(""))), v, keepss="false")
-
-
 def exists(v):
     """Condition for createIf: v has a non-empty value (user feedback 1.1.0: conditional containers use createIf)."""
     return F("createIf", F("not", F("stringEquals", v, C(""))))
@@ -59,7 +47,6 @@ def table(inp, rows, default=""):
 
 
 ag_partn = partner("AG", "PARTN")            # ordering Tibnor company 0010 / 0310 / 0500
-is_oy = F("stringEquals", ag_partn, C("0500"))
 
 # ---- Header (#1-8) ----------------------------------------------------------------------
 b.map(T, C(""))
@@ -85,84 +72,93 @@ b.map(f"{T}/Reference[1]/@Type", C("ZZ"))
 b.map(f"{T}/Reference[2]", C("TPO"))
 b.map(f"{T}/Reference[2]/@Type", C("ZOT"))
 
-# ---- Party SE = Party (#24-31) -----------------------------------------------------------
-lf_partn = partner("LF", "PARTN")
-se_gln = table(lf_partn, [("0000080008", "00370113276957")])                      # VM-01
-se_zti = table(se_gln, [("00370113276957", "0003092")], default="0003092")       # VM-02, fallback Metocs
-P = f"{T}/Party"
-b.map(P, C(""))
-b.map(f"{P}/@Role", C("SE"))
-b.map(f"{P}/PartyId", se_zti)
-b.map(f"{P}/PartyId/@Type", C("ZTI"))
-b.map(f"{P}/PartyId[1]", se_gln)
-b.map(f"{P}/PartyId[1]/@Type", C("100"))
-b.map(f"{P}/PartyName1", table(lf_partn, [("0000080008", "METFORM")]))
-b.map(f"{P}/PartyName2", table(lf_partn, [("0000080008", "METFORM HÄMEENLINNA")]))
-b.map(f"{P}/AddressLine1", nonempty(partner("BA", "STRAS")))
-b.map(f"{P}/AddressLine3", nonempty(partner("BA", "ORT01")))                      # OP-16
-b.map(f"{P}/PostalCode", nonempty(partner("BA", "PSTLZ")))
-b.map(f"{P}/CountryCode", nonempty(partner("BA", "LAND1")))
+# ---- Parties: filter at segment level, fields 1:1 (user's v1.2.0 feedback, CLAUDE.md) ----------
+# Party ← createIf(PARVW [context IDOC] = X): one value per E1EDKA1, SUPPRESS for the others, so each
+# created Party reads its own E1EDKA1's fields. The partner rules differ from the v0.1 sheet on purpose
+# (user 2026-11-24); see the "Current CPI mapping" column of the v2 sheet.
+KA = f"{I}/E1EDKA1"
 
-# ---- Party BY = Party[1] (#13-23) -------------------------------------------------------
-by_gln = table(ag_partn, [("0010", "094200005561351270"), ("0310", "0942000055613512703000"),
-                          ("0500", "003723894430")])                               # VM-04
-by_zti = table(by_gln, [("094200005561351270", "8380390"), ("0942000055613512703000", "0142700"),
-                        ("003723894430", "8387920")])                              # VM-02
-we_stras, we_ort01, we_pstlz = partner("WE", "STRAS"), partner("WE", "ORT01"), partner("WE", "PSTLZ")
-P = f"{T}/Party[1]"
-b.map(P, C(""))
-b.map(f"{P}/@Role", C("BY"))
-b.map(f"{P}/PartyId", nonempty(by_zti))
+
+def party_if(parvw):
+    return F("createIf", F("stringEquals", S(f"{KA}/PARVW", context=I), C(parvw)))
+
+
+def ka(field, default=True):
+    """E1EDKA1 field, straight map (mapWithDefault where the user's version has it)."""
+    return F("mapWithDefault", S(f"{KA}/{field}"), default_value="") if default else S(f"{KA}/{field}")
+
+
+def use_key(inp, rows):
+    """FixValues 'Use Key' (vmstrategy 2, empty default), as in the user's version."""
+    return b.table("FixValues", inp, rows, default="", strategy="2")
+
+
+# Party SE = Party (#24-31): LF partner; names and address hardcoded (user)
+P = f"{T}/Party"
+b.map(P, party_if("LF"))
+b.map(f"{P}/@Role", C("SE"))
+b.map(f"{P}/PartyId", ka("PARTN"))
 b.map(f"{P}/PartyId/@Type", C("ZTI"))
-b.map(f"{P}/PartyId[1]", by_gln)
+b.map(f"{P}/PartyId[1]", ka("PARTN"))
 b.map(f"{P}/PartyId[1]/@Type", C("100"))
-b.map(f"{P}/PartyName1", table(ag_partn, [("0010", "TIBNOR AB"), ("0310", "TIBNOR AS"), ("0500", "TIBNOR OY")]))
-# iF pins: then, condition, else (CONFIRMED). Tibnor OY uses the ship-to address (OP-05).
-b.map(f"{P}/AddressLine1", F("iF", we_stras, is_oy,
-                             table(ag_partn, [("0010", "Sjöhagsvägen 2"), ("0310", "Professor Birkelandsvei 21")])))
-b.map(f"{P}/AddressLine2", nonempty(table(ag_partn, [("0010", "909"), ("0310", "140")])))   # OY: left out
-b.map(f"{P}/AddressLine3", F("iF", we_ort01, is_oy, table(ag_partn, [("0010", "Köping"), ("0310", "OSLO")])))
-b.map(f"{P}/PostalCode", F("iF", we_pstlz, is_oy, table(ag_partn, [("0010", "73129"), ("0310", "1081")])))
-b.map(f"{P}/CountryCode", partner("AG", "LAND1"))
-bname_raw = partner("AG", "BNAME")
-b.map(f"{P}/Contact", exists(bname_raw))              # container: createIf (user feedback 1.1.0)
+b.map(f"{P}/PartyName1", C("METFORM"))
+b.map(f"{P}/PartyName2", C("METFORM HÄMEENLINNA"))
+b.map(f"{P}/AddressLine1", C("HARVIALANTIE 420"))
+b.map(f"{P}/AddressLine3", C("HÄMEENLINNA"))
+b.map(f"{P}/PostalCode", C("13300"))
+b.map(f"{P}/CountryCode", C("FI"))
+
+# Party BY = Party[1] (#13-23): AG partner; address by company code (Use Key)
+P = f"{T}/Party[1]"
+b.map(P, party_if("AG"))
+b.map(f"{P}/@Role", C("BY"))
+b.map(f"{P}/PartyId", ka("PARTN"))
+b.map(f"{P}/PartyId/@Type", C("ZTI"))
+b.map(f"{P}/PartyId[1]", ka("PARTN"))
+b.map(f"{P}/PartyId[1]/@Type", C("100"))
+b.map(f"{P}/PartyName1", ka("NAME1"))
+b.map(f"{P}/AddressLine1", use_key(ka("PARTN"), [("0500", "Niinistönkatu 7"), ("0010", "Norsavägen 38"),
+                                                 ("0310", "Professor Birkelandsvei 21")]))
+b.map(f"{P}/AddressLine2", use_key(ka("PARTN"), [("0500", ""), ("0010", "909"), ("0310", "140")]))
+b.map(f"{P}/AddressLine3", use_key(ka("PARTN"), [("0500", "HYVINKÄÄ"), ("0010", "Köping"), ("0310", "OSLO")]))
+b.map(f"{P}/PostalCode", use_key(ka("PARTN"), [("0500", "05800"), ("0010", "73129"), ("0310", "1081")]))
+b.map(f"{P}/CountryCode", ka("LAND1"))
+b.map(f"{P}/Contact", exists(ka("BNAME")))            # optional inside the AG segment, same E1EDKA1 context
 b.map(f"{P}/Contact/@Type", C("PD"))
-b.map(f"{P}/Contact/ContactName", bname_raw)            # straight under createIf (same condition)
-telf1 = nonempty(F("replaceString", F("replaceString", partner("AG", "TELF1"), C("-"), C("")), C(" "), C("")))
-b.map(f"{P}/Contact/CommId", telf1)
+b.map(f"{P}/Contact/ContactName", ka("BNAME"))
+b.map(f"{P}/Contact/CommId", F("replaceString", F("replaceString", ka("TELF1", default=False), C("-"), C("")),
+                               C(" "), C("")))
 b.map(f"{P}/Contact/CommId/@Type", C("TE"))
 
-# ---- Party CN = Party[2] (#32-39) -------------------------------------------------------
-cn_gln = F("ifWithoutElse", F("not", is_oy),
-           F("concat", C("094200005561351270"), partner("WE", "LIFNR"), delimeter=""), keepss="false")   # none for OY
-cn_zti = nonempty(table(cn_gln, [("0942000055613512700050", "8430748"),
-                                 ("0942000055613512703020", "8426340")]))         # VM-02, no hit -> left out
+# Party CN = Party[2] (#32-39): WE partner, all fields straight
 P = f"{T}/Party[2]"
-b.map(P, C(""))
+b.map(P, party_if("WE"))
 b.map(f"{P}/@Role", C("CN"))
-b.map(f"{P}/PartyId", cn_zti)
+b.map(f"{P}/PartyId", ka("PARTN", default=False))
 b.map(f"{P}/PartyId/@Type", C("ZTI"))
-b.map(f"{P}/PartyId[1]", cn_gln)
+b.map(f"{P}/PartyId[1]", ka("LIFNR", default=False))
 b.map(f"{P}/PartyId[1]/@Type", C("100"))
-b.map(f"{P}/PartyName1", nonempty(partner("WE", "NAME1")))
-b.map(f"{P}/AddressLine1", nonempty(we_stras))
-b.map(f"{P}/AddressLine2", nonempty(partner("WE", "PFACH")))
-b.map(f"{P}/AddressLine3", nonempty(we_ort01))
-b.map(f"{P}/PostalCode", nonempty(F("replaceString", we_pstlz, C(" "), C(""))))
-b.map(f"{P}/CountryCode", nonempty(partner("WE", "LAND1")))
+b.map(f"{P}/PartyName1", ka("NAME1", default=False))
+b.map(f"{P}/AddressLine1", ka("STRAS", default=False))      # user 2026-11-24: keep the street
+b.map(f"{P}/AddressLine2", ka("PFACH"))
+b.map(f"{P}/AddressLine3", ka("ORT01", default=False))
+b.map(f"{P}/PostalCode", F("replaceString", ka("PSTLZ"), C(" "), C("")))
+b.map(f"{P}/CountryCode", ka("LAND1"))
 
 # ---- Commercial terms (#40-42) ----------------------------------------------------------
 b.map(f"{T}/Currency", C("EUR"))                                                   # OP-20
 b.map(f"{T}/Currency/@Type", C("5"))
-lkond_raw = header_qualified("E1EDK17", "001", "LKOND")
-lktext_raw = header_qualified("E1EDK17", "001", "LKTEXT")
-b.map(f"{T}/TermsOfDelivery", exists(lkond_raw))      # container: createIf (user feedback 1.1.0)
+K17 = f"{I}/E1EDK17"
+lkond = F("mapWithDefault", S(f"{K17}/LKOND"), default_value="")
+lktext = F("mapWithDefault", S(f"{K17}/LKTEXT"), default_value="")
+# segment-level filter: QUALF 001 in the IDOC context, fields 1:1 from the same E1EDK17
+b.map(f"{T}/TermsOfDelivery", F("createIf", F("stringEquals", S(f"{K17}/QUALF", context=I), C("001"))))
 b.map(f"{T}/TermsOfDelivery/@Type", C("6"))
-b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond_raw)   # straight under createIf
+b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode", lkond)
 b.map(f"{T}/TermsOfDelivery/TermsOfDeliveryCode/@CodeSet", C("Z2K"))
-b.map(f"{T}/TermsOfDelivery/Location", exists(lktext_raw))
+b.map(f"{T}/TermsOfDelivery/Location", exists(lktext))
 b.map(f"{T}/TermsOfDelivery/Location/@Type", C("1"))
-b.map(f"{T}/TermsOfDelivery/Location/LocationText", lktext_raw)   # straight under createIf
+b.map(f"{T}/TermsOfDelivery/Location/LocationText", lktext)
 
 # ---- Items (#43-51) -----------------------------------------------------------------------
 E = f"{I}/E1EDP01"

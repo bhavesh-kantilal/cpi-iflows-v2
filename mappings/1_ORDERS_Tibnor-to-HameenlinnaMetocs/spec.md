@@ -112,6 +112,20 @@ The output contains only these Party fields:
 - **Decided 2026-11-13 (user): Reference keeps its values** ← BELNR / 'S' / 'TPO'. The empty-constant CPI edit was not intended. Simple-content elements that carry a value are not "tags".
 - **Known risk (from v1.0.0 design):** Property text pairs E1EDP19 QUALF (context per item) with KTEXT (context per segment). This is correct with one E1EDP19 per item, as in all samples, but may mis-pair if an item also has e.g. a QUALF 002 segment. Fix it once there is a sample.
 
+- **2026-11-24 Feedback v1.2.0 (L2, user's CPI mapping `feedback/… (1).zip`).** The user simplified the parties: every Party segment is filtered at segment level and its fields are 1:1 maps. This is now a rule (CLAUDE.md "Filter at segment level", FORMAT_NOTES §3.5).
+  - Party SE/BY/CN ← `createIf(PARVW [context IDOC] = LF/AG/WE)`; fields straight from E1EDKA1.
+  - **Contradicts the v0.1 sheet on purpose** (user: "the partner mappings in the spec are incorrect anyway"):
+    - SE names and address hardcoded
+    - BY: PartyId ZTI and 100 = PARTN, PartyName1 = NAME1, address by company code with Tibnor OY (0500) as a fixed address (Niinistönkatu 7, 05800 HYVINKÄÄ)
+    - CN: PartyId = PARTN, PartyId 100 = LIFNR without a prefix
+
+    Listed in `25200_…_MappingSpec_v2.xlsx`, column "Current CPI mapping".
+  - Not taken over: the user's version dropped `Party[2]/AddressLine1`. The user confirmed (2026-11-24) to map STRAS again.
+  - Same pattern applied by me:
+    - `Contact ← createIf(BNAME not empty)` on the raw E1EDKA1 field
+    - `TermsOfDelivery ← createIf(E1EDK17/QUALF [context IDOC] = 001)` with LKOND/LKTEXT 1:1. Change: the segment is now created for every QUALF 001 segment, even when LKOND is empty (before: only when LKOND had a value).
+  - Kept as a filtered value: `Item/AddArticleNo` (a value-carrying element, E1EDP19 QUALF 001 per item) and `Header/InterchangeSender` (a header field from the AG partner).
+
 ## UDF call-outs (rule R2, 2026-11-15)
 - **Bhavesh, I built `hasBestText` (`TibnorOrdersHelpers.groovy`) because** Property/PropertyText (row 46) is only sent for items that have an E1EDPT1 text with TDID `BEST`, and no standard function answers "does this item contain a value X among its segments" per item. Standard alternative: `exists` / `stringEquals` + `ifWithoutElse` on E1EDPT1/TDID with the context set to E1EDP01. Why not then: at v1.0.0 neither `exists` nor the context rules (R3, attribute context) were known. Candidate to replace at the next version.
 - **Bhavesh, I built `cropText` because** the KTEXT must be cut to 35 characters, the reference UDF `cropString` is fixed at 50, and a standard `substring(0, 35)` fails on shorter texts. Today's alternative: library UDF `substringSafe(value, '0', '35')` (udf_library). Candidate to replace at the next version.
