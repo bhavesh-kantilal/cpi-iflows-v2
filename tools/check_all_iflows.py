@@ -29,6 +29,10 @@ iflows = [
     "SmarTeam/I2024_P_FunctionLocation_COD_FUNCTIONAL_LOCATION_SAVE_COD_FUNCTIONAL_LOCATION_SAVE01_MSAP_IDocToJMS",
     "Tibnor_SSAB_EDIMigration/IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS",
     "Tibnor_SSAB_EDIMigration/IXXXX_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_FinMessageHub_HameenlinnaMetocs_JMSToMQ",
+    "Tibnor_SSAB_EDIMigration/IXXXX_P_OrderResponse_FinMessageHub_MQToJMS",
+    "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc",
 ]
 
 all_ok = True
