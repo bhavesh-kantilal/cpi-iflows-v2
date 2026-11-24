@@ -1,5 +1,10 @@
 # CHANGELOG — Map_RaaheTilkkuHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.1 — 2026-11-24 15:10 CET
+- Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_mill), PARTN constant.
+- Kept as filtered chains (rule limits): E1EDK01 (is_380 with CURCY), E1EDK05 (sum condition), item qualified values, header values.
+- Semantic diff: only the targets above changed. All checks passed. Not yet tested in CPI.
+
 ## 1.0.0 — 2026-11-16 15:58 CET
 - First build from `1002663_INVOIC_Tilkku-to-Tibnor_MappingSpec_v0.1.xlsx`: rows 1–30, 82 target mappings.
 - Source `Harmonized_Mill_Invoice_0_0_4_AoC.xsd`, target `INVOIC.INVOIC01.xsd`. Patterns of the Metocs INVOIC v1.0.2.

@@ -73,14 +73,16 @@ def build(mill: dict):
     inv_date = header(by_attr(f"{H}/DocumentId/Date", "Type", "149", attr_context=f"{H}/DocumentId"))
     po_no = F("formatNumber", header(by_attr(f"{H}/Reference", "Type", "ON", "ReferenceIdentification")),
               nformat="0000000000", separator=".")                                      # #24: 10 digits
-    vendor = F("ifWithoutElse", is_mill, C(mill["vendor"]), keepss="false")
+    vendor = C(mill["vendor"])            # E1EDKA1 segments carry the mill check (segment-level filter)
 
     # ---- control record EDI_DC40 (#1-7) --------------------------------------------------------
     b.map("/INVOIC01", C(""))
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    b.map(D, C(""))
+    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
+    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
+    b.map(D, F("createIf", is_mill))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))
     b.map(f"{D}/DIRECT", C("2"))
@@ -91,9 +93,9 @@ def build(mill: dict):
     b.map(f"{D}/STDVRS", C("96A"))
     b.map(f"{D}/STDMES", C("INVOIC"))
     b.map(f"{D}/SNDPOR", F("getProperty", C("SNDPOR")))       # #3 OP-07 ('INOBIZ' today)
-    b.map(f"{D}/SNDPRT", F("ifWithoutElse", is_mill, C("LI"), keepss="false"))
-    b.map(f"{D}/SNDPFC", F("ifWithoutElse", is_mill, C("LF"), keepss="false"))
-    b.map(f"{D}/SNDPRN", F("ifWithoutElse", is_mill, C(mill["sndprn"]), keepss="false"))
+    b.map(f"{D}/SNDPRT", C("LI"))
+    b.map(f"{D}/SNDPFC", C("LF"))
+    b.map(f"{D}/SNDPRN", C(mill["sndprn"]))
     b.map(f"{D}/SNDLAD", S(f"{H}/Header/InterchangeSender"))
     b.map(f"{D}/RCVPOR", F("getProperty", C("RCVPOR")))       # #4 OP-07
     b.map(f"{D}/RCVPRT", C("LS"))
@@ -108,11 +110,11 @@ def build(mill: dict):
     b.map(f"{T}/E1EDK01/FKART_RL", F("ifWithoutElse", is_380, C("LR"), keepss="false"))
     b.map(f"{T}/E1EDK01/FKTYP", F("ifWithoutElse", is_380, C("L"), keepss="false"))
 
-    b.map(f"{T}/E1EDKA1", C(""))                              # #12 LF = vendor
+    b.map(f"{T}/E1EDKA1", F("createIf", is_mill))            # #12 LF = vendor
     b.map(f"{T}/E1EDKA1/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1/PARVW", C("LF"))
     b.map(f"{T}/E1EDKA1/PARTN", vendor)
-    b.map(f"{T}/E1EDKA1[1]", C(""))                           # #13 RE = same vendor
+    b.map(f"{T}/E1EDKA1[1]", F("createIf", is_mill))         # #13 RE = same vendor
     b.map(f"{T}/E1EDKA1[1]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1[1]/PARVW", C("RE"))
     b.map(f"{T}/E1EDKA1[1]/PARTN", vendor)
