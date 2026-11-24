@@ -75,7 +75,10 @@ po_no = F("removeContexts", co_ref)                                             
 # #8, #10: one value per CO reference; feeds E1EDK01/BELNR, E1EDK02 and E1EDK02/BELNR (user's CPI fix v2:
 # createIf(@Type = CO) without removeContexts only saw the first Reference, so E1EDK02 001 was missing)
 po_chain = each(co_ref)
-is_doc_date = eq(S(f"{M}/DocumentId/Date/@Type"), "137")
+# E1EDK03: Date/@Type is compared with its own element's value -> context DocumentId; segment and DATUM
+# from one filtered chain (user 2026-11-24, as the Tilkku ORDRSP and E1EDP03; review when testing)
+doc_date = each(F("ifWithoutElse", eq(S(f"{M}/DocumentId/Date/@Type", f"{M}/DocumentId"), "137"),
+                  S(f"{M}/DocumentId/Date"), keepss="false"))
 is_metocs = F("startWith2", S(f"{M}/Header/ApplicationId"), C("METOCS"))                      # VM-01
 
 # ---- control record EDI_DC40 (#1-7) -----------------------------------------------------
@@ -108,10 +111,10 @@ b.map(f"{D}/RCVLAD", S(f"{M}/Header/InterchangeRecipient"))
 b.map(f"{T}/E1EDK01", C(""))
 b.map(f"{T}/E1EDK01/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK01/BELNR", po_chain)
-b.map(f"{T}/E1EDK03", F("createIf", is_doc_date))         # optional container: createIf
+b.map(f"{T}/E1EDK03", doc_date)                           # segment and field from one filtered chain
 b.map(f"{T}/E1EDK03/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK03/IDDAT", C("012"))
-b.map(f"{T}/E1EDK03/DATUM", F("ifWithoutElse", is_doc_date, S(f"{M}/DocumentId/Date"), keepss="false"))
+b.map(f"{T}/E1EDK03/DATUM", doc_date)
 # QUALF 001, one per CO reference: segment-level filter, @Type lifted to the message context; BELNR 1:1
 b.map(f"{T}/E1EDK02", F("createIf", eq(S(f"{M}/Reference/@Type", M), "CO")))
 b.map(f"{T}/E1EDK02/@SEGMENT", C("1"))

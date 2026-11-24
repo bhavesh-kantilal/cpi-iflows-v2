@@ -1,5 +1,9 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.8 — 2026-11-24 16:05 CET
+- E1EDK03 and E1EDK03/DATUM from one filtered chain: `SplitByValue(removeContexts(ifWithoutElse(Date/@Type [context DocumentId] = 137, Date)))`. This replaces createIf on the segment plus ifWithoutElse on DATUM (user 2026-11-24, Q3; same as the Tilkku ORDRSP and E1EDP03). **Review in detail when testing** (user request).
+- All checks passed. Semantic diff: only these 2 targets changed.
+
 ## 1.0.7 — 2026-11-24 15:10 CET
 - Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_metocs), SNDPRT/SNDPFC/SNDPRN constants; E1EDK02 (QUALF 001) ← createIf(Reference/@Type [context OrderResponseMessage] = CO), BELNR 1:1 from Reference/RefNo.
 - Kept as filtered chains (rule limits): E1EDK01/BELNR and E1EDP02/BELNR (header values from the CO reference), E1EDK03 (DocumentId/Date/@Type is an own-value attribute), the item node (PO pattern with the Property condition), E1EDP03/E1EDP19/E1EDP20 and the Quantity values (own-value or per-item qualified values).

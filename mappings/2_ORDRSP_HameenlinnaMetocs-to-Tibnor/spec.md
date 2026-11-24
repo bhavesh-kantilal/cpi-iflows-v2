@@ -68,6 +68,8 @@ All 15 items: POSEX 10 … 150, MENGE = type-21 quantity, MENEE MTR, DATUM = EDA
 - **2026-11-24 Segment-level filters (v1.0.7, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_metocs), SNDPRT/SNDPFC/SNDPRN constants; E1EDK02 (QUALF 001) ← createIf(Reference/@Type [context OrderResponseMessage] = CO), BELNR 1:1 from Reference/RefNo.
   - Kept as chains: E1EDK01/BELNR and E1EDP02/BELNR (header values from the CO reference), E1EDK03 (DocumentId/Date/@Type is an own-value attribute), the item node (PO pattern with the Property condition), E1EDP03/E1EDP19/E1EDP20 and the Quantity values (own-value or per-item qualified values).
 
+- **2026-11-24 E1EDK03 (v1.0.8, L2, user Q3).** Q: E1EDK03 used createIf + ifWithoutElse on DATUM; DocumentId/Date/@Type is an own-value attribute, so the segment-level form does not fit. A: one filtered chain for the segment and DATUM (context DocumentId), as E1EDP03. The user wants to **review this in detail when testing**.
+
 ## Import test v1.0.0 (2026-11-13, package Test_BK, user screenshots)
 - **Both variants:** the user had to add the source message by hand in the editor after import. It is unclear which part of the generated source link CPI did not accept (perhaps a 4th `<elem>` with the namespace, as WSDL links have). This will be learned from the CPI download of the fixed variant.
 - **NsRootOnly fails.** The CPI source tree shows `ns0:OrdrspInterchange / ns0:OrderResponseMessage / …`. The unprefixed `OrderResponseMessage` is shown orange, as missing.
