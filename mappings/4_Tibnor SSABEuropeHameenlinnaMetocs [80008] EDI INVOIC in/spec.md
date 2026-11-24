@@ -65,3 +65,6 @@ All header, tax, item and total values match, **except** ZEILE in 552-601893 (ME
 
 - **2026-11-24 Segment-level filters (v1.0.3, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_metocs), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_metocs), PARTN constant.
   - Kept as chains: E1EDK01 BSART/FKART_RL/FKTYP (is_380: the segment also carries CURCY), E1EDK04 MWSBT, E1EDP26 BETRG, E1EDP19 IDTNR and the item Quantity values (qualified values inside an item / tax line), header values (currency, date, PO number).
+
+- **2026-11-24 E1EDK04 / E1EDP26 (v1.0.4, L2, user Q2 a+b).** Segment-level filter instead of a filtered value per field: E1EDK04 ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176), E1EDP26 ← createIf(Item/MonetaryAmount/@Type [context Item] = 38); the amount fields 1:1. Impact: no segment when the amount type is missing.
+- **2026-11-24 E1EDK01 BSART/FKART_RL/FKTYP (L2, user Q4).** Keep the field-level `DocumentType = 380` checks for now (CURCY in the same segment is always sent). To explain to the user later.

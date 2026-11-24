@@ -1,5 +1,11 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.4 — 2026-11-24 16:20 CET
+- Segment-level filters (user 2026-11-24, Q2):
+  - `E1EDK04` ← createIf(Tax/MonetaryAmount/@Type [context Invoice] = 176); MWSBT ← Tax/MonetaryAmount/MonetaryValue 1:1 (a Tax has exactly one MonetaryAmount). A Tax without a 176 amount gives no E1EDK04 (before: one per Tax).
+  - `E1EDP01/E1EDP26` ← createIf(Item/MonetaryAmount/@Type [context Item] = 38); BETRG ← MonetaryValue 1:1. An item without a type-38 amount gives no E1EDP26 (before: always, empty BETRG).
+- All checks passed. Semantic diff: only these 4 targets changed. Not tested in CPI.
+
 ## 1.0.3 — 2026-11-24 15:10 CET
 - Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_metocs), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_metocs), PARTN constant.
 - Kept as filtered chains (rule limits): E1EDK01 BSART/FKART_RL/FKTYP (is_380: the segment also carries CURCY), E1EDK04 MWSBT, E1EDP26 BETRG, E1EDP19 IDTNR and the item Quantity values (qualified values inside an item / tax line), header values (currency, date, PO number).

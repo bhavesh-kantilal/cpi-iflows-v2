@@ -130,11 +130,13 @@ b.map(f"{T}/E1EDK03/IDDAT", C("012"))
 b.map(f"{T}/E1EDK03/DATUM", inv_date)
 
 tax_rate = S(f"{H}/Tax/TaxRate")
-b.map(f"{T}/E1EDK04", S(f"{H}/Tax"))                      # one E1EDK04 per Tax
+# segment-level filter (user 2026-11-24, Q2b): one E1EDK04 per Tax whose amount is type 176 (a Tax has exactly
+# one MonetaryAmount, XSD); @Type lifted to the Invoice context, MWSBT 1:1
+b.map(f"{T}/E1EDK04", F("createIf", eq(S(f"{H}/Tax/MonetaryAmount/@Type", context=H), "176")))
 b.map(f"{T}/E1EDK04/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK04/MWSKZ", each(S(f"{H}/Tax/@Type")))   # attribute sits in the Invoice context: split per Tax
 b.map(f"{T}/E1EDK04/MSATZ", F("iF", C("0"), eq(tax_rate, "0.00"), tax_rate))       # #18: '0.00' -> '0'
-b.map(f"{T}/E1EDK04/MWSBT", each(by_attr(f"{H}/Tax/MonetaryAmount", "Type", "176", "MonetaryValue")))
+b.map(f"{T}/E1EDK04/MWSBT", S(f"{H}/Tax/MonetaryAmount/MonetaryValue"))
 
 # ---- items (#20-27) ---------------------------------------------------------------------------
 P = f"{T}/E1EDP01"
@@ -157,10 +159,11 @@ b.map(f"{P}/E1EDP19", C(""))                              # #26: created even wi
 b.map(f"{P}/E1EDP19/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP19/QUALF", C("001"))
 b.map(f"{P}/E1EDP19/IDTNR", each(by_attr(f"{IT}/AddArticleNo", "Type", "UA", attr_context=IT)))
-b.map(f"{P}/E1EDP26", C(""))
+# segment-level filter (user 2026-11-24, Q2a): one E1EDP26 per item amount of type 38, none without; BETRG 1:1
+b.map(f"{P}/E1EDP26", F("createIf", eq(S(f"{IT}/MonetaryAmount/@Type", context=IT), "38")))
 b.map(f"{P}/E1EDP26/@SEGMENT", C("1"))
 b.map(f"{P}/E1EDP26/QUALF", C("003"))
-b.map(f"{P}/E1EDP26/BETRG", each(by_attr(f"{IT}/MonetaryAmount", "Type", "38", "MonetaryValue")))
+b.map(f"{P}/E1EDP26/BETRG", S(f"{IT}/MonetaryAmount/MonetaryValue"))
 
 # ---- totals (#28-29) ---------------------------------------------------------------------------
 b.map(f"{T}/E1EDS01", C(""))
