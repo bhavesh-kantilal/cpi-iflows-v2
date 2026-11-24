@@ -142,3 +142,5 @@ What was wrong, in plain words:
 - OP-10 PDF file name, OP-11 BELNR content, OP-13 price, OP-15 cancelled items, OP-16 items without a type-12 property.
 
 - **2026-11-15 Rule R4 applied (user: "Docs + R4 fix only"):** no `mapWithDefault` around an attribute that has a `context=` setting (AddArticleNo/@Type → IDTNR). See CHANGELOG.
+
+- **2026-11-24 User test (L2): mapping OK.** Only feedback: `EDI_DC40` needs no condition; it should come from an empty constant (kept for future use). **Not changed now** (user: "Need not change anything now"). Apply at the next version of this mapping and the other EDI mappings. CLAUDE.md rule updated.

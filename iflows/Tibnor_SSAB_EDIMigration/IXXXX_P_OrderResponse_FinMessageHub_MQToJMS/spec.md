@@ -5,7 +5,7 @@ Parent (package Tibnor_SSAB_EDIMigration): order responses (ORDRSP, hub XML) fro
 - Templates:
   - our ORDERS parent `IXXXX_P_PurchaseOrder_…_IDocToJMS` (L3): Manual Retrigger, Main Process, Receivers Exist? → Error End, receiver loop, Send To JMS
   - IBM MQ sender channel: Bhavesh's `I2017_PurchaseOrder_SalesOrderBulkRequest_TILKKU_MSAP_IBMMQtoSOAP.jar` (L1, `source/`)
-- Build: `py -I tools/iflow_build_tibnor_ordrsp.py --only parent`
+- Build: `py -I tools/iflow_build_tibnor_inbound.py --flow ORDRSP --only parent`
 
 ## Flow
 1. IBM MQ sender (`FinMessageHub`, Rojo IBMMQ adapter 1.4.1) or HTTPS retrigger → Main Process.

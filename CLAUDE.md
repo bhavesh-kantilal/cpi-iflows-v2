@@ -65,7 +65,8 @@ iflows/<IFlowName>/         older flat layout (FSAP flows), moves into iflows/<P
   - The **target segment** gets `createIf(stringEquals(qualifier [context = parent of the source segment], 'X'))`, e.g. `Party[SE] ← createIf(PARVW [context /ORDERS02/IDOC] = 'LF')`.
   - Its **fields are straight maps** of the same source segment's fields, e.g. `PartyId ← mapWithDefault(E1EDKA1/PARTN)`. No `ifWithoutElse` / `removeContexts` per field.
   - It works because CPI skips the children's context for every SUPPRESS in the parent queue, so each created segment reads its own source segment.
-  - The same goes for a condition that only decides whether fields are sent at all (e.g. EDI_DC40 sender fields ← `ifWithoutElse(is_metocs, const)`): put the condition on the segment and make the fields constants.
+  - The same goes for a condition that only decides whether fields are sent at all: put the condition on the segment and make the fields constants.
+  - **Exception: the IDoc control record `EDI_DC40` gets no condition.** It comes from an empty constant, so it is always created and stays ready for later use (user, 2026-11-24, Metocs ORDRSP test). Existing mappings change at their next version, not now.
   - It needs the fields to be **children of the filtered source segment**. Use the filtered chain below instead when the value is the element itself (`Date/@Type` vs `Date`) or a field mixes two source segments.
 - **`createIf`** (user rule 2026-11-15, FORMAT_NOTES §3.5):
   - On a repeating condition, lift it with `context=` (rule above) or follow it with `removeContexts`. The segment's fields are then **straight maps**.

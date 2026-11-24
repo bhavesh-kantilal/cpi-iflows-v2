@@ -5,7 +5,7 @@ Child (package Tibnor_SSAB_EDIMigration) for ApplicationId `TILKKUHA`. The paren
 - Templates:
   - flow shape: our ORDERS child `IXXXX_PurchaseOrder_…_JMSToMQ` (L3)
   - ProcessDirect receiver ("IDoc to SAP"): reference `I2052_…_PDToIDoc` (L1, `source/`)
-- Build: `py -I tools/iflow_build_tibnor_ordrsp.py --only HameenlinnaTilkku`
+- Build: `py -I tools/iflow_build_tibnor_inbound.py --flow ORDRSP --only HameenlinnaTilkku`
 
 ## Flow (Main Process)
 Set Monitoring Identifiers → Log Payload → LogCustomHeaders → mapping → Set AttachmentName → Log Payload → **Send To TibnorS4** (ProcessDirect) → End.

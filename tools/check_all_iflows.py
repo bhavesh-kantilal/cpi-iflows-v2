@@ -33,6 +33,14 @@ iflows = [
     "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMSToIDoc",
     "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc",
     "Tibnor_SSAB_EDIMigration/IXXXX_OrderResponse_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_P_DespatchAdvice_FinMessageHub_MQToJMS",
+    "Tibnor_SSAB_EDIMigration/IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_DespatchAdvice_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_P_Invoice_FinMessageHub_MQToJMS",
+    "Tibnor_SSAB_EDIMigration/IXXXX_Invoice_FinMessageHub_HameenlinnaMetocs_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_Invoice_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc",
+    "Tibnor_SSAB_EDIMigration/IXXXX_Invoice_FinMessageHub_RaaheTilkku_TibnorS4_JMSToIDoc",
 ]
 
 all_ok = True

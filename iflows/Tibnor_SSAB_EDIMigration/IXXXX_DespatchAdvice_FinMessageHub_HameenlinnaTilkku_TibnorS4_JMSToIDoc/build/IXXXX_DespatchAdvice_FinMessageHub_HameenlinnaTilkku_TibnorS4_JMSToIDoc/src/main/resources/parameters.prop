@@ -1,0 +1,18 @@
+#Fri Nov 20 11:16:53 UTC 2026
+AllowedHeaders=SSAB.*|SAP.*
+HTTPS_Authorization=RoleBased
+HTTPS_BodySize=40
+HTTPS_CSRFProtected=0
+HTTPS_UserRole=SSAB_MessagingSend_InternalOperations
+HTTP_Session_Reuse=onIntegrationFlow
+LogPayload=true
+LogPayloadSize=512
+SAP_MessageType=DESADV
+SAP_Receiver=TibnorS4
+SAP_Sender=FinMessageHub
+PD_Address=/IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc
+HTTPS_Address=/IXXXX_DespatchAdvice_FinMessageHub_HameenlinnaTilkku_TibnorS4_JMSToIDoc
+TibnorS4_IDocEndpoint=/T0143_P_IDocReceiver_TibnorS4_PDToIDoc
+TibnorS4_SNDPOR=
+TibnorS4_RCVPOR=
+TibnorS4_RCVPRN=

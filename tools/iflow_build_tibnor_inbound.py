@@ -1,15 +1,18 @@
 """
-tools/iflow_build_tibnor_ordrsp.py
-Order responses from the Finnish message hub to Tibnor S4 (CPI package Tibnor_SSAB_EDIMigration,
-repo folder iflows/Tibnor_SSAB_EDIMigration/).
+tools/iflow_build_tibnor_inbound.py
+Inbound EDI from the Finnish message hub to Tibnor S4 (CPI package Tibnor_SSAB_EDIMigration,
+repo folder iflows/Tibnor_SSAB_EDIMigration/). One parent + three mill children per message type:
 
-  parent  IXXXX_P_OrderResponse_FinMessageHub_MQToJMS
-          IBM MQ sender (+ Manual Retrigger) -> receiver determination on Header/ApplicationId
-          -> JMS queue IXXXX_TibnorS4 (dispatcher, not built here)
-  children IXXXX_OrderResponse_FinMessageHub_<Mill>_TibnorS4_JMSToIDoc, <Mill> =
-          HameenlinnaMetocs (ApplicationId METOCS*), HameenlinnaTilkku (TILKKUHA), RaaheTilkku (TILKKURA)
-          ProcessDirect from the dispatcher -> ORDRSP mapping of the mill -> ProcessDirect to the shared
-          IDoc flow T0143_P_IDocReceiver_TibnorS4_PDToIDoc
+  ORDRSP  IXXXX_P_OrderResponse_FinMessageHub_MQToJMS    route on Header/ApplicationId
+  DESADV  IXXXX_P_DespatchAdvice_FinMessageHub_MQToJMS   route on SourceSystem + InterchangeSender, only for
+  INVOIC  IXXXX_P_Invoice_FinMessageHub_MQToJMS          the PO recipient GLNs (user's PO conditions, 2026-11-24)
+
+  parent   IBM MQ sender (+ Manual Retrigger) -> receiver determination -> JMS queue IXXXX_TibnorS4
+           (dispatcher, not built here)
+  children IXXXX_<Object>_FinMessageHub_<Mill>_TibnorS4_JMSToIDoc, <Mill> =
+           HameenlinnaMetocs, HameenlinnaTilkku, RaaheTilkku
+           ProcessDirect from the dispatcher -> the mill's mapping -> ProcessDirect to the shared
+           IDoc flow T0143_P_IDocReceiver_TibnorS4_PDToIDoc
 
 Templates (no XML structure invented, CLAUDE.md):
   parent  = our ORDERS parent IXXXX_P_PurchaseOrder_..._IDocToJMS (L3 shape from I2023_P)
@@ -17,7 +20,8 @@ Templates (no XML structure invented, CLAUDE.md):
   IBM MQ sender channel + parameters = Bhavesh's I2017_..._IBMMQtoSOAP.jar (L1, source/)
   ProcessDirect receiver channel ("IDoc to SAP") = reference I2052_..._PDToIDoc (L1, _reference/iflows)
 
-Usage:  py -I tools/iflow_build_tibnor_ordrsp.py [--only parent|HameenlinnaMetocs|HameenlinnaTilkku|RaaheTilkku]
+Usage:  py -I tools/iflow_build_tibnor_inbound.py --flow ORDRSP|DESADV|INVOIC
+                                                  [--only parent|HameenlinnaMetocs|HameenlinnaTilkku|RaaheTilkku]
 """
 import copy
 import os
@@ -35,27 +39,81 @@ import iflow_build_tibnor as tb  # noqa: E402  (sets st.PKG to the Tibnor packag
 REPO, PKG, RES = st.REPO, tb.PKG, tb.RES
 NUMBER = tb.NUMBER                                    # interface number, not decided yet
 QUEUE = f"{NUMBER}_TibnorS4"                          # new dispatcher queue for Tibnor S4 (user, 2026-11-24)
-PARENT = f"{NUMBER}_P_OrderResponse_FinMessageHub_MQToJMS"
 MQ_SYSTEM, IDOC_SYSTEM = "FinMessageHub", "TibnorS4"
 IDOC_ENDPOINT = "/T0143_P_IDocReceiver_TibnorS4_PDToIDoc"   # shared IDoc flow (user, 2026-11-24)
-MESSAGE_TYPE = "ORDRSP"
-NS_URI = "http://www.ruukki.com/schemas/eai/internal/production/eruukki"
-# Namespace Mapping of the iFlow (Runtime Configuration). UNVERIFIED: the field exists in every template,
-# no reference has it filled. Prefix p1 as in the user's PO receiver determination screenshot.
-NS_MAPPING = f"xmlns:p1={NS_URI}"
-X = "/p1:OrdrspInterchange/p1:OrderResponseMessage"
 APP_ID = "CH_FinMessageHubApplicationId"             # user, 2026-11-24 (not CH_ApplicationId: confusable)
-
+SOURCE_SYSTEM = "CH_FinMessageHubSourceSystem"
 MAPPINGS = os.path.join(REPO, "mappings")
-CHILDREN = {   # mill: (mapping folder, mapping name, receiver rule for the Groovy script)
-    "HameenlinnaMetocs": ("2_ORDRSP_HameenlinnaMetocs-to-Tibnor",
-                          "Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP", 'appId.startsWith("METOCS")'),
-    "HameenlinnaTilkku": ("11_ORDRSP_HameenlinnaTilkku-to-Tibnor",
-                          "Map_HammelinnaTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP", 'appId == "TILKKUHA"'),
-    "RaaheTilkku": ("7_ORDRSP_RaaheTilkku-to-Tibnor",
-                    "Map_RaaheTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP", 'appId == "TILKKURA"'),
+
+# DESADV / INVOIC routing, as the user's PO conditions (2026-11-24):
+#   receiver: recipient GLN in this list; interface: SourceSystem METOCS* -> Metocs, else Tilkku.
+#   Tilkku is split by the mill GLN (InterchangeSender), the value the Tilkku mappings check (user, 2026-11-24).
+RECIPIENTS = "7340195700006,7080003309006,5790002585623,003723894430"
+METOCS = 'sourceSystem.startsWith("METOCS")'
+RAAHE, HAMEENLINNA = 'sender == "00372389445741"', 'sender == "00372389445751"'
+
+# ns: iFlow Namespace Mapping xmlns:p1=<ns> (Runtime Configuration). UNVERIFIED: the field exists in every
+# template, no reference has it filled. Prefix p1 as in the user's PO conditions.
+# rows: XPath properties in both parent and child (logged as custom headers); route_rows: parent only.
+FLOWS = {
+    "ORDRSP": dict(
+        object="OrderResponse", ns="http://www.ruukki.com/schemas/eai/internal/production/eruukki",
+        root="/p1:OrdrspInterchange/p1:OrderResponseMessage", app_id="/p1:DocumentId/p1:DocumentNo",
+        rows=[(APP_ID, "/p1:Header/p1:ApplicationId"),
+              ("CH_PurchaseOrder", "/p1:Reference[@Type=&apos;CO&apos;]/p1:RefNo")],
+        route_rows=[], guard=False,
+        children={   # mill: (mapping folder, mapping name, receiver rule for the Groovy script)
+            "HameenlinnaMetocs": ("2_ORDRSP_HameenlinnaMetocs-to-Tibnor",
+                                  "Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP",
+                                  'appId.startsWith("METOCS")'),
+            "HameenlinnaTilkku": ("11_ORDRSP_HameenlinnaTilkku-to-Tibnor",
+                                  "Map_HammelinnaTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP", 'appId == "TILKKUHA"'),
+            "RaaheTilkku": ("7_ORDRSP_RaaheTilkku-to-Tibnor",
+                            "Map_RaaheTilkkuHub_TibnorS4_OrderConfirmation_ORDRSP", 'appId == "TILKKURA"')}),
+    "DESADV": dict(
+        object="DespatchAdvice", ns="http://www.ruukki.com/schemas/eai/rucomef/otc",
+        root="/p1:DeliveryBatch", app_id="/p1:DeliveryBatchId",
+        rows=[(SOURCE_SYSTEM, "/p1:SourceSystem"),
+              ("CH_PurchaseOrder", "/p1:Reference[p1:ReferenceType=&apos;BuyersOrderId&apos;][1]/p1:ReferenceId")],
+        route_rows=[("FinMessageHubSender", "/p1:Header/p1:InterchangeSender"),
+                    ("FinMessageHubRecipient", "/p1:Header/p1:InterchangeRecipient")], guard=True,
+        children={
+            "HameenlinnaMetocs": ("3_Tibnor SSABEuropeHameenlinnaMetocs [80008] EDI DESADV in",
+                                  "Map_HammelinnaMetocsHub_TibnorS4_DeliveryNotice_DESADV", METOCS),
+            "HameenlinnaTilkku": ("12_DESADV_HameenlinnaTilkku-to-Tibnor",
+                                  "Map_HammelinnaTilkkuHub_TibnorS4_DeliveryNotice_DESADV", HAMEENLINNA),
+            "RaaheTilkku": ("8_DESADV_RaaheTilkku-to-Tibnor",
+                            "Map_RaaheTilkkuHub_TibnorS4_DeliveryNotice_DESADV", RAAHE)}),
+    "INVOIC": dict(
+        object="Invoice", ns=None,                    # <Invoice> has no namespace: no Namespace Mapping
+        root="/Invoice", app_id="/DocumentId/DocumentNo",
+        rows=[(SOURCE_SYSTEM, "/Header/SourceSystem"),
+              ("CH_PurchaseOrder", "/Reference[@Type=&apos;ON&apos;][1]/ReferenceIdentification")],
+        route_rows=[("FinMessageHubSender", "/Header/InterchangeSender"),
+                    ("FinMessageHubRecipient", "/Header/RecipientIdentification")], guard=True,
+        children={
+            "HameenlinnaMetocs": ("4_Tibnor SSABEuropeHameenlinnaMetocs [80008] EDI INVOIC in",
+                                  "Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC", METOCS),
+            "HameenlinnaTilkku": ("13_INVOIC_HameenlinnaTilkku-to-Tibnor",
+                                  "Map_HammelinnaTilkkuHub_TibnorS4_Invoice_INVOIC", HAMEENLINNA),
+            "RaaheTilkku": ("9_INVOIC_RaaheTilkku-to-Tibnor",
+                            "Map_RaaheTilkkuHub_TibnorS4_Invoice_INVOIC", RAAHE)}),
 }
-VERSION = {PARENT: "1.0.0", **{f"{NUMBER}_OrderResponse_FinMessageHub_{m}_TibnorS4_JMSToIDoc": "1.0.0" for m in CHILDREN}}
+VERSIONS = {"ORDRSP": "1.0.0", "DESADV": "1.0.0", "INVOIC": "1.0.0"}
+
+
+def parent_name(mt: str) -> str:
+    return f"{NUMBER}_P_{FLOWS[mt]['object']}_FinMessageHub_MQToJMS"
+
+
+def child_name(mt: str, mill: str) -> str:
+    return f"{NUMBER}_{FLOWS[mt]['object']}_FinMessageHub_{mill}_TibnorS4_JMSToIDoc"
+
+
+VERSION = {}
+for _mt, _cfg in FLOWS.items():
+    VERSION[parent_name(_mt)] = VERSIONS[_mt]
+    VERSION.update({child_name(_mt, m): VERSIONS[_mt] for m in _cfg["children"]})
 
 I2017 = "I2017_PurchaseOrder_SalesOrderBulkRequest_TILKKU_MSAP_IBMMQtoSOAP"
 I2052 = "I2052_DocumentInfoRecord_Update_DOCMAS05_CLFMAS02_SmarTeam_MSAP_PDToIDoc"
@@ -80,12 +138,14 @@ def prop_unescape(k: str) -> str:
     return re.sub(r"\\(.)", r"\1", k)
 
 
-def set_namespace_mapping(xml: str) -> str:
+def set_namespace_mapping(xml: str, ns) -> str:
+    if not ns:
+        return xml
     root = iflow_lib.parse(xml)
     coll = root.find(".//bpmn2:collaboration", NS)
     v = iflow_lib.get_prop(root, coll, "namespaceMapping")
     assert not (v.text or ""), v.text
-    v.text = NS_MAPPING
+    v.text = f"xmlns:p1={ns}"
     return iflow_lib.serialize(root)
 
 
@@ -110,10 +170,8 @@ def smi_id(xml: str) -> str:
             and "SAP_Sender" in (iflow_lib.get_prop(root, e, "headerTable").text or "")][0].get("id")
 
 
-def doc_no_rows():
-    co = f"{X}/p1:Reference[@Type=&apos;CO&apos;]/p1:RefNo"
-    return [tb.row("xpath", APP_ID, f"{X}/p1:Header/p1:ApplicationId", "java.lang.String"),
-            tb.row("xpath", "CH_PurchaseOrder", co, "java.lang.String")]
+def xpath_rows(cfg, key="rows"):
+    return [tb.row("xpath", n, cfg["root"] + x, "java.lang.String") for n, x in cfg[key]]
 
 
 def rename_participant_plain(xml: str, old: str, new: str) -> str:
@@ -124,19 +182,40 @@ def rename_participant_plain(xml: str, old: str, new: str) -> str:
 # Parent
 # ---------------------------------------------------------------------------
 
-def rd_groovy() -> str:
+def rd_groovy(mt: str) -> str:
+    cfg = FLOWS[mt]
+    ind = "        " if cfg["guard"] else "    "
     rules = "\n".join(
-        f'    {"if" if i == 0 else "else if"} ({rule}) {{\n'
-        f'        arr_receiversQueueList.add("{QUEUE}")\n'
-        f'        arr_receiversIFlowList.add("{NUMBER}_OrderResponse_FinMessageHub_{mill}_TibnorS4_JMSToIDoc")\n'
-        f'    }}' for i, (mill, (_, _, rule)) in enumerate(CHILDREN.items()))
+        f'{ind}{"if" if i == 0 else "else if"} ({rule}) {{\n'
+        f'{ind}    arr_receiversQueueList.add("{QUEUE}")\n'
+        f'{ind}    arr_receiversIFlowList.add("{child_name(mt, mill)}")\n'
+        f'{ind}}}' for i, (mill, (_, _, rule)) in enumerate(cfg["children"].items()))
+    get = '(message.getProperty("%s") ?: "").toString().trim()'
+    if not cfg["guard"]:
+        doc = f""" * The mill comes from Header/ApplicationId, read by XPath into property {APP_ID} in
+ * "Set Monitoring Identifiers": no payload parsing here (user, 2026-11-24).
+ *   METOCS*  -> Hameenlinna Metocs, TILKKUHA -> Hameenlinna Tilkku, TILKKURA -> Raahe Tilkku"""
+        body = f"""    def appId = {get % APP_ID}
+
+{rules}"""
+    else:
+        doc = """ * All values are read by XPath in "Set Monitoring Identifiers": no payload parsing here (user, 2026-11-24).
+ * As the PO conditions (user, 2026-11-24): only for a recipient GLN in property AllowedRecipients, then
+ *   SourceSystem METOCS*  -> Hameenlinna Metocs
+ *   else by mill GLN (InterchangeSender): 00372389445751 -> Hameenlinna Tilkku, 00372389445741 -> Raahe Tilkku"""
+        body = f"""    def sourceSystem = {get % SOURCE_SYSTEM}
+    def sender = {get % "FinMessageHubSender"}
+    def recipient = {get % "FinMessageHubRecipient"}
+    def allowedRecipients = {get % "AllowedRecipients"}.split(",")*.trim()
+
+    if (allowedRecipients.contains(recipient)) {{
+{rules}
+    }}"""
     return f"""import com.sap.gateway.ip.core.customdev.util.Message
 
 /*
- * Receiver determination for {PARENT}
- * The mill comes from Header/ApplicationId, read by XPath into property {APP_ID} in
- * "Set Monitoring Identifiers": no payload parsing here (user, 2026-11-24).
- *   METOCS*  -> Hameenlinna Metocs, TILKKUHA -> Hameenlinna Tilkku, TILKKURA -> Raahe Tilkku
+ * Receiver determination for {parent_name(mt)}
+{doc}
  * No receiver found: the lists stay empty, arr_receiversLastIndex = -1 and the
  * "Receivers Exist?" router sends the message to the Error End.
  */
@@ -145,9 +224,7 @@ def Message processData(Message message) {{
     def arr_receiversQueueList = []
     def arr_receiversIFlowList = []
 
-    def appId = (message.getProperty("{APP_ID}") ?: "").toString().trim()
-
-{rules}
+{body}
 
     message.setProperty("arr_receiversQueueList", arr_receiversQueueList)
     message.setProperty("arr_receiversIFlowList", arr_receiversIFlowList)
@@ -186,12 +263,12 @@ def mq_sender_params(xml: str, p, src_prop: str, src_def: str) -> str:
     return xml
 
 
-def build_parent() -> str:
-    name = PARENT
+def build_parent(mt: str) -> str:
+    cfg, name = FLOWS[mt], parent_name(mt)
     files = tb.template("Tibnor_SSAB_EDIMigration", tb.PARENT)
     xml = tb.iflw_of(files)
     tb.set_identity(files, name)
-    files[RES + "script/ReceiverDetermination.groovy"] = rd_groovy().encode("utf-8")
+    files[RES + "script/ReceiverDetermination.groovy"] = rd_groovy(mt).encode("utf-8")
     src = zipfile.ZipFile(os.path.join(tb.SOURCE, I2017 + ".jar"))
     src_xml = [src.read(n).decode("utf-8") for n in src.namelist() if n.endswith(".iflw")][0]
     p = iflow_lib.Params(files[RES + "parameters.prop"].decode("utf-8"),
@@ -201,15 +278,18 @@ def build_parent() -> str:
     xml = rename_participant_plain(xml, tb.SENDER, MQ_SYSTEM)
     xml = mq_sender_params(xml, p, src.read(RES + "parameters.prop").decode("utf-8"),
                            src.read(RES + "parameters.propdef").decode("utf-8"))
-    xml = set_namespace_mapping(xml)
-    # monitoring: ORDRSP keys instead of the IDoc ones
+    xml = set_namespace_mapping(xml, cfg["ns"])
+    # monitoring: hub message keys instead of the IDoc ones
     sid = smi_id(xml)
-    xml = tb.edit_table(xml, sid, "propertyTable", drop=("CH_IdocNumber", "CH_PurchaseOrder", "RCVPRN"),
-                        add=doc_no_rows())
-    xml = tb.edit_table(xml, sid, "headerTable", xpaths={"SAP_ApplicationID": f"{X}/p1:DocumentId/p1:DocumentNo"})
+    add = xpath_rows(cfg) + xpath_rows(cfg, "route_rows")
+    if cfg["guard"]:
+        add.append(tb.row("constant", "AllowedRecipients", "{{FinMessageHub_AllowedRecipients}}"))
+        p.add("FinMessageHub_AllowedRecipients", RECIPIENTS)
+    xml = tb.edit_table(xml, sid, "propertyTable", drop=("CH_IdocNumber", "CH_PurchaseOrder", "RCVPRN"), add=add)
+    xml = tb.edit_table(xml, sid, "headerTable", xpaths={"SAP_ApplicationID": cfg["root"] + cfg["app_id"]})
     p.set("HTTPS_Address", "/" + name)
     p.set("SAP_Sender", MQ_SYSTEM)
-    p.set("SAP_MessageType", MESSAGE_TYPE)
+    p.set("SAP_MessageType", mt)
     st.remove_unused(xml, p)
     return st.finish(name, files, xml, p, VERSION[name], FORBIDDEN, rename=False)
 
@@ -218,9 +298,10 @@ def build_parent() -> str:
 # Children
 # ---------------------------------------------------------------------------
 
-def build_child(mill: str) -> str:
-    folder, mapping, _ = CHILDREN[mill]
-    name = f"{NUMBER}_OrderResponse_FinMessageHub_{mill}_TibnorS4_JMSToIDoc"
+def build_child(mt: str, mill: str) -> str:
+    cfg = FLOWS[mt]
+    folder, mapping, _ = cfg["children"][mill]
+    name = child_name(mt, mill)
     files = tb.template("Tibnor_SSAB_EDIMigration", tb.CHILD)
     xml = tb.iflw_of(files)
     files = {n: b for n, b in files.items()
@@ -249,7 +330,7 @@ def build_child(mill: str) -> str:
     p.propdef = (p.propdef.replace(f'attribute_category="{tb.SENDER}"', 'attribute_category="__S__"')
                  .replace(f'attribute_category="{MQ_SYSTEM}"', f'attribute_category="{IDOC_SYSTEM}"')
                  .replace('attribute_category="__S__"', f'attribute_category="{MQ_SYSTEM}"'))
-    # mapping step -> the mill's ORDRSP mapping
+    # mapping step -> the mill's mapping
     root = iflow_lib.parse(xml)
     m = st.by_id(root, tb.MAP_STEP)
     m.set("name", mapping)
@@ -257,20 +338,20 @@ def build_child(mill: str) -> str:
                      ("mappingname", mapping), ("mappingpath", f"src/main/resources/mapping/{mapping}")):
         iflow_lib.get_prop(root, m, key).text = val
     xml = iflow_lib.serialize(root)
-    xml = set_namespace_mapping(xml)
+    xml = set_namespace_mapping(xml, cfg["ns"])
     # monitoring + IDoc control values read by the mapping (getProperty SNDPOR / RCVPOR / RCVPRN)
     xml = tb.edit_table(xml, tb.SMI_CHILD, "propertyTable",
                         drop=("CH_IdocNumber", "CH_PurchaseOrder", "HubEnvironment"),
-                        add=doc_no_rows() + [tb.row("constant", k, "{{TibnorS4_%s}}" % k)
-                                             for k in ("SNDPOR", "RCVPOR", "RCVPRN")])
-    xml = tb.edit_table(xml, tb.SMI_CHILD, "headerTable", xpaths={"SAP_ApplicationID": f"{X}/p1:DocumentId/p1:DocumentNo"})
+                        add=xpath_rows(cfg) + [tb.row("constant", k, "{{TibnorS4_%s}}" % k)
+                                               for k in ("SNDPOR", "RCVPOR", "RCVPRN")])
+    xml = tb.edit_table(xml, tb.SMI_CHILD, "headerTable", xpaths={"SAP_ApplicationID": cfg["root"] + cfg["app_id"]})
     for k in ("SNDPOR", "RCVPOR", "RCVPRN"):
         p.add(f"TibnorS4_{k}", "")                     # set on the tenant (user, 2026-11-24)
     p.set("PD_Address", "/" + name)
     p.set("HTTPS_Address", "/" + name)
     p.set("SAP_Sender", MQ_SYSTEM)
     p.set("SAP_Receiver", IDOC_SYSTEM)
-    p.set("SAP_MessageType", MESSAGE_TYPE)
+    p.set("SAP_MessageType", mt)
     st.remove_unused(xml, p)
     return st.finish(name, files, xml, p, VERSION[name], FORBIDDEN, rename=True)
 
@@ -279,11 +360,12 @@ st.KNOWN_PARTICIPANTS |= {MQ_SYSTEM, IDOC_SYSTEM}
 
 
 def main():
+    mt = sys.argv[sys.argv.index("--flow") + 1]
     only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
-    jobs = [(m, lambda m=m: build_child(m)) for m in CHILDREN] + [("parent", build_parent)]
+    jobs = [(m, lambda m=m: build_child(mt, m)) for m in FLOWS[mt]["children"]] + [("parent", lambda: build_parent(mt))]
     for key, fn in jobs:
         if only in (None, key):
-            print(f"== {key}")
+            print(f"== {mt} {key}")
             name = fn()
             z = st.read_archive(tb.LONG + os.path.join(PKG, name, "build", name + ".zip"))[0]
             for fl in iflow_lib.best_practice_flags(tb.iflw_of(z), z[RES + "parameters.prop"].decode("utf-8")):

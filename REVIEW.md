@@ -123,6 +123,11 @@ Status: `Open` = not reviewed yet · `OK` = reviewed and accepted · `Changed` =
 |---|---|---|---|---|
 | S16 | **Filter at segment level, map the fields 1:1**: `createIf(qualifier [context = parent of the source segment] = X)` on the target segment; its fields are straight maps of the same source segment. SUPPRESS skips the children's contexts. A filtered chain only where the value is the element itself or a field mixes segments | CLAUDE.md + FORMAT_NOTES §3.5 (applied) | L2 (user's CPI mapping `… (1).zip`, Party SE/BY/CN; explanation confirmed in chat 2026-11-24) | OK (approved with the plan, 2026-11-24) |
 
+## A6. EDI_DC40 without a condition (Metocs ORDRSP test, 2026-11-24)
+| # | Proposal | Where | Why | Status |
+|---|---|---|---|---|
+| A6.1 | `EDI_DC40` ← empty constant, no `createIf`; the sender fields stay constants | CLAUDE.md conventions | User's test of `Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP` v1.0.8: "EDI_DC40 does not need a condition… blank constant for it for future" | OK (user statement, applied 2026-11-24; mappings change at their next version) |
+
 ## D. Other actions taken
 | # | Action | Status |
 |---|---|---|
