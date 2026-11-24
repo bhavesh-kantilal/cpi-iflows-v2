@@ -1,5 +1,10 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_Invoice_INVOIC
 
+## 1.0.3 — 2026-11-24 15:10 CET
+- Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_metocs), sender fields constants; E1EDKA1 (LF) and E1EDKA1[1] (RE) ← createIf(is_metocs), PARTN constant.
+- Kept as filtered chains (rule limits): E1EDK01 BSART/FKART_RL/FKTYP (is_380: the segment also carries CURCY), E1EDK04 MWSBT, E1EDP26 BETRG, E1EDP19 IDTNR and the item Quantity values (qualified values inside an item / tax line), header values (currency, date, PO number).
+- Semantic diff: only the targets above changed. All checks passed. Not yet tested in CPI.
+
 ## 1.0.2 — 2026-11-15 13:38 CET
 - Rule R4 (CLAUDE.md): no `mapWithDefault` after a context change when the new context can hold several occurrences. `AddArticleNo/@Type` [context Item] (IDTNR) now goes into the filter directly. An item can carry several AddArticleNo (UA, MF, HS), and `mapWithDefault` doesn't fill gaps after a context change.
 - The same function also builds `DocumentId/Date/@Type` [context DocumentId] (E1EDK03/DATUM, E1EDP03/DATUM) without `mapWithDefault`. There is one Date per DocumentId, so the result is the same.

@@ -72,14 +72,16 @@ inv_date = header(by_attr(f"{H}/DocumentId/Date", "Type", "149", attr_context=f"
 po_no = F("formatNumber", header(by_attr(f"{H}/Reference", "Type", "ON", "ReferenceIdentification")),
           nformat="0000000000", separator=".")                                             # #23: 10 digits
 line_no = F("formatNumber", S(f"{IT}/LineNo"), nformat="#", separator=".")                 # '000010' -> '10'
-vendor = F("ifWithoutElse", is_metocs, C("80008"), keepss="false")
+vendor = C("80008")                    # E1EDKA1 segments carry the Metocs check (segment-level filter)
 
 # ---- control record EDI_DC40 (#1-7) --------------------------------------------------------
 b.map("/INVOIC01", C(""))
 b.map(T, C(""))
 b.map(f"{T}/@BEGIN", C("1"))
 D = f"{T}/EDI_DC40"
-b.map(D, C(""))
+# segment-level filter (CLAUDE.md, user 2026-11-24): the Metocs check sits on the segment, the sender
+# fields are constants. A non-Metocs message gets no control record (it could not be posted anyway).
+b.map(D, F("createIf", is_metocs))
 b.map(f"{D}/@SEGMENT", C("1"))
 b.map(f"{D}/TABNAM", C("EDI_DC40"))
 b.map(f"{D}/DIRECT", C("2"))
@@ -90,9 +92,9 @@ b.map(f"{D}/STD", C("E"))
 b.map(f"{D}/STDVRS", C("96A"))
 b.map(f"{D}/STDMES", C("INVOIC"))
 b.map(f"{D}/SNDPOR", F("getProperty", C("SNDPOR")))
-b.map(f"{D}/SNDPRT", F("ifWithoutElse", is_metocs, C("LI"), keepss="false"))
-b.map(f"{D}/SNDPFC", F("ifWithoutElse", is_metocs, C("LF"), keepss="false"))
-b.map(f"{D}/SNDPRN", F("ifWithoutElse", is_metocs, C("0000080008"), keepss="false"))
+b.map(f"{D}/SNDPRT", C("LI"))
+b.map(f"{D}/SNDPFC", C("LF"))
+b.map(f"{D}/SNDPRN", C("0000080008"))
 b.map(f"{D}/SNDLAD", S(f"{H}/Header/InterchangeSender"))
 b.map(f"{D}/RCVPOR", F("getProperty", C("RCVPOR")))
 b.map(f"{D}/RCVPRT", C("LS"))
@@ -107,11 +109,11 @@ b.map(f"{T}/E1EDK01/BSART", F("ifWithoutElse", is_380, C("INVO"), keepss="false"
 b.map(f"{T}/E1EDK01/FKART_RL", F("ifWithoutElse", is_380, C("LR"), keepss="false"))
 b.map(f"{T}/E1EDK01/FKTYP", F("ifWithoutElse", is_380, C("L"), keepss="false"))
 
-b.map(f"{T}/E1EDKA1", C(""))                              # LF = vendor
+b.map(f"{T}/E1EDKA1", F("createIf", is_metocs))          # LF = vendor
 b.map(f"{T}/E1EDKA1/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDKA1/PARVW", C("LF"))
 b.map(f"{T}/E1EDKA1/PARTN", vendor)
-b.map(f"{T}/E1EDKA1[1]", C(""))                           # RE = invoicing party, same vendor
+b.map(f"{T}/E1EDKA1[1]", F("createIf", is_metocs))       # RE = invoicing party, same vendor
 b.map(f"{T}/E1EDKA1[1]/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDKA1[1]/PARVW", C("RE"))
 b.map(f"{T}/E1EDKA1[1]/PARTN", vendor)
