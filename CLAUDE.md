@@ -108,6 +108,7 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
 - **No overlapping pools or steps on the iFlow canvas** (user, 2026-11-23, I2024): when a step is inserted and a pool gets wider, move every pool to its right (same height) with its steps. Build check `layout_errors`: pools don't overlap, every step lies inside its own pool.
 - **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. Close gaps left by removed steps. `iflow_lib.fix_diagram` (with `shift=`) and `iflow_lib.sync_flow_refs` do this. (I0539 v1.0.0: "Main Process connection missing"; I0539_P 2.0.0: gap and no arrows, L2.)
 - For a quick visual check without CPI, `py -I tools/iflow_render.py <zip> <out.svg>` draws the diagram.
+- **No payload parsing in Groovy for values one XPath can read** (user, 2026-11-24): set them as a property by XPath in a Content Modifier (usually "Set Monitoring Identifiers"), and the script reads `message.getProperty(...)`. E.g. receiver determination on RCVPRN or ApplicationId. Parse the payload only for complex logic.
 - **Groovy XML parsing streams the body** (user, 2026-11-23, CPI script editor "High" warning on IXXXX_P ReceiverDetermination):
   - write `new XmlSlurper().parse(message.getBody(java.io.Reader))` (same for `XmlParser`)
   - never `parseText(message.getBody(String))` or any other body String

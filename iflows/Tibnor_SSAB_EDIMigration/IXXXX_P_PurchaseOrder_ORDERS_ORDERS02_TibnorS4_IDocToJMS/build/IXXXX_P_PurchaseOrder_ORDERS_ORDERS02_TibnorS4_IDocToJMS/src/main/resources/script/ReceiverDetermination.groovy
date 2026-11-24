@@ -2,7 +2,8 @@ import com.sap.gateway.ip.core.customdev.util.Message
 
 /*
  * Receiver determination for IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS
- * Reads EDI_DC40/RCVPRN of the ORDERS02 IDoc.
+ * RCVPRN comes from property RCVPRN, set by XPath /ORDERS02/IDOC/EDI_DC40/RCVPRN in
+ * "Set Monitoring Identifiers": no payload parsing for a value one XPath can read (user, 2026-11-24).
  * RCVPRN can be a partner number (0000025200) or a logical system / alphanumeric name
  * (e.g. TS4CLNT100): leading zeros are removed only when the value is all digits
  * (0000025200 = 25200); any other value is compared as it is (trimmed).
@@ -14,9 +15,7 @@ def Message processData(Message message) {
     def arr_receiversQueueList = []
     def arr_receiversIFlowList = []
 
-    // Stream the body into the parser (no copy of the payload as a String)
-    def idoc = new XmlSlurper().parse(message.getBody(java.io.Reader))
-    def rcvprn = idoc.IDOC.EDI_DC40.RCVPRN.text().trim()
+    def rcvprn = (message.getProperty("RCVPRN") ?: "").toString().trim()
     if (rcvprn ==~ /\d+/) {
         rcvprn = rcvprn.replaceFirst(/^0+(?!$)/, '')
     }

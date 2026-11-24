@@ -50,7 +50,7 @@ RECEIVER = "FinMessageHub_HameenlinnaMetocs"   # SAP_Receiver, child only (user,
 MQ_SYSTEM = "FinMessageHub"              # receiver participant: plain system name
 MESSAGE_TYPE = "ORDERS.ORDERS02"
 MAPPING = "Map_TibnorS4_HammelinnaMetocsHub_PurchaseOrder_ORDERS02"
-VERSION = {PARENT: "1.0.1", CHILD: "1.0.1"}
+VERSION = {PARENT: "1.0.2", CHILD: "1.0.1"}
 
 I2023_P = "I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS"
 I2018 = "I2018_Material_MSAP_SmarTeam_JMSToHTTP"
@@ -111,7 +111,8 @@ RD_GROOVY = f"""import com.sap.gateway.ip.core.customdev.util.Message
 
 /*
  * Receiver determination for {PARENT}
- * Reads EDI_DC40/RCVPRN of the ORDERS02 IDoc.
+ * RCVPRN comes from property RCVPRN, set by XPath /ORDERS02/IDOC/EDI_DC40/RCVPRN in
+ * "Set Monitoring Identifiers": no payload parsing for a value one XPath can read (user, 2026-11-24).
  * RCVPRN can be a partner number (0000025200) or a logical system / alphanumeric name
  * (e.g. TS4CLNT100): leading zeros are removed only when the value is all digits
  * (0000025200 = 25200); any other value is compared as it is (trimmed).
@@ -123,9 +124,7 @@ def Message processData(Message message) {{
     def arr_receiversQueueList = []
     def arr_receiversIFlowList = []
 
-    // Stream the body into the parser (no copy of the payload as a String)
-    def idoc = new XmlSlurper().parse(message.getBody(java.io.Reader))
-    def rcvprn = idoc.IDOC.EDI_DC40.RCVPRN.text().trim()
+    def rcvprn = (message.getProperty("RCVPRN") ?: "").toString().trim()
     if (rcvprn ==~ /\\d+/) {{
         rcvprn = rcvprn.replaceFirst(/^0+(?!$)/, '')
     }}
@@ -165,7 +164,8 @@ def build_parent() -> str:
     smi = [e for e in root.iter(_q("bpmn2:callActivity")) if e.get("name") == "Set Monitoring Identifiers"
            and "SAP_Sender" in (iflow_lib.get_prop(root, e, "headerTable").text or "")][0].get("id")
     xml = edit_table(xml, smi, "propertyTable",
-                     add=[row("xpath", "CH_PurchaseOrder", "/ORDERS02/IDOC/E1EDK01/BELNR", "java.lang.String")])
+                     add=[row("xpath", "CH_PurchaseOrder", "/ORDERS02/IDOC/E1EDK01/BELNR", "java.lang.String"),
+                          row("xpath", "RCVPRN", "/ORDERS02/IDOC/EDI_DC40/RCVPRN", "java.lang.String")])
     xml = st.rename_participant(xml, p, "MSAP", SENDER)      # ProcessDirect sender = sending system
     st.remove_unused(xml, p)
     files[RES + "parameters.prop"] = p.prop.encode("utf-8")

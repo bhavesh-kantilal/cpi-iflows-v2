@@ -40,6 +40,7 @@ Parent (package Tibnor_SSAB_EDIMigration). It receives the ORDERS02 IDoc from Ti
 | 2026-11-23 | Misspelt template names (CLAUDE.md rule) | Fixed | `Enviroinment` → `Environment` (parameter and property) |
 | 2026-11-23 | CPI editor warning "XmlSlurper without streaming" (L2, user screenshot) | Stream the body: `parse(message.getBody(java.io.Reader))`; made a rule | 1.0.1. Build check `script_parse_errors` |
 | 2026-11-23 | RCVPRN can be a logical system name or alphanumeric (L2, user question) | Strip leading zeros only from all-digit values; compare other values as they are | 1.0.1. `0000025200` → `25200`, `TS4CLNT100` stays `TS4CLNT100` |
+| 2026-11-24 | Parse the payload in Groovy for one value? (L2, user) | No: XPath in a Content Modifier, the script reads the property | 1.0.2: property `RCVPRN` (XPath `/ORDERS02/IDOC/EDI_DC40/RCVPRN`) in Set Monitoring Identifiers; no XmlSlurper. CLAUDE.md rule |
 
 ## Call-outs
 - **Bhavesh, I built `ReceiverDetermination.groovy` because** the receiver depends on RCVPRN with leading zeros ignored, and the SSAB parent pattern feeds the receiver loop from the `arr_receivers*` properties.

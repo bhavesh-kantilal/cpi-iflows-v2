@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDocToJMS
 Bundle-SymbolicName: IXXXX_P_PurchaseOrder_ORDERS_ORDERS02_TibnorS4_IDoc
  ToJMS
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
