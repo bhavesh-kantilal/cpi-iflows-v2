@@ -26,3 +26,6 @@ See the Raahe spec (same questions, same build logic).
 | 2026-11-16 | Control record | As Metocs (my default, stated to the user): `getProperty` SNDPOR/RCVPOR/RCVPRN, STD constants `93A` | iFlow sets the properties |
 | 2026-11-16 | "Before the first '-'" | UDF `getBuyerOrderId` (port of the PO UDF), call-out in the Raahe spec | One UDF |
 | 2026-11-16 | iFlow steps | None: mapping only (user) | No sort step |
+
+- **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1ADRM1 ← createIf(is_mill), PARTNER_ID constant. (logic shared with DESADV_RaaheTilkku-to-Tibnor)
+  - Kept as chains: Header values and the grouping chains of E1EDL24.
