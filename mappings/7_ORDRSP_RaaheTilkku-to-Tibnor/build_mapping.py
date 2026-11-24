@@ -89,7 +89,9 @@ def build(mill: dict):
     b.map(T, C(""))
     b.map(f"{T}/@BEGIN", C("1"))
     D = f"{T}/EDI_DC40"
-    b.map(D, C(""))
+    # segment-level filter (CLAUDE.md, user 2026-11-24): the mill check sits on the segment, the sender
+    # fields are constants. A message from another sender gets no control record (it could not be posted anyway).
+    b.map(D, F("createIf", is_mill))
     b.map(f"{D}/@SEGMENT", C("1"))
     b.map(f"{D}/TABNAM", C("EDI_DC40"))                       # mandatory, as reference CLFMAS02
     b.map(f"{D}/DIRECT", C("2"))                              # inbound, as reference CLFMAS02
@@ -99,9 +101,9 @@ def build(mill: dict):
     b.map(f"{D}/STDVRS", C("93A"))
     b.map(f"{D}/STDMES", C("ORDRSP"))
     b.map(f"{D}/SNDPOR", F("getProperty", C("SNDPOR")))       # as Metocs ORDRSP Q3
-    b.map(f"{D}/SNDPRT", F("ifWithoutElse", is_mill, C("LI"), keepss="false"))
-    b.map(f"{D}/SNDPFC", F("ifWithoutElse", is_mill, C("LF"), keepss="false"))
-    b.map(f"{D}/SNDPRN", F("ifWithoutElse", is_mill, C(mill["sndprn"]), keepss="false"))
+    b.map(f"{D}/SNDPRT", C("LI"))
+    b.map(f"{D}/SNDPFC", C("LF"))
+    b.map(f"{D}/SNDPRN", C(mill["sndprn"]))
     b.map(f"{D}/SNDLAD", S(f"{M}/Header/InterchangeSender"))
     b.map(f"{D}/RCVPOR", F("getProperty", C("RCVPOR")))
     b.map(f"{D}/RCVPRT", C("LS"))
@@ -127,10 +129,11 @@ def build(mill: dict):
     b.map(f"{T}/E1EDKA1[2]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDKA1[2]/PARVW", C("LF"))
     b.map(f"{T}/E1EDKA1[2]/PARTN", party_zti("SE"))
-    b.map(f"{T}/E1EDK02", po_chain)                           # #12 QUALF 001, one per CO reference
+    # #12 QUALF 001, one per CO reference: segment-level filter, @Type lifted to the message context; BELNR 1:1
+    b.map(f"{T}/E1EDK02", F("createIf", eq(S(f"{M}/Reference/@Type", M), "CO")))
     b.map(f"{T}/E1EDK02/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDK02/QUALF", C("001"))
-    b.map(f"{T}/E1EDK02/BELNR", po_chain)
+    b.map(f"{T}/E1EDK02/BELNR", S(f"{M}/Reference/RefNo"))
     b.map(f"{T}/E1EDK02[1]", C(""))                           # #13 QUALF 002: DocumentNo is mandatory
     b.map(f"{T}/E1EDK02[1]/@SEGMENT", C("1"))
     b.map(f"{T}/E1EDK02[1]/QUALF", C("002"))

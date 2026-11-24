@@ -49,3 +49,6 @@ PO 46540729: BELNR 46540729, E1EDK03 20261113, AG 0142700, WE empty, LF 0003000,
 | 2026-11-16 | Control record | As Metocs ORDRSP (my default, stated to the user): `getProperty` SNDPOR / RCVPOR / RCVPRN, STD constants, STDVRS `93A` from the sample | iFlow sets the properties |
 | 2026-11-16 | iFlow steps | None: mapping only (user) | One OrderResponseMessage per message assumed, as Metocs |
 | 2026-11-16 | Price fields | `context = Item` instead of the PO filter pattern (no qualifier to filter on) | An Item without Price stays aligned |
+
+- **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDK02 (QUALF 001) ← createIf(Reference/@Type [context OrderResponseMessage] = CO), BELNR 1:1.
+  - Kept as chains: E1EDKA1 AG/LF: PARTN is the ZTI PartyId inside the Party (own-value filter), so it stays a chain. Item values as in Metocs ORDRSP.
