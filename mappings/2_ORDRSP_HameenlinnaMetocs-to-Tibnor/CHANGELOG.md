@@ -1,5 +1,10 @@
 # CHANGELOG — Map_HammelinnaMetocsHub_TibnorS4_OrderConfirmation_ORDRSP
 
+## 1.0.7 — 2026-11-24 15:10 CET
+- Segment-level filters (rule of 2026-11-24, user's ORDERS v1.2.0): EDI_DC40 ← createIf(is_metocs), SNDPRT/SNDPFC/SNDPRN constants; E1EDK02 (QUALF 001) ← createIf(Reference/@Type [context OrderResponseMessage] = CO), BELNR 1:1 from Reference/RefNo.
+- Kept as filtered chains (rule limits): E1EDK01/BELNR and E1EDP02/BELNR (header values from the CO reference), E1EDK03 (DocumentId/Date/@Type is an own-value attribute), the item node (PO pattern with the Property condition), E1EDP03/E1EDP19/E1EDP20 and the Quantity values (own-value or per-item qualified values).
+- Semantic diff: only the targets above changed. All checks passed. Not yet tested in CPI.
+
 ## 1.0.6 — 2026-11-15 13:38 CET
 - Rule R4 (CLAUDE.md): `AddArticleNo/@Type` [context Item] (E1EDP19, IDTNR) goes into the filter without `mapWithDefault`. An item can carry several AddArticleNo, and `mapWithDefault` after a context change doesn't fill gaps. This changes a detail of the user's v1.0.4 CPI version, approved by the user 2026-11-15 ("Docs + R4 fix").
 - All checks passed. Re-test in CPI recommended (E1EDP19/IDTNR).

@@ -83,7 +83,9 @@ b.map("/ORDERS01", C(""))
 b.map(T, C(""))
 b.map(f"{T}/@BEGIN", C("1"))
 D = f"{T}/EDI_DC40"
-b.map(D, C(""))
+# segment-level filter (CLAUDE.md, user 2026-11-24): the Metocs check sits on the segment, the sender
+# fields are constants. A non-Metocs message gets no control record (it could not be posted anyway).
+b.map(D, F("createIf", is_metocs))
 b.map(f"{D}/@SEGMENT", C("1"))
 b.map(f"{D}/TABNAM", C("EDI_DC40"))                       # mandatory, as reference CLFMAS02
 b.map(f"{D}/DIRECT", C("2"))                              # mandatory, inbound, as reference CLFMAS02
@@ -93,9 +95,9 @@ b.map(f"{D}/STD", C("E"))                                 # OP-06 (Q4)
 b.map(f"{D}/STDVRS", C("96A"))
 b.map(f"{D}/STDMES", C("ORDRSP"))
 b.map(f"{D}/SNDPOR", F("getProperty", C("SNDPOR")))       # Q3, as reference CLFMAS02
-b.map(f"{D}/SNDPRT", F("ifWithoutElse", is_metocs, C("LI"), keepss="false"))
-b.map(f"{D}/SNDPFC", F("ifWithoutElse", is_metocs, C("LF"), keepss="false"))
-b.map(f"{D}/SNDPRN", F("ifWithoutElse", is_metocs, C("0000080008"), keepss="false"))
+b.map(f"{D}/SNDPRT", C("LI"))
+b.map(f"{D}/SNDPFC", C("LF"))
+b.map(f"{D}/SNDPRN", C("0000080008"))
 b.map(f"{D}/SNDLAD", S(f"{M}/Header/InterchangeSender"))
 b.map(f"{D}/RCVPOR", F("getProperty", C("RCVPOR")))
 b.map(f"{D}/RCVPRT", C("LS"))
@@ -110,10 +112,11 @@ b.map(f"{T}/E1EDK03", F("createIf", is_doc_date))         # optional container: 
 b.map(f"{T}/E1EDK03/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK03/IDDAT", C("012"))
 b.map(f"{T}/E1EDK03/DATUM", F("ifWithoutElse", is_doc_date, S(f"{M}/DocumentId/Date"), keepss="false"))
-b.map(f"{T}/E1EDK02", po_chain)                                  # QUALF 001, one per CO reference
+# QUALF 001, one per CO reference: segment-level filter, @Type lifted to the message context; BELNR 1:1
+b.map(f"{T}/E1EDK02", F("createIf", eq(S(f"{M}/Reference/@Type", M), "CO")))
 b.map(f"{T}/E1EDK02/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK02/QUALF", C("001"))
-b.map(f"{T}/E1EDK02/BELNR", po_chain)
+b.map(f"{T}/E1EDK02/BELNR", S(f"{M}/Reference/RefNo"))
 b.map(f"{T}/E1EDK02[1]", C(""))                           # QUALF 002: DocumentNo is mandatory
 b.map(f"{T}/E1EDK02[1]/@SEGMENT", C("1"))
 b.map(f"{T}/E1EDK02[1]/QUALF", C("002"))
