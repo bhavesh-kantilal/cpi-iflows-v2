@@ -27,3 +27,5 @@ See the Raahe spec (same questions, same build logic).
 
 - **2026-11-24 Segment-level filters (v1.0.1, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_mill), sender fields constants; E1EDK02 (QUALF 001) ← createIf(Reference/@Type [context OrderResponseMessage] = CO), BELNR 1:1. (logic shared with ORDRSP_RaaheTilkku-to-Tibnor)
   - Kept as chains: E1EDKA1 AG/LF: PARTN is the ZTI PartyId inside the Party (own-value filter), so it stays a chain. Item values as in Metocs ORDRSP.
+
+- **2026-11-24 (v1.0.2, L2, user Q1).** E1EDKA1 (AG) ← createIf(Party/@Role [context OrderResponseMessage] = BY), E1EDKA1[2] (LF) ← createIf(… = SE); PARTN ← ifWithoutElse(PartyId/@Type [context Party] = ZTI, PartyId) within that Party (useOneAsMany removed). No E1EDKA1 AG/LF when the Party is missing (before: always, possibly empty).
