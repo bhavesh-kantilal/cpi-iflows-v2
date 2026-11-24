@@ -65,3 +65,6 @@ A Python model of exactly these rules reproduces all **11 E1EDL24 of the 5 expec
 - **2026-11-13 Control record** as ORDRSP (user).
 - **2026-11-13 Files moved:** XSDs → `schemas/`. The empty `Test/` folder is left as it is.
 - **2026-11-15 Why the `groupByHeat` UDF exists (call-out to the user):** the delivery items must be grouped per line + heat, with sums and the "as sent / sum" format, and there is no proof that the hub sends bundles of one heat next to each other. The user's standard without a UDF: an XSLT step in the iFlow that sorts by line + heat, then `SplitByValue` (value change) + `formatByExample` + `sum` in the mapping (re-learn Q1; L1 evidence: iFlow I0115 sorts with XSLT `SortByTaxLines` before `MapToRFC_BAPI_ACC_DOCUMENT_POST`). **Decide in the iFlow phase** (REVIEW.md C13).
+
+- **2026-11-24 Segment-level filters (v1.0.2, rule from the user's ORDERS v1.2.0 feedback, L2).** EDI_DC40 ← createIf(is_metocs), sender fields constants; E1ADRM1 ← createIf(is_metocs), PARTNER_ID constant.
+  - Kept as chains: PO number / cargo id header values (used in several segments), the groupByHeat UDF chain for E1EDL24.
