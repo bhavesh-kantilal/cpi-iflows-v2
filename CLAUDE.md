@@ -191,7 +191,8 @@ The guide lives on SharePoint (SSE IT - SAP Integration Suite › 20. Developmen
 - After each build, commit (`<MappingName> v<x.y.z>: <change>`) and tag `<MappingName>-v<x.y.z>`.
 - **Line endings**: never remove or weaken `.gitattributes` (`* -text`). Git on this PC has `core.autocrlf=true` set system-wide, so without that file it rewrites CRLF and LF. Every reference export and every build output must stay byte-identical to the original. After committing, spot-check with `git show HEAD:<file> | cmp - <file>`.
 - Commits are authored by the user's git identity. **Do not add `Co-Authored-By` or any Claude/AI attribution** to commits or files.
-- Commit or push only as part of a task the user asked for. Recommended: a private remote (GitHub or Azure DevOps) so the repo survives a disk crash.
+- **This PC and GitHub stay in sync** (user, 2026-11-25): the remote is `origin` = `github.com/bhavesh-kantilal/cpi-mappings` (private). **After every commit, push `master` and the tags** (`git push origin master` + `git push origin --tags`). The user wants to start on another PC from `git clone` alone. Before ending a task, `git status -sb` must show no `ahead`. Commit only as part of a task the user asked for. (Until 2026-11-25 nothing was pushed, and 157 commits existed only on this PC.)
+- **Claude's memory folder is mirrored in the repo**: `docs/claude_memory/` holds a copy of every note in Claude's own memory folder (`%USERPROFILE%\.claude\projects\C--work-cpi-mappings\memory\`). When Claude writes or changes such a note, it updates the copy in the same commit. On a new PC, CLAUDE.md and the repo are enough; the copies are only a backup.
 
 ## Learning loop
 Claude keeps no private memory for this project: what is not written in this repo is not known.
