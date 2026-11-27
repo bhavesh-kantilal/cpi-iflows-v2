@@ -115,10 +115,10 @@ cpi-mappings-v2/            git submodule: the mapping repo (its own CLAUDE.md, 
 - Commits are authored by the user's git identity. **Do not add `Co-Authored-By` or any Claude/AI attribution** to commits or files.
 - **This PC and GitHub stay in sync** (user, 2026-11-25): the remote is `origin` = `github.com/bhavesh-kantilal/cpi-iflows-v2` (private). **After every commit, push `master` and the tags** (`git push origin master` + `git push origin --tags`). Clone with `git clone --recurse-submodules` to get the mapping repo too. Before ending a task, `git status -sb` must show no `ahead`, here and in `cpi-mappings-v2/`. Commit only as part of a task the user asked for.
 - **The old repo `C:\work\cpi-mappings` is frozen** (user, 2026-11-27): it is the fallback from before the split. Never edit, commit or push there.
-- **Claude's memory folder is mirrored in the repo**: `docs/claude_memory/` holds a copy of every note in Claude's own memory folder. When Claude writes or changes such a note, it updates the copy in the same commit.
+- **Claude's memory folder is mirrored in the repo** (corrected 2026-11-27): Claude Code keeps one memory folder per working folder, `%USERPROFILE%\.claude\projects\C--work-cpi-iflows-v2\memory\`. Every note there is copied to `docs/claude_memory/`; when Claude writes or changes a note, it updates the copy in the same commit. A session in a new folder or on a new PC starts with an empty memory: read `docs/claude_memory/MEMORY.md` first. The copies are the backup; CLAUDE.md and the repo stay the source.
 
 ## Learning loop
-Claude keeps no private memory for this project: what is not written in this repo is not known.
+**The repo is the knowledge.** What is not written in this repo is not known. Claude's own memory holds only short working notes (how the user wants to work, current status), and each is copied into `docs/claude_memory/`.
 - **Evidence levels.** L1 = the user's original export; L2 = the user's CPI download or explicit statement;
   L3 = Claude's build that the user tested in CPI; L4 = Claude's analysis (UNVERIFIED). Every rule here and in a customer skill names its source and level.
 - **Loop for every new lesson:** capture it in the iFlow's `spec.md` with its evidence → propose it in

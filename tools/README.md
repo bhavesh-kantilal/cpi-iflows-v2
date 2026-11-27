@@ -1,34 +1,20 @@
-# tools/ — CPI Message Mapping toolkit
+# tools/: iFlow builders and checks
 
-Python 3.12 with `lxml` and `openpyxl`. Always run with `py -I` (isolated mode).
+Python 3.12 with `lxml`. Always run with `py -I` (isolated mode), from the repo root.
+The mapping toolkit (`cpimm`, `mm.py`, `catalog.py`, …) is in the mapping repo: `cpi-mappings-v2/tools/`.
 
 | File | What it does |
 |---|---|
-| `mm.py` | CLI: `selftest`, `check <zip> <Name>`, `paths <mmap> <folder>` |
-| `cpimm/xmltree.py` | Lossless XML reader/writer. Keeps `<a/>` vs `<a></a>` and attribute order. |
-| `cpimm/model.py` | `.mmap` ⇄ mapping model (`read_mmap`, `render_mmap`). Rejects any structure FORMAT_NOTES doesn't cover. |
-| `cpimm/build.py` | `Builder`: write a mapping as Python expressions. Handles shared nodes, groups and layout. |
-| `cpimm/check.py` | Schema path index (XSD, IDoc XSD, WSDL) and build checks (zip layout, well-formed, no forbidden strings) |
-| `sim_copy.py` | `py -I tools/sim_copy.py <file.xml> …` writes `<name>_sim.xml` without the root's `xmlns:xsi` / `xsi:*` attributes, for the CPI mapping simulator (CLAUDE.md) |
-| `wsdl_inline.py` | `py -I tools/wsdl_inline.py <in.wsdl> <out.wsdl> <ns>=<file.xsd> …` makes a self-contained WSDL: copies XSDs the WSDL imports by URL into `<types>` (namespace-only imports, as the reference WSDLs) |
-| `cpimm/package.py` | Writes `build/<Name>.zip` and the extracted `build/<Name>/`, in the standalone-export layout |
+| `iflow_lib.py` | Shared library: parse/serialize, `fix_diagram`, `sync_flow_refs`, `externalize`, `Params` (parameters.prop + propdef), `check_iflow`, `script_parse_errors`, `best_practice_flags` |
+| `iflow_build_fsap_dispatcher.py` | FSAP Controlling iFlows and the Medius / StreamServe dispatchers. `--only <IFlowName> …` |
+| `iflow_build_smarteam.py` | SmarTeam parents and children. `--all`, `--only <IFlowName> …`, `--selftest` (jar → design-time conversion) |
+| `iflow_build_tibnor.py` | Tibnor ORDERS parent + child. `--only parent\|child`. Reads the mapping zip from `cpi-mappings-v2/mappings/…/build/` |
+| `iflow_build_tibnor_inbound.py` | Tibnor ORDRSP / DESADV / INVOIC parents + mill children. `--flow ORDRSP\|DESADV\|INVOIC [--only …]`. Reads the mapping zips from `cpi-mappings-v2/mappings/` |
+| `iflow_add_request_reply.py` | One-off: inserted the Request-Reply block into a SmarTeam iFlow |
+| `iflow_import.py` | Extracts new iFlow exports in `_reference/iflows/` |
+| `iflow_render.py` | `py -I tools/iflow_render.py <zip> <out.svg>`: draws the diagram for a quick visual check |
+| `check_all_iflows.py` | Checks every built iFlow zip: well-formed XML, diagram and wiring, parameters, no AI strings, MANIFEST name, Groovy streaming, best-practice FLAGs. Must say `All OK` |
+| `check_best_practices.py` | Best-practice FLAGs only |
+| `spot_check_iflows.py` | One-time spot checks of the FSAP dispatcher migration |
 
-## Self-test (run before trusting any change to the toolkit)
-```
-py -I tools/mm.py selftest
-```
-For every distinct reference `.mmap`, the self-test does three things:
-1. reads it into the model
-2. renders it back and requires **byte-identical** output
-3. checks every source and target path against the mapping's own schemas
-
-`MapSpecialTaxCases.mmap` is skipped as a known legacy envelope. It is an orphan in I0115.
-
-## A mapping build
-Each mapping folder has a `build_mapping.py` that uses `Builder`, then calls `package()`, `check_build()` and `check_paths()`. It expects:
-- `mappings/<Folder>/schemas/` with the source and target XSD/WSDL/JSON
-- `mappings/<Folder>/scripts/` with any Groovy UDFs
-
-## Not implemented yet
-- Path check for JSON (Swagger) schemas. It is reported as NOTE, so check those paths manually.
-- iFlow generation.
+**Customer values:** the builders still contain SSAB values (roles, queue names, participant names, step names). The list is in `.claude/skills/ssab-tibnor/SKILL.md`, "Where the code enforces SSAB values". For another customer, don't run them unchanged (CLAUDE.md "Which customer?").

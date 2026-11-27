@@ -10,7 +10,7 @@ Status on 2026-11-24, for the next session. Details per iFlow and mapping are in
 | DESADV in | `IXXXX_P_DespatchAdvice_FinMessageHub_MQToJMS` 1.0.0 | 3 × `IXXXX_DespatchAdvice_…_JMSToIDoc` 1.0.1 | `… --flow DESADV` |
 | INVOIC in | `IXXXX_P_Invoice_FinMessageHub_MQToJMS` 1.0.0 | 3 × `IXXXX_Invoice_…_JMSToIDoc` 1.0.1 | `… --flow INVOIC` |
 
-`<Mill>` = HameenlinnaMetocs / HameenlinnaTilkku / RaaheTilkku. The children contain the mappings of `mappings/2,3,4,7,8,9,11,12,13` byte-identical to their `build/` zips.
+`<Mill>` = HameenlinnaMetocs / HameenlinnaTilkku / RaaheTilkku. The children contain the mappings of `cpi-mappings-v2/mappings/2,3,4,7,8,9,11,12,13` (submodule) byte-identical to their `build/` zips.
 
 Routing:
 - ORDRSP: `Header/ApplicationId` (METOCS* / TILKKUHA / TILKKURA)
