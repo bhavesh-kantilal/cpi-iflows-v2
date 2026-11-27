@@ -7,4 +7,4 @@ The rules in CLAUDE.md, FORMAT_NOTES and the specs always win over these notes.
 - `project_iflow_spec_pending.md`: done, now the CLAUDE.md rule "Every iFlow folder gets a spec.md".
 - `project_iflow_version_comment.md`: still valid. The CPI version history comment can only be typed in the import dialog; the zip only sets `Bundle-Version`.
 - `feedback_bpmn_rfind_bug.md`: still valid (tooling pitfall).
-- `project_ssab_smart_switch.md` is **not** copied: SSAB Smart Switch work was to stay out of this repo (user, 2026-11-19).
+- `project_ssab_smart_switch.md`: SSAB Smart Switch concept (MSAP AQ1/AP1) and the SSAB documentation writing style. Copied on the user's request (2026-11-27); the Smart Switch deliverables themselves stay outside the repo.
