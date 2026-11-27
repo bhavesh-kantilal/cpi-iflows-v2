@@ -43,7 +43,7 @@ MQ_SYSTEM, IDOC_SYSTEM = "FinMessageHub", "TibnorS4"
 IDOC_ENDPOINT = "/T0143_P_IDocReceiver_TibnorS4_PDToIDoc"   # shared IDoc flow (user, 2026-11-24)
 APP_ID = "CH_FinMessageHubApplicationId"             # user, 2026-11-24 (not CH_ApplicationId: confusable)
 SOURCE_SYSTEM = "CH_FinMessageHubSourceSystem"
-MAPPINGS = os.path.join(REPO, "mappings")
+MAPPINGS = os.path.join(REPO, "cpi-mappings-v2", "mappings")   # mapping repo as git submodule
 
 # DESADV / INVOIC routing, as the user's PO conditions (2026-11-24):
 #   receiver: recipient GLN in this list; interface: SourceSystem METOCS* -> Metocs, else Tilkku.

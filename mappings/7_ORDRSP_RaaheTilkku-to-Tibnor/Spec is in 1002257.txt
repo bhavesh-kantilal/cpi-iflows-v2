@@ -1,2 +1,0 @@
-The mapping spec for this interface is shared with Hämeenlinna Tilkku:
-..\1002257 Tibnor SSABEuropeHameenlinnaTilkku [86245] EDI ORDRSP in\1002257_ORDRSP_Tilkku-to-Tibnor_MappingSpec_v0.1.xlsx

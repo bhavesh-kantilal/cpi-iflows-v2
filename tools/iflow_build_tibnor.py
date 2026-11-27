@@ -55,7 +55,7 @@ VERSION = {PARENT: "1.0.2", CHILD: "1.0.1"}
 I2023_P = "I2023_P_Equipment_COD_EQUIPMENT_SAVE_COD_EQUIPMENT_SAVE01_MSAP_IDocToJMS"
 I2018 = "I2018_Material_MSAP_SmarTeam_JMSToHTTP"
 I2034 = "I2034_Pickinglist_SCWM_WMTORD_SCWM_WMTOID01_MSAP_StreamServe_JMSToIBMMQ"
-MAP_ZIP = os.path.join(REPO, "mappings", "1_ORDERS_Tibnor-to-HameenlinnaMetocs", "build", MAPPING + ".zip")
+MAP_ZIP = os.path.join(REPO, "cpi-mappings-v2", "mappings", "1_ORDERS_Tibnor-to-HameenlinnaMetocs", "build", MAPPING + ".zip")
 RES = "src/main/resources/"
 FORBIDDEN = ["SmarTeam", "I2018", "I2023", "I2034", "StreamServe", "Pickinglist", "Equipment",
              "Enviroinment", "COD_EQUIPMENT"]

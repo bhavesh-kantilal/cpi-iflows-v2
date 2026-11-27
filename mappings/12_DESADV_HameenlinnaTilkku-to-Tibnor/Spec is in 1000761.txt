@@ -1,2 +1,0 @@
-The mapping spec for this interface is shared with Raahe Tilkku:
-..\1000761 Tibnor SSABEuropeRaaheTilkku [80067]EDI DESADV in\1000761_DESADV_RaaheTilkku-to-Tibnor_MappingSpec_v0.1.xlsx
