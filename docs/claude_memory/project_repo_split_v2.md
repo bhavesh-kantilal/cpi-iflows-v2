@@ -15,4 +15,4 @@ On 2026-11-27 the repo was split (Part 1 of the approved plan):
 
 **Why:** The user wants to share mappings alone or both together, and keep the original untouched in case something goes wrong.
 
-**How to apply:** Never edit, commit or push in C:\work\cpi-mappings. Next steps: Part 2 (SSAB/Tibnor customer skill, generic vs customer-specific rules, customer checklist) and Part 3 (fix out-of-date items), each only after the user's OK. Both clones need `core.longpaths true`. See [[feedback-small-modular-answers]].
+**How to apply:** Never edit, commit or push in C:\work\cpi-mappings. Part 2 done 2026-11-27 (skill .claude/skills/ssab-tibnor in cpi-iflows-v2, generic CLAUDE.md with customer checklist). Next: Part 3 (fix out-of-date items: READMEs, memory statement, self-test skips, REVIEW.md), only after the user's OK. Both clones need `core.longpaths true`. See [[feedback-small-modular-answers]].
