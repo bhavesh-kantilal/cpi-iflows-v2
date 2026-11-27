@@ -1,28 +1,42 @@
-# CPI Mappings — working rules
+# CPI iFlows: working rules
 
-This repo builds SAP CPI Message Mappings (and later iFlows) for the SSAB landscape as **importable zips**.
-The ground truth lives in `_reference/`:
-- `_reference/FORMAT_NOTES.md`: how a mapping export is built. It is the **only** source for XML structure.
-- `_reference/IFLOW_CONVENTIONS.md`: iFlow patterns and naming.
-- `_reference/README.md`: what each reference export shows.
+This repo builds SAP CPI **iFlows** as importable zips, for several customers.
+- **How iFlows are built is generic.** Diagram rules, checks, Groovy, XPath, externalizing and the workflow are in this file.
+- **How a customer organizes and names its iFlows is customer-specific.** Each customer has a **skill** in `.claude/skills/<customer>/SKILL.md`.
+  - The only one so far: **`ssab-tibnor`**, SSAB and Tibnor, one CPI tenant.
+- **Mapping development lives in the mapping repo**, included here as the git submodule `cpi-mappings-v2/`. See "Mapping work from this repo" below.
+
+The ground truth for iFlows:
+- `_reference/iflows/`: the user's iFlow exports (L1, SSAB)
+- `_reference/IFLOW_CONVENTIONS.md`: patterns and naming observed at SSAB
+- `_reference/README.md`: what each reference export shows
+
+## Working style (user, 2026-11-27)
+- **Answer in small, separate parts, one topic per reply.** When the user asks many questions at once, split them into steps. Answer the first one briefly, report, and wait before the next.
+
+## Which customer? (user, 2026-11-27)
+- **Before building or changing an iFlow, know which customer it is for.** If the chat or the iFlow folder doesn't make it clear, ask.
+  - **SSAB or Tibnor** (same tenant): use the skill `ssab-tibnor`.
+  - **Another customer:** ask whether to reuse the SSAB answers or go through the customer checklist below. Write the answers into a new skill `.claude/skills/<customer>/SKILL.md`, with the same sections as `ssab-tibnor`. Mark each point "[Generic pattern, <customer> value]" or "[<customer> only]".
+- **Customer checklist:** ask before the first iFlow for a customer. The answers go into the customer skill.
+  1. **Monitoring identifiers:** usually yes, see below. Which values do `SAP_Sender`, `SAP_Receiver` and `SAP_MessageType` take?
+  2. **JMS organization:** queues, queue names, retention, retries, dead-letter queue, transaction handling.
+  3. **Naming:** iFlows, steps, participants, parameters, mappings, versions.
+  4. **JMS dispatcher:** one per sender/receiver pair, or shared dispatchers like SSAB's Simplified Pipeline?
+  5. **Payload logging:** which script or collection, which switch properties?
+  6. **Custom header logging:** which script, which prefix?
+  7. **Sender role, Allowed Headers, shared helper flows** (IDoc/XI receivers, mail, lookups).
+  8. **Anything else customer-specific:** the customer's own best-practice guide, structure (main process, retrigger), transport, operations.
+- The builders in `tools/` still hold SSAB values (see the skill, "Where the code enforces SSAB values"). For another customer, don't run them unchanged. Ask first.
 
 ## Folder layout
 ```
-_reference/                 reference exports (<Name>.zip + extracted <Name>/), README, FORMAT_NOTES, IFLOW_CONVENTIONS, CATALOG
-  iflows/                   whole iFlow exports (<iFlowName>.zip + extracted), the context of the mappings
-tools/                      reusable generator / validation scripts
-udf_library/                reusable Groovy UDFs (README: when to use each one)
+_reference/                 README, IFLOW_CONVENTIONS
+  iflows/                   whole iFlow exports (<iFlowName>.zip + extracted)
+.claude/skills/<customer>/  customer conventions (SKILL.md)
+tools/                      iFlow builders and checks (iflow_lib.py, iflow_build_*.py, check_*.py)
+udf_library/iflow/          reusable iFlow Groovy scripts
 docs/explained/             plain-language explanations of lessons learned
-mappings/<Folder>/          one folder = one mapping
-  spec.md                   spec + "Decisions" section
-  <mapping sheet>           whatever sheet the user provides (xlsx/csv/…)
-  schemas/                  source/target XSD, WSDL, IDoc XSD
-  samples/                  sample payloads
-  scripts/                  Groovy UDFs used by this mapping
-  build_mapping.py          the mapping as code (tools/cpimm Builder); single source of truth
-  feedback/                 user's CPI download of a build (zip + extracted folder)
-  build/                    <MappingName>.zip + extracted <MappingName>/
-  CHANGELOG.md
 iflowdevelopment/           the user's single drop folder for iFlow exports (any package); Claude copies from here
 iflows/<Package>/           one folder = one CPI package (e.g. SmarTeam)
   source/                   copies of the user's exports and CPI downloads (zip / jar / package zip), unchanged
@@ -31,82 +45,25 @@ iflows/<Package>/           one folder = one CPI package (e.g. SmarTeam)
     build/<IFlowName>.zip + extracted <IFlowName>/
     CHANGELOG.md
 iflows/<IFlowName>/         older flat layout (FSAP flows), moves into iflows/<Package>/ later
+cpi-mappings-v2/            git submodule: the mapping repo (its own CLAUDE.md, tools/, mappings/)
 ```
-- Each mapping lives in its own folder under `mappings/`. Every folder there is a new mapping. Subfolders may appear later; the user will say in chat where to look.
-- **The mapping name is given by the user in chat.** It can differ from the folder name. It sets the `.mmap` name and the zip name. Default pattern: `Map_<Src>_<Tgt>_<Object>_<MsgType>` (see IFLOW_CONVENTIONS §2.2). If no name was given, or the name breaks the pattern, ask.
-- `_reference/`: never modify anything except README.md (typos and heading formatting only), FORMAT_NOTES.md, IFLOW_CONVENTIONS.md and CATALOG.md, and the last three only with approval.
+- `_reference/`: never modify anything except README.md (typos and heading formatting only) and IFLOW_CONVENTIONS.md, the latter only with approval.
 
-## Reading the spec and the mapping sheet
-- Mapping sheet and spec formats vary per mapping. Work out the sheet's columns yourself: which column is source path, target path, rule/logic, constant, comment and so on.
-- **Ask the user if anything is ambiguous rather than assuming.** Examples: unclear column meaning, conditions, context or queue questions, cardinality, missing schema paths, value-mapping agencies.
-- Record **every** Q&A decision in that mapping's `spec.md` under a `## Decisions` section, with date, question, answer and impact.
+## Mapping work from this repo (user, 2026-11-27)
+- During iFlow work the user may ask for a mapping as well. All mapping work happens in **`cpi-mappings-v2/`** and follows **its** `CLAUDE.md`: the mapping rules, the self-test and the 7 build checks.
+- The user may point to input files anywhere ("the mapping Excel / XMLs are in folder xyz"). **Copy them unchanged** into the mapping folder, in the layout of the mapping repo:
+  - `cpi-mappings-v2/mappings/<NN_Name>/` with the sheet, `schemas/`, `samples/`, `scripts/`
+  - a new folder gets the next free number
 
-## Building a mapping
-- Build strictly following `_reference/FORMAT_NOTES.md`. **Never invent XML structure that is not seen in the references.**
-- If something is needed that the references don't show (anything marked NOT COVERED, or a function with no catalog entry), **stop and ask**.
-- **WSDLs that import XSDs by URL:** CPI does not fetch them. Ask before downloading, and keep the XSDs unchanged in `schemas/downloaded/`. **Default (user, 2026-11-15):** a copy of the WSDL with only the `schemaLocation` values changed to `../xsd/<file>.xsd`. The build packs the XSDs into the zip's `xsd/` (FORMAT_NOTES §1.1, NShift TestD). Inlining with `tools/wsdl_inline.py` is the alternative. The original WSDL stays unchanged.
-- If you rely on an item marked UNVERIFIED, say so to the user.
-- The mapping is written in `mappings/<Folder>/build_mapping.py` with the toolkit's `Builder` (`tools/README.md`). XML is produced only by `tools/cpimm/model.py`, which renders only the structures described in FORMAT_NOTES. Running the script builds, packages and checks.
-- **Before every build, run `py -I tools/mm.py selftest`.** It must pass: every standard reference `.mmap` round-trips byte-identically and all its paths are found in its schemas. Run it again after any toolkit change.
+  The layout gets improved later.
+- **Commit order:**
+  1. Commit and push the mapping change **inside `cpi-mappings-v2/`**, to its own remote.
+  2. Then commit the new submodule pointer here (`git add cpi-mappings-v2`) and push.
 
-### Mapping conventions (user rules, 2026-11-13)
-- **Containers ("tags")** — nodes that only hold child elements — come from an **empty constant**. When the node is optional, use `createIf(condition)` instead.
-  - Use SAP judgement for which is which, e.g. a PO item always has Quantity and Price.
-  - An element that **carries its own value** (simple content, with or without attributes, e.g. `Reference`, `PartyId`, `Date`) is **not** a tag. It keeps its source value.
-  - Repeating nodes keep their source occurrence (e.g. `Item` ← `E1EDP01`).
-- **Leading zeros**: use standard `formatNumber` with Number Format `#` and Decimal Separator `.` when the source is always numeric (e.g. POSEX). Use a UDF (`removezeros`) only for values that may contain letters (e.g. IDTNR).
-- **Standard functions before UDFs.** Use a Groovy UDF only when no standard function does the job (e.g. `count` instead of a counting UDF). Prefer reusing a reference UDF unchanged over writing a new one.
-- **Sample files**: check the encoding. A file with `<?xml version="1.0"?>` and no encoding declaration must be UTF-8, or the CPI mapping simulator won't load it. Make a UTF-8 copy (`*_utf8.xml`) and never change the user's original.
-  - A root with `xmlns:xsi` + `xsi:schemaLocation` breaks the mapping simulator (`prefix "ns6" … is not bound`). Make a copy without those attributes with `py -I tools/sim_copy.py <file>` (`*_sim.xml`) for simulation (ORDRSP, 2026-11-13). Runtime behaviour in the iFlow is not tested yet.
-- **Qualifier filters on repeating source children** (e.g. `Quantity[@Type='21']`, `Property[@Type='12']`): follow the user's PO pattern (FORMAT_NOTES §3.6). No UDF. Put value transforms that can fail (e.g. `substring`) after the filter. (User rule, 2026-11-13.)
-  - **Context settings only for attributes compared with their own element's value** (`Date/@Type` vs `Date` → context = Item). An attribute compared with a child element (`Quantity/@Type` + `QuantityValue`) gets no context. Never `mapWithDefault` after a context change. (FORMAT_NOTES §3.6, user's fix ORDRSP v1.0.4, 2026-11-15.)
-  - **A segment and its fields use the same aligned chain.** A misaligned chain can give the right segment count with wrong field values (ORDRSP E1EDP03 v1.0.5).
-- **Filter at segment level, map the fields 1:1** (user rule 2026-11-24, ORDERS v1.2.0 feedback, FORMAT_NOTES §3.5). This is the default for qualified segments:
-  - The **target segment** gets `createIf(stringEquals(qualifier [context = parent of the source segment], 'X'))`, e.g. `Party[SE] ← createIf(PARVW [context /ORDERS02/IDOC] = 'LF')`.
-  - Its **fields are straight maps** of the same source segment's fields, e.g. `PartyId ← mapWithDefault(E1EDKA1/PARTN)`. No `ifWithoutElse` / `removeContexts` per field.
-  - It works because CPI skips the children's context for every SUPPRESS in the parent queue, so each created segment reads its own source segment.
-  - The same goes for a condition that only decides whether fields are sent at all: put the condition on the segment and make the fields constants.
-  - **Exception: the IDoc control record `EDI_DC40` gets no condition.** It comes from an empty constant, so it is always created and stays ready for later use (user, 2026-11-24, Metocs ORDRSP test). Applied to all Tibnor inbound mappings 2026-11-24.
-  - **No mill or sender check in the mapping when the iFlow already routes on it** (user, 2026-11-24, Metocs INVOIC test: "overkill… this check has been done already"). E.g. `createIf(startsWith(SourceSystem, 'METOCS'))` or `InterchangeSender = <mill GLN>` on EDI_DC40, E1EDKA1, E1ADRM1 repeats the parent's receiver determination: those segments come from empty constants. Before adding a check, look at what the iFlow routes on.
-  - It needs the fields to be **children of the filtered source segment**. Use the filtered chain below instead when the value is the element itself (`Date/@Type` vs `Date`) or a field mixes two source segments.
-- **`createIf`** (user rule 2026-11-15, FORMAT_NOTES §3.5):
-  - On a repeating condition, lift it with `context=` (rule above) or follow it with `removeContexts`. The segment's fields are then **straight maps**.
-  - Never `createIf` on a segment together with `ifWithoutElse` on its fields. Instead feed the segment and its fields from one filtered chain (`ifWithoutElse` → `removeContexts` → `SplitByValue`).
-  - **An attribute of the repeating source element is a straight map too** (user, 2026-11-24, INVOIC `E1EDK04/MWSKZ ← Tax/@Type`): it already has one context per element, like the element's children (FORMAT_NOTES: attribute context = its own element). No `removeContexts` → `SplitByValue` around it: that only merges the contexts and splits them again.
-  - Optional **item** segments whose value is the qualified element itself (one per item, e.g. E1EDP03 ← `Item/Date[@Type]`, E1EDP19 ← `Item/AddArticleNo[@Type]`) come from that filtered chain, never from `createIf` on a per-child condition.
-- **Header value on every item:** `CopyValue(value, 0)`, not `useOneAsMany` (user rule 2026-11-15).
-- **SplitByValue "Value change"** groups only *consecutive* equal values. **Whenever a mapping uses it, ask the user** whether the input must be sorted first, and how: the source may already be sorted, sorting may not be needed, or the user may want it without sorting. If sorting is wanted, it's an XSLT sort step in the iFlow before the mapping (L1: iFlow I0115 XSLT `SortByTaxLines` before `MapToRFC_BAPI_ACC_DOCUMENT_POST`). A sum per group is `sum(formatByExample(value, SplitByValue[value change](removeContexts(key))))` (L1 ACC `CURRENCYAMOUNT/item[2]/AMT_DOCCUR`, confirmed by the user). (R1, 2026-11-15)
-- **Lifting a field to a higher level:** prefer a `context=` setting on the source (JournalEntry style, shown in italics in the editor). Use `removeContexts` when *all* contexts must go. Not a hard rule. (R3, user 2026-11-15)
-- **`mapWithDefault` after a context change** only when the business context guarantees at most one occurrence per new context (e.g. an invoice header field). Otherwise apply `mapWithDefault` in the field's own context first, then `removeContexts` / `formatByExample`. (R4, FORMAT_NOTES §3.6)
-- **Line numbers:** case by case. Only when the source does **not** provide line numbers, consider the standard `counter` (e.g. `ini=2`, `inc=2` when line 1 is reserved for the vendor line, as in ACC). A UDF only if `counter` can't do it. (R5, user 2026-11-15)
-- **iFlow steps around the mapping: a check, not a rule.** Before building, ask whether something belongs in the iFlow, and decide per interface with the user. Candidates seen in the user's iFlows:
-  - a sort step (see "Value change" above)
-  - a splitter when the **target expects one message per object** (I0541, I0544: Medius wants one message per supplier / company code)
-  - XSLT for grouping, filtering, or moving a whole segment to another level (I0161 `LowestLevel`, I0544 `AccountingInformationAllowed`)
-  - removing `xsi:nil` fields that clutter the mapping (I0544 JDBC `removeXSINil`)
+  Never leave the pointer at a commit that is not pushed.
+- iFlows that embed a mapping read the zip from `cpi-mappings-v2/mappings/<Folder>/build/` (e.g. `MAP_ZIP` in `tools/iflow_build_tibnor.py`).
 
-  Otherwise a UDF is preferred over XSLT. Every such step is named in the mapping's `spec.md` and called out to the user. (R6, user 2026-11-15)
-- **Value tables:** FixValues "Use Key" (`vmstrategy 2`, empty default) passes unknown values through, e.g. unit M → MTR. Use it instead of if-then-else.
-- **Layout (user rule 2026-11-15):** share logic between targets only when the editor canvas stays clean: no overlapping bricks, and a shared brick in the same column for all its targets (like E1EDK03 + DATUM). Otherwise split. The toolkit does this (`Builder`), and the build checks reject overlaps.
-- **UDF library:** reusable UDFs live in `udf_library/` (see its README). A mapping copies the file **unchanged** into its `scripts/`. Prefer the standard function, e.g. `substring`; use a library UDF such as `substringSafe` only when the standard one may fail (value length not certain).
-- **Build output** goes to `mappings/<Folder>/build/` as:
-  - `<MappingName>.zip`, importable, with the same layout as the standalone reference zips (FORMAT_NOTES §1.1): root `mapping/`, `script/`, `xsd/`, `wsdl/`. No MANIFEST, `.project` or `metainfo.prop`.
-  - The extracted `<MappingName>/` folder next to the zip.
-  - The zip name stays fixed with no version suffix. Git history holds the versions.
-- Reusable generator and validation scripts go in `tools/`, never inside a mapping folder.
-
-## Checks before finishing a build (all must pass, report results)
-1. Every source and target XPath used in the `.mmap` exists in the schemas, including attributes (`@x`), duplicate indexes (`item[1]`) and `context="…"` paths. For **JSON** sources or targets, check paths against the Swagger/OpenAPI schema of the linked operation (request body, `$ref` resolved) instead of an XSD. `/__$$RoOt_ArRaY$$__` stands for a root array (FORMAT_NOTES §2.2).
-2. All XML is well-formed: `.mmap`, XSD and WSDL.
-3. The zip structure matches the references: entries at the root, only the allowed folders, the `.mmap` name equals the mapping name, every `UsedFuncLib` script is present in `script/`, and every schema in `lnks` is present.
-4. The `.mmap` envelope matches FORMAT_NOTES §2.1: one line, no BOM, no prolog.
-5. No `claude` or `anthropic` string, and no tool or AI metadata, in any file inside the zip. `modifBy` and `owner` stay empty, as in the references.
-6. Every `type=` / `ref=` / `base=` reference in the zip's XSD and WSDL files resolves (NShift v1.0.0: unresolved types gave an empty structure in CPI).
-7. No overlapping bricks on any editor canvas.
-
-Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `check_paths`).
-
-## Building an iFlow (user rules, 2026-11-16, I0539 feedback)
+## Building an iFlow (generic rules; user rules, 2026-11-16 onwards)
 - iFlows are built by scripts in `tools/` (e.g. `tools/iflow_build_fsap_dispatcher.py --only <IFlowName>`), which use `tools/iflow_lib.py`. The script is the single source of truth. Feedback is taken over into the script, as with mappings.
 - **No overlapping pools or steps on the iFlow canvas** (user, 2026-11-23, I2024): when a step is inserted and a pool gets wider, move every pool to its right (same height) with its steps. Build check `layout_errors`: pools don't overlap, every step lies inside its own pool.
 - **A change to the process flow must also update the BPMN diagram.** Drop the shapes and edges of removed steps, give every flow an edge whose ends match its source and target, and give every step a shape. Close gaps left by removed steps. `iflow_lib.fix_diagram` (with `shift=`) and `iflow_lib.sync_flow_refs` do this. (I0539 v1.0.0: "Main Process connection missing"; I0539_P 2.0.0: gap and no arrows, L2.)
@@ -118,26 +75,20 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - build check `iflow_lib.script_parse_errors`: fails our builds, FLAG in `check_all_iflows.py`
 - **Partner / logical system values** (RCVPRN, SNDPRN…) can be numbers with leading zeros or alphanumeric logical system names: strip leading zeros only when the value is all digits, and compare other values as they are (user, 2026-11-23).
 - **XPath in Content Modifiers and routers: no `local-name()`** unless the user asks for it or a source needs it for a logical reason (user, 2026-11-23). Write plain paths that match the real message, checked against a sample or the mapping source XSD/WSDL. When only the root element is namespaced (SAP ESR messages, unqualified children), use `/*/child/…`.
-- **Message monitoring** (user's blog "SAP CPI Message Monitoring: standard out-of-the-box features", sprintegrate.com, 2023; L2, 2026-11-23):
-  - Standard headers are mandatory, set in the **first Content Modifier** ("Set Monitoring Identifiers") as **headers**: `SAP_Sender` = `{{SAP_Sender}}`, `SAP_Receiver` = `{{SAP_Receiver}}`, `SAP_MessageType` = `{{SAP_MessageType}}` (parameter name = header name, always this casing; build check `monitor_param_names`).
+- **Message monitoring identifiers: generic, at almost every customer** (user's blog "SAP CPI Message Monitoring: standard out-of-the-box features", sprintegrate.com, 2023; L2, 2026-11-23 and 2026-11-27):
+  - Standard headers are set in the **first Content Modifier** as **headers**: `SAP_Sender` = `{{SAP_Sender}}`, `SAP_Receiver` = `{{SAP_Receiver}}`, `SAP_MessageType` = `{{SAP_MessageType}}` (parameter name = header name, always this casing; build check `monitor_param_names`). The step name comes from the customer skill (SSAB: "Set Monitoring Identifiers").
   - For IDoc senders `SAP_MessageType` may come from XPath `concat(//MESTYP, '.',//IDOCTYP,if (//CIMTYP) then concat('.', //CIMTYP) else ())`.
   - `SAP_ApplicationID` = XPath to the business key (payload search), e.g. `//DOCNUM` for IDocs.
-  - Allowed-value lists for SAP_Sender / SAP_Receiver / SAP_MessageType: ask the user, don't invent values.
-  - SmarTeam flows: `SAP_Sender` default `AD1_110` everywhere (user, 2026-11-23).
+  - Allowed-value lists for SAP_Sender / SAP_Receiver / SAP_MessageType: ask the user, don't invent values. Known values are in the customer skill.
   - **Parent iFlows (receiver determination, several receivers) never set `SAP_Receiver`**; only point-to-point flows and children do (user, 2026-11-23). Build check `monitor_header_errors`.
-- **Participant names are unique in an iFlow**: CPI does not allow a sender and a receiver (or a local process) with the same name (user, 2026-11-23). **Ask before renaming** when the plain system name is taken. Patterns agreed so far:
-  - ProcessDirect sender from the system = `MSAP`; HTTPS retrigger sender = `Retrigger`; its local process = `Manual Retrigger`
-  - a receiver is the **plain system name** (`MSAP`, `SmarTeam`, `CI`). Add a purpose suffix (`MSAP_BOM`, `MSAP_FLOC`, `CI_MAIL`) **only when that name is already taken** by another participant in the same iFlow (user, 2026-11-23). Never `Receiver`, `Receiver1`, `Sender`…
-  - build flag: a suffixed name whose plain name is free is reported
-  - Build check `participant_name_errors` fails on duplicates and generic names.
-- **Always flag participant names that are not the system name** (`Receiver1`, `MSAP_Lookup`, `MSAP_PO`…) to the user (user, 2026-11-23). Generic names fail the build (`participant_name_errors`); other unknown names are printed as FLAG.
-- **Receiver/participant names: keep them simple**, the receiver system name (e.g. `MSAP`, `MSAP_BOM`), not leftovers like `MSAP_PO` (user, 2026-11-23). When the plain name is taken by another participant in the same iFlow, add a short suffix.
-  - Custom headers only via the reusable Groovy script (`UTIL_LogCustomHeaders`, `CH_` properties); searchable in the monitor with "Use More Fields", `Name=Value`.
-- **Step name `LogCustomHeaders`** for every Script step that runs `logCustomHeaders.groovy` (`UTIL_LogCustomHeaders`), in parents and children (user, 2026-11-23, screenshot). Not "Set Custom Header", "Log Custom Header(s)" or "Log Headers". `iflow_build_smarteam.py` renames them and fails on any other name.
-- **Step name "Send To JMS"** for the step that sends to the JMS receiver in parent iFlows (user, 2026-11-23). `name_jms_send_step` in `iflow_build_smarteam.py`.
-- **Child iFlows (`…_JMSToHTTP`): Allowed Headers externalized as `{{AllowedHeaders}}` = `SSAB.*|SAP.*`** (user, 2026-11-23). `iflow_build_smarteam.py` sets it for every child and fails if it is not externalized.
-- **HTTPS sender role** (user, 2026-11-23): **child iFlows always `SSAB_MessagingSend_InternalOperations`**; **parent iFlows: never change the role of a parent whose main entry is HTTPS**. When the parent is SOAP/IDoc/AMQP based and the HTTPS sender is only the **retrigger**, set it to `SSAB_MessagingSend_InternalOperations` too (I2018_P, I2023_P, I2024_P). `iflow_build_smarteam.py`: child role always set, `retrigger_role=True` for retrigger-only parents, otherwise the build fails if a parent's role changes. CSRF: always ask (SSAB default off).
-- **Externalize every adapter setting someone may tune**, with `HTTP_<Setting>` / `<System>_<Setting>` names (IFLOW_CONVENTIONS §1.4, §2.4). Channels to the same system share one set. Fix misspelt parameter names and tell the user that the tenant value must be set again.
+- **Sender role: never CPI's default role `ESBMessaging.send`** (user, 2026-11-27). For every customer, ask which role a sender uses. The values are in the customer skill. CSRF protection: always ask.
+- **Participant names are unique in an iFlow**: CPI does not allow a sender and a receiver (or a local process) with the same name (user, 2026-11-23). **Ask before renaming** when the plain system name is taken.
+  - A receiver is the **plain system name**. Add a purpose suffix (e.g. `<System>_BOM`, `<System>_MAIL`) **only when that name is already taken** by another participant in the same iFlow. Never `Receiver`, `Receiver1`, `Sender`…
+  - Keep names simple, the receiver system name, not leftovers like `MSAP_PO`.
+  - Build check `participant_name_errors` fails on duplicates and generic names. A suffixed name whose plain name is free is reported.
+  - **Always flag participant names that are not the system name** (`Receiver1`, `MSAP_Lookup`, `MSAP_PO`…) to the user. Generic names fail the build; other unknown names are printed as FLAG. The known names per customer are in its skill.
+- **Allowed Headers: never `*`** in a sender's Allowed Headers or a receiver's request headers. List the expected ones and externalize them. The values are in the customer skill.
+- **Externalize every adapter setting someone may tune** (IFLOW_CONVENTIONS §1.4, §2.4), e.g. `HTTP_<Setting>` / `<System>_<Setting>`; the naming comes from the customer skill. Channels to the same system share one set. Fix misspelt parameter names and tell the user that the tenant value must be set again.
   - **Location ID always with Proxy Type** (HTTP `locationID`, OData `scc_location_id`), even when empty, e.g. `SmarTeam_LocationID` (user, 2026-11-23). Build check `location_not_externalized`.
   - **Check every adapter of every iFlow in each round, not only the ones being changed** (SmarTeam, 2026-11-23: the SmarTeam receiver stayed fixed for 3 rounds). List every non-empty fixed value per channel, and externalize it or ask. Never leave it as an "open point".
 - Every iFlow folder gets a `spec.md` with a Decisions table (user, 2026-11-16).
@@ -148,85 +99,37 @@ Checks 1–7 run automatically in every `build_mapping.py` (`check_build`, `chec
   - every `{{param}}` is in parameters.prop and propdef, and no unused parameters
   - no `claude`/`anthropic` strings
   - MANIFEST name equals the iFlow name
-- **Best-practice FLAGs** (`iflow_lib.best_practice_flags`, `tools/check_best_practices.py`, also printed by `check_all_iflows.py`). They are reported, not failed: fix them in the flow you touch, or confirm with the user.
-
-### SSAB Best Practises (user's guide "SSAB_IntegrationSuite_Best Practises" v1.9, L2, read 2026-11-23)
-The guide lives on SharePoint (SSE IT - SAP Integration Suite › 20. Development). Section numbers below are the guide's. Summary: `docs/explained/ssab_best_practices_guide.md`.
-- **Where the guide differs, what we built is correct** (user, 2026-11-23; the guide gets updated later):
-  - ProcessDirect sender and HTTPS sender addresses **are** externalized (`PD_Address`, `HTTPS_Address`), against guide §3.5.
-  - Child names stay as built: SmarTeam children `…_JMSToHTTP` (guide §3.10.5.5), FSAP Medius children `…_PDToREST`.
-  - `JMS_RetentionThresholdAlerting = 2` on the FSAP parents stays (guide §3.10.1.1 says 1).
-  - The retrigger role is `SSAB_MessagingSend_InternalOperations` (guide §3.3.2 says `SSAB_Internal_Operations`).
-- **Structure:** all logic sits in a local process **"Main Process"**, called from each entry point. At most **15 steps per local process**; lookups, backend checks and exception handling get their own local process (§3.1–3.2). Lay out left to right (§3.4).
-- **Two entry points:** the source process and a **"Manual Retrigger"** HTTPS process (§3.3). Retrigger needs a payload attachment named **`IncomingPayload`** (§1.2.1, §3.3.2).
-- **Payload logging** only with `UTIL_LogPayloadAsAttachment`, never an own script (§1.5). Properties `LogPayload` (default false) and `LogPayloadSize` (KB) are set in "Set Monitoring Identifiers". `AttachmentName` is never externalized (§1.2.1).
-- **Mandatory externalized:** `SAP_Sender`, `SAP_MessageType`, `MaxRetries` (JMS), `LogPayload`, `LogPayloadSize`, and every Content Modifier value (§3.6). `SAP_Receiver` only where the flow has one receiver; with dynamic receiver determination it is not set (user, 2026-11-23).
-- **Headers:** never `*` in a sender's Allowed Headers or a receiver's request headers; list the expected ones (§3.7.1.1–2). Delete properties that hold a payload as soon as they are no longer needed, and never put a payload in a header (§3.7.1.3–4).
-- **Transaction handling:** "Not Required" by default. With more than one JMS write (several JMS receivers, or the parent's receiver loop) use **"Required for JMS", timeout 1 min**; with several JDBC receivers "Required for JDBC". Never JMS and JDBC in one iFlow (§3.8, §4.1.2.1).
-- **HTTP session handling:** "On Integration Flow" (one user per host), externalized; "None" only with different users for the same host (§3.9).
-- **JMS sender** (old-style children and dispatchers), all externalized: concurrency 1, retry interval 1 min, exponential backoff only for unstable targets, Dead-Letter Queue on (§3.10.1.2). JMS receiver: Retention Threshold and Expiration externalized (§3.10.1.1).
-- **Max retries:** dispatcher `MaxRetries` = 2 with `SAPJMSRetries > MaxRetries` (3 retries), then the DLQ `<Queue>_D` and an Escalation End (§3.10.5.1, §3.10.5.4).
-- **Exceptions:** use an exception subprocess for expected errors. In a JMS-fed flow, including every dispatcher child, it **ends with an Error End** so JMS retries. Log `${exception.message}` to a custom header if needed (§3.13, §3.10.5.5).
-- **Simplified Pipeline extras:**
-  - **Parent with one receiver:** Content Modifier **"Set JMS Header Parameters"** sets `SSAB_Dispatcher_ReceiverIFlow` and `SAP_MessageProcessingLogCustomStatus` (§3.10.5.3).
-  - **Deploy order:** the child before the parent (§3.10.5.4).
-  - **Properties to the child:** `CopyPropertiesToHeader` / `CopyHeaderToProperties` only as a last resort; pass headers instead (§3.10.5.6).
-  - **Dispatcher numbers:** I07XX/I08XX, created only by the Central Integration team (§3.10.5.7–8).
-- **Routing:** a Router (multicast) for 2–5 receivers; the Groovy Receiver Determination for 5 or more, or when "No receivers found" must be an error (§4.1.2.1).
-- **Shared helper flows** over ProcessDirect instead of own channels: SAP receivers in `UTIL_SAPReceiverAdapters` (IDoc/XI per system), MDM partner-id lookup `I0096_P_MasterData_MDMLookup_PDToHTTP` (§4.4–4.5). See IFLOW_CONVENTIONS §1.5.
-- **Plain file transfers** (SFTP sender → file) use no JMS queue; the file stays on the sender until delivered (§4.6).
-- **Mapping:** graphical message mapping first; XSLT or Groovy only when the graphical one gets too hard to build or maintain (§3.14).
-- **Versions** (CPI iFlow version, §5.2): major per project, minor per CR / SR / production bug fix, micro per change during development. The version comment carries the project or SR ID (§5.1).
+- **Best-practice FLAGs** (`iflow_lib.best_practice_flags`, `tools/check_best_practices.py`, also printed by `check_all_iflows.py`). They are reported, not failed: fix them in the flow you touch, or confirm with the user. Today they follow the SSAB guide (see the `ssab-tibnor` skill).
 
 ## CHANGELOG
-- Each mapping folder has a `CHANGELOG.md`. Add an entry for **every** build:
+- Each iFlow folder has a `CHANGELOG.md`. Add an entry for **every** build:
   `## <x.y.z> — <YYYY-MM-DD HH:MM> CET` (time of the build commit, Central European Time: CET in winter, CEST in summer) followed by what changed in plain words. (User, 2026-11-15: a date alone is not enough when several versions are made on one day.)
-- Versions start at `1.0.0`. Bump the patch for fixes and the minor for spec or scope changes.
-
-## Naming
-- Follow `_reference/IFLOW_CONVENTIONS.md` for mappings, iFlows, queues and parameters. Don't copy its "Observed deviations" table.
+- Versions start at `1.0.0`. The customer skill says how versions count (SSAB: major per project, minor per CR/SR/fix, micro per development change).
 
 ## Git
-- Track everything: `_reference/`, docs, `tools/`, mapping sources and `build/` zips. The repo is the backup of all knowledge. Nothing project-specific lives only in Claude's memory.
-- After each build, commit (`<MappingName> v<x.y.z>: <change>`) and tag `<MappingName>-v<x.y.z>`.
+- Track everything: `_reference/`, docs, `tools/`, iFlow sources and `build/` zips. The repo is the backup of all knowledge. Nothing project-specific lives only in Claude's memory.
+- After each build, commit (`<IFlowName> v<x.y.z>: <change>`) and tag `<IFlowName>-v<x.y.z>`.
 - **Line endings**: never remove or weaken `.gitattributes` (`* -text`). Git on this PC has `core.autocrlf=true` set system-wide, so without that file it rewrites CRLF and LF. Every reference export and every build output must stay byte-identical to the original. After committing, spot-check with `git show HEAD:<file> | cmp - <file>`.
+  - Don't edit files with `sed -i` in Git Bash: it rewrites CRLF files to LF (2026-11-27). Use the Edit tool or a byte-level Python replace.
+- **Long paths:** SmarTeam names exceed 260 characters. This clone has `core.longpaths true`; set it in every new clone (`git -c core.longpaths=true clone …`).
 - Commits are authored by the user's git identity. **Do not add `Co-Authored-By` or any Claude/AI attribution** to commits or files.
-- **This PC and GitHub stay in sync** (user, 2026-11-25): the remote is `origin` = `github.com/bhavesh-kantilal/cpi-mappings` (private). **After every commit, push `master` and the tags** (`git push origin master` + `git push origin --tags`). The user wants to start on another PC from `git clone` alone. Before ending a task, `git status -sb` must show no `ahead`. Commit only as part of a task the user asked for. (Until 2026-11-25 nothing was pushed, and 157 commits existed only on this PC.)
-- **Claude's memory folder is mirrored in the repo**: `docs/claude_memory/` holds a copy of every note in Claude's own memory folder (`%USERPROFILE%\.claude\projects\C--work-cpi-mappings\memory\`). When Claude writes or changes such a note, it updates the copy in the same commit. On a new PC, CLAUDE.md and the repo are enough; the copies are only a backup.
+- **This PC and GitHub stay in sync** (user, 2026-11-25): the remote is `origin` = `github.com/bhavesh-kantilal/cpi-iflows-v2` (private). **After every commit, push `master` and the tags** (`git push origin master` + `git push origin --tags`). Clone with `git clone --recurse-submodules` to get the mapping repo too. Before ending a task, `git status -sb` must show no `ahead`, here and in `cpi-mappings-v2/`. Commit only as part of a task the user asked for.
+- **The old repo `C:\work\cpi-mappings` is frozen** (user, 2026-11-27): it is the fallback from before the split. Never edit, commit or push there.
+- **Claude's memory folder is mirrored in the repo**: `docs/claude_memory/` holds a copy of every note in Claude's own memory folder. When Claude writes or changes such a note, it updates the copy in the same commit.
 
 ## Learning loop
 Claude keeps no private memory for this project: what is not written in this repo is not known.
 - **Evidence levels.** L1 = the user's original export; L2 = the user's CPI download or explicit statement;
-  L3 = Claude's build that the user tested in CPI; L4 = Claude's analysis (UNVERIFIED). Every fact in
-  FORMAT_NOTES and every rule here names its source and level.
-- **Loop for every new lesson:** capture it in the mapping's `spec.md` with its evidence → propose it in
-  `REVIEW.md` → only after the user's approval write it into CLAUDE.md (rule) or FORMAT_NOTES (fact).
-- **Re-learn after every approved lesson or new reference:** run `py -I tools/catalog.py`, then check every
-  rule against all references (supported / contradicted / not seen, with files) in a report under
-  `docs/explained/`. Contradictions and anything not understood go to the user as numbered questions
-  (mapping, target field, brick). Generated mappings are not changed unless an approved rule changes.
-- **Generated references** go into `_reference/` marked L3 in its README; they show what works, not how
-  SAP itself writes a mapping.
-- **UDF call-out:** whenever Claude writes a UDF (or proposes an iFlow step such as an XSLT), the mapping's
-  `spec.md` Decisions and the chat message say: "Bhavesh, I built `<name>` because `<requirement>`; standard
-  alternative: `<…>`; why not: `<…>`." (R2)
-- **Question format:** every question names `iFlow › mapping › target field (full path)` and the full
-  expression (sources, functions, context settings), so it can be opened in CPI. If the iFlow is not known,
-  say "no iFlow known". (R2)
-- **Re-learn includes the iFlow:** a mapping pattern is always read with the iFlow steps before and after it
-  (`_reference/CATALOG.md` §4; `tools/iflow_import.py` for new iFlow zips). Mappings without an iFlow are
-  listed, and the user is asked for the export. (R2)
-- **New references**: the user drops `<Name>.zip` into `_reference/` and adds a README entry. On "learn new references":
-  - extract the zip into `_reference/<Name>/`
-  - regenerate `_reference/CATALOG.md` with `py -I tools/catalog.py` (functions, params and patterns, with sources; never edit it by hand)
-  - diff against FORMAT_NOTES and propose additions with citations
-- **Feedback** (after the user tests in CPI):
-  1. The user downloads the mapping from CPI: package → Artifacts → Actions (…) → **Download**. They save the zip in `mappings/<Folder>/feedback/` and say "feedback is in".
-  2. Extract it into `feedback/<Name>/`. Compare it with the build using `tools/cpimm/diff.py`, which works per target and ignores layout and uid numbering. CPI re-serializes XSDs, so compare those by paths, not bytes (FORMAT_NOTES §3.12).
-  3. Take over the user's changes in `build_mapping.py`, so the build script stays the single source of truth. **Don't blindly copy** a change that contradicts the spec or the samples: flag it and ask (e.g. ORDERS v1.1.0, Reference).
-  4. Rebuild as the next version. Record each difference in spec.md (Decisions) and CHANGELOG. Propose any general lesson as a rule here.
-- Before committing, check `git status` for files changed by the user (e.g. edited samples) and mention them; don't commit them silently.
-- **At the end of each task**, propose any new convention or correction you learned as an update to `CLAUDE.md` or `_reference/FORMAT_NOTES.md`. **Wait for the user's approval before changing them.**
+  L3 = Claude's build that the user tested in CPI; L4 = Claude's analysis (UNVERIFIED). Every rule here and in a customer skill names its source and level.
+- **Loop for every new lesson:** capture it in the iFlow's `spec.md` with its evidence → propose it in
+  `REVIEW.md` → only after the user's approval write it into CLAUDE.md (generic rule), the customer skill (customer rule) or IFLOW_CONVENTIONS.
+  When proposing, say whether the lesson is generic or customer-specific.
+- **UDF / script call-out:** whenever Claude writes a Groovy script or proposes an iFlow step such as an XSLT, the `spec.md` Decisions and the chat message say: "Bhavesh, I built `<name>` because `<requirement>`; standard alternative: `<…>`; why not: `<…>`." (R2)
+- **Question format:** every question names `iFlow › step › setting` (or `iFlow › mapping › target field`) and the full expression, so it can be opened in CPI. (R2)
+- **New iFlow references**: the user drops exports into `iflowdevelopment/` or `_reference/iflows/`. `tools/iflow_import.py` extracts them into `_reference/iflows/`.
+- **Feedback** (after the user tests in CPI): the user downloads the iFlow from CPI into the package's `source/`. Take over the changes in the builder script, rebuild as the next version, and record each difference in spec.md (Decisions) and CHANGELOG. **Don't blindly copy** a change that contradicts the spec: flag it and ask.
+- Before committing, check `git status` for files changed by the user and mention them; don't commit them silently.
+- **At the end of each task**, propose any new convention or correction you learned as an update to `CLAUDE.md`, the customer skill or `_reference/IFLOW_CONVENTIONS.md`. **Wait for the user's approval before changing them.**
 
 ## Environment
 - Windows 11 with Git Bash and PowerShell.

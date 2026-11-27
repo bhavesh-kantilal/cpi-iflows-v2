@@ -1,5 +1,7 @@
 # SSAB Integration Suite Best Practises — summary (guide v1.9, 18.11.2026)
 
+> **Customer-specific: SSAB / Tibnor** (one CPI tenant). Used through the skill `.claude/skills/ssab-tibnor/SKILL.md`. For another customer, ask before reusing anything here (CLAUDE.md "Which customer?").
+
 Source: `SSAB_IntegrationSuite_Best Practises.pdf` on SharePoint (SSE IT - SAP Integration Suite › 20. Development). Author: Bhavesh Kantilal. Reviewer: Andreas Holmberg. Updates by Hans Nehrman. Evidence level L2.
 Read on 2026-11-23. The build rules taken from it are in `CLAUDE.md` ("SSAB Best Practises"), and the naming facts are in `_reference/IFLOW_CONVENTIONS.md` (§1.5, §2.3). This page also holds the parts that are **not** build rules (security, operations, transport), so they are known when a question comes up.
 

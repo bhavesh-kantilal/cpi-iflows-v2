@@ -1,4 +1,6 @@
 # Reference iFlow Scan — Full Findings
+
+> **Customer-specific: SSAB / Tibnor** (one CPI tenant). Used through the skill `.claude/skills/ssab-tibnor/SKILL.md`. For another customer, ask before reusing anything here (CLAUDE.md "Which customer?").
 Scanned: all 18 iFlow ZIPs under `_reference/iflows/`, 2026-11-15
 
 ---

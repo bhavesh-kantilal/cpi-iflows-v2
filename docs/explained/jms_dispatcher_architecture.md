@@ -1,4 +1,6 @@
 # JMS Queue Consolidation — Dispatcher Architecture
+
+> **Customer-specific: SSAB / Tibnor** (one CPI tenant). Used through the skill `.claude/skills/ssab-tibnor/SKILL.md`. For another customer, ask before reusing anything here (CLAUDE.md "Which customer?").
 Source: CPI_JMS_Queue_Consolidation.pptx (SSAB Integration, November 2026)
 
 ---

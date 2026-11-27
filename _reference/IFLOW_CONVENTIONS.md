@@ -1,5 +1,7 @@
 # iFlow patterns and naming conventions
 
+> **Customer-specific: SSAB / Tibnor** (one CPI tenant). Used through the skill `.claude/skills/ssab-tibnor/SKILL.md`. For another customer, ask before reusing anything here (CLAUDE.md "Which customer?").
+
 This file comes from the four iFlow exports in `_reference/` plus your answers in the setup Q&A (2026-11-13). A source in brackets marks where each point came from. "Q&A" means you decided it; anything else was observed in the files.
 
 ## 1. Message path: Parent → JMS → Dispatcher → PD child → target

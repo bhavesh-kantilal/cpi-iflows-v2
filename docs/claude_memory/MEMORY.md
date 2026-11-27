@@ -6,3 +6,5 @@
 - [BPMN rfind bug](feedback_bpmn_rfind_bug.md) — when regex match starts at element opening tag, use `m.start()` directly — rfind with end=`m.start()+1` always returns -1 and corrupts the XML by doubling content
 - [SSAB Smart Switch + writing style](project_ssab_smart_switch.md) — MSAP AQ1/AP1 switch: PD sender check outbound, I2004 Additional inbound, Atlas; SSAB doc style
 - [iFlow spec.md per folder](project_iflow_spec_pending.md) — answered yes (2026-11-16); create spec.md with each iFlow feedback round
+- [Small modular answers](feedback_small_modular_answers.md) — one topic per reply; split big questions into steps
+- [Repo split v2](project_repo_split_v2.md) — work in cpi-mappings-v2 / cpi-iflows-v2; original cpi-mappings frozen
