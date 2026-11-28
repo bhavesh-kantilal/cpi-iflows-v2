@@ -51,6 +51,7 @@ cpi-mappings-v2/            git submodule: the mapping repo (its own CLAUDE.md, 
 
 ## Mapping work from this repo (user, 2026-11-27)
 - During iFlow work the user may ask for a mapping as well. All mapping work happens in **`cpi-mappings-v2/`** and follows **its** `CLAUDE.md`: the mapping rules, the self-test and the 7 build checks.
+- **Before developing a mapping, get the latest version** (user, 2026-11-28): the user also works on mappings in a separate clone (`C:\work\cpi-mappings-v2\`), and the two copies sync only through GitHub. Run `git -C cpi-mappings-v2 pull` first. If it brings new commits, commit the new submodule pointer here and push. No hook, the rule is enough (user).
 - The user may point to input files anywhere ("the mapping Excel / XMLs are in folder xyz"). **Copy them unchanged** into the mapping folder, in the layout of the mapping repo:
   - `cpi-mappings-v2/mappings/<NN_Name>/` with the sheet, `schemas/`, `samples/`, `scripts/`
   - a new folder gets the next free number
